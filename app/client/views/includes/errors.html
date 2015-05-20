@@ -1,0 +1,16 @@
+<template name="errors">
+  <div class="row errors">    
+	  <div class="col-md-12">    
+      {{#each errors}}
+        {{> error}}
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="error">
+  <div class="alert alert-danger alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    {{message}}
+  </div>
+</template>

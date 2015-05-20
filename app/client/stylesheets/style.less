@@ -1,0 +1,123 @@
+@import "bootstrap/custom.bootstrap.output.import.less";
+@import "paper.import.less";
+
+@import "bs_sidedanv.import.less";
+
+@grid-float-breakpoint: 830px;
+
+body {
+  padding-top: 70px;
+}
+@media print {
+  body {
+    padding-top: 0px;
+  }
+}
+
+.reactive-table {
+  th {
+    color: @text-color !important;
+  }
+  td.buttons {
+    text-align: right;
+  }
+}
+
+.daterangepicker {
+  color: black;
+}
+
+
+.page-header, .page-header-small {
+  border-bottom: none;
+}
+
+.nav-tabs {
+  li > form {
+    padding-top: 6px;
+    input:first-child {
+      padding-bottom: 6px;
+    }
+  }
+}
+
+
+
+////////////////////////////////
+// segmentation
+.row-fill {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.row-max-half {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+////////////////////////////////
+// misc
+#spinner {
+  height: 300px;
+}
+
+.label {
+  font-size: 85%;
+  display: inline-block;
+}
+.label-warning {
+  background-color: rgba(243, 156, 18, 0.3);
+}
+
+.smallSelect {
+  width: auto;
+  height: auto;
+  padding: 2px 5px;
+  display: inline-block;
+  border: none;
+  margin: 3px 0px;
+}
+.smallInput {
+  //height: auto;
+  padding: 2px 5px;
+  display: inline-block;
+  border: none;
+  margin: 3px 0px;
+}
+
+.btn-img {
+  padding: 0;
+  border: none;
+  background: none;
+  &:hover, &:focus, &:active {
+    color: inherit !important;
+    box-shadow: none;
+  }
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.cursorPointer {
+  cursor: pointer;
+}
+
+.page-header-small {
+  &:extend(.page-header);
+  margin: 0px;
+}
+
+.btn-hdr {
+  margin-left: 15px;
+  //vertical-align: bottom;
+}
+
+.btn-stack {
+  padding: 5.5px 7px;
+}
+
+.hoverOpaque {
+  opacity: 0.6;
+  &:hover {
+    opacity: 1.0;
+  }
+}

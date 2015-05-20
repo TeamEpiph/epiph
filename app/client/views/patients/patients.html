@@ -1,0 +1,42 @@
+<template name="patients">
+<div class="patients">
+  <div class="page-header-small">
+    <h3>Patients
+      <button id="createPatient" class="btn btn-img btn-hdr">
+        <i class="fa fa-2x fa-plus-square-o"></i>
+      </button>
+    </h3>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="nav nav-tabs">
+        {{#each openPatients}}
+        <li role="presentation" class={{patientTabClasses}}>
+          <a href="" class="selectPatient" data-id={{_id}}>
+            {{patientAbbrev _id}}
+            {{#if isSelectedPatient}}
+            <i class="fa fa-times cursorPointer hoverOpaque closePatient"></i>
+            {{/if}}
+          </a>
+        </li>
+        {{/each}}
+        <li role="presentation">
+          <form id="openPatient">
+            <input type="text" class="form-control" name="patientId" placeholder="enter patient token">
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      {{#with selectedPatient}}
+        <h3>{{patientAbbrev _id}}</h3>
+        <h3>{{_id}}</h3>
+      {{else}}
+        Please select a patient.
+      {{/with}}
+    </div>
+  </div>
+</div>
+</template>
