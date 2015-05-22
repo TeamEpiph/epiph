@@ -11,7 +11,6 @@ accounts-password
 alanning:roles
 aldeed:autoform
 aldeed:collection2
-chrismbeckett:fontawesome4
 drskullster:bootstrap
 jabbslad:basic-auth
 less
@@ -21,3 +20,4 @@ joshowens:accounts-entry
 ian:accounts-ui-bootstrap-3
 sacha:spin
 matb33:collection-hooks
+fortawesome:fontawesome
