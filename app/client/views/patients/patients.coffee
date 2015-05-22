@@ -24,7 +24,7 @@ Template.patients.helpers
 
 
 Template.patients.events
-  "click #createPatient": ->
+  "click #createPatient": (evt) ->
     Meteor.call "createPatient", (error, patientId) ->
       throwError error if error?
       openPatientIds = Session.get("openPatientIds") or []
@@ -32,6 +32,7 @@ Template.patients.events
       openPatientIds = _.uniq openPatientIds
       Session.set "openPatientIds", openPatientIds
       Session.set "selectedPatientId", patientId
+      evt.target.blur()
 
   "click .selectPatient": (evt) ->
     evt.preventDefault()
@@ -47,6 +48,7 @@ Template.patients.events
     Session.set "openPatientIds", openPatientIds
     Session.set "selectedPatientId", patientId
     evt.target.patientId.value = ""
+    evt.target.patientId.blur()
 
   "click .closePatient": (evt) ->
     evt.stopPropagation()
