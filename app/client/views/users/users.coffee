@@ -9,7 +9,7 @@ Template.users.helpers
     fields: [
       { key: 'profile.name', label: 'name' }
       'username',
-      { key: 'roles', label: 'roles', fn: (v,o) -> v.sort().join(', ') }
+      { key: 'roles', label: 'roles', fn: (v,o) -> if v? then v.sort().join(', ') else "" }
       { key: 'status', label: 'online', tmpl: Template.userStatusTableCell }
       { key: 'buttons', label: '', tmpl: Template.usersTableButtons }
     ]
