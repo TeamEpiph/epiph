@@ -24,6 +24,13 @@
         </li>
         {{/if}}
         {{/if}}
+        {{#if isInRole 'admin'}}
+        <li class="{{activeRouteClass 'users'}}">
+          <a href="{{pathFor 'users'}}">
+            Users
+          </a>
+        </li>
+        {{/if}}
       </ul>
       <ul class="nav navbar-nav navbar-right">
         {{> loginButtons}}

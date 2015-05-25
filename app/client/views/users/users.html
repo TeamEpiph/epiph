@@ -1,0 +1,35 @@
+<template name="users">
+<h3>Users</h3>
+<div class="row">
+  <div class="col-md-8">
+    {{> reactiveTable collection=users settings=usersReactiveTableSettings}}
+  </div>
+</div>
+</template>
+
+<template name="userStatusTableCell">
+{{#if status.online}}
+  <i class="fa fa-lg fa-circle text-success" title="online"></i>
+{{else}}
+  <i class="fa fa-lg fa-circle text-danger" title="offline"></i>
+{{/if}}
+</template>
+
+<template name="usersTableButtons">
+  <div class="btn-group">
+    {{#each systemRoles}}
+    {{#if isInRole ../_id role}}
+      <button class="btn btn-success btn-stack removeFromRole" data-id={{../_id}} data-role={{role}} title="remove from role {{role}}">
+        <span class="fa-stack fa">
+          <i class="fa {{icon}} fa-stack-1x"></i>
+          <i class="fa fa-ban fa-stack-2x text-danger hoverOpaque"></i>
+        </span>
+      </button>
+    {{else}}
+      <button class="btn btn-success addToRole" data-id={{../_id}} data-role={{role}} title="add to role {{role}}">
+        <i class="fa fa-lg {{icon}}"></i>
+      </button>
+    {{/if}}
+    {{/each}}
+  </div>
+</template>
