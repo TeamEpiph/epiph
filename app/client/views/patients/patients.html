@@ -38,8 +38,7 @@
   <div class="row">
     <div class="col-md-12">
       {{#with selectedPatient}}
-        <h3>{{patientAbbrev _id}}</h3>
-        <h3>{{_id}}</h3>
+        {{> patient}}
       {{/with}}
     </div>
   </div>

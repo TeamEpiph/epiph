@@ -12,3 +12,10 @@ Template.registerHelper "headTitle", (title) ->
 Template.registerHelper "headDescription", (desc) ->
   document.description = desc
   ""
+
+Template.registerHelper "fullDate", (date) ->
+  date = moment(date)
+  if date.dayOfYear() is moment().dayOfYear()
+    return "today #{date.format('HH:mm')}"
+  else
+    return date.format("DD.MM.YYYY HH:mm")

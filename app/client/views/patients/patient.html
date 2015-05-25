@@ -1,0 +1,27 @@
+<template name="patient">
+<div class="patient">
+  <br>
+  <div class="row profile">
+    <div class="col-xs-12 col-md-3 col-md-push-9 text-right">
+      <table class="table">
+        <tr>
+          <td>{{patientAbbrev _id}}</td>
+          <th>ID</th>
+        </tr>
+        <tr>
+          <td>{{fullDate createdAt}}</td>
+          <th>created at</th>
+        </tr>
+        <tr>
+          <td>4</td>
+          <th>visists</th>
+        </tr>
+      </table>
+      <img src="{{identicon _id size=10 scale=10}}">
+    </div>
+    <div class="col-xs-12 col-md-9 col-md-pull-3">
+      visits
+    </div>
+  </div>
+</div>
+</template>
