@@ -1,6 +1,6 @@
 onlyIfAdmin = ->
   if !Roles.userIsInRole(@userId, ['admin'])
-    @stop()
+    @ready()
     return
 
 Meteor.publish "users", ->
@@ -10,7 +10,7 @@ Meteor.publish "users", ->
 #####################################
 onlyIfTherapist = ->
   if !Roles.userIsInRole(@userId, ['therapist'])
-    @stop()
+    @ready()
     return
 
 Meteor.publish "patients", ->
