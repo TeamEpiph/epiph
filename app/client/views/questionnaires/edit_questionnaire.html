@@ -7,10 +7,11 @@
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-8">
-      {{#autoForm doc=null schema=questionnaireFormSchema id=questionnaireFormId type="insert" class="questionnaireForm" validation="keyup"}}
+      {{#autoForm doc=null schema=questionnaireFormSchema id="questionnaireForm" type="normal" class="questionnaireForm"}}
         {{#each afFieldNames}}
           {{> afQuickField name=this.name options=afOptionsFromSchema}}
         {{/each}}
+        <button type="button" id="validate" class="btn btn-primary">Validate</button>
         <button type="reset" class="btn btn-warning">Reset</button>
       {{/autoForm}}
     </div>
@@ -19,7 +20,7 @@
         <div class="panel-heading">Question editor</div>
         <div class="panel-body">
           {{#with selectedQuestion}}
-            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id=questionFormId type="update" class="questionForm" autosave=true}}
+            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id="questionForm" type="update" class="questionForm" autosave=true}}
               {{#each afFieldNames}}
                 {{> afQuickField name=this.name options=afOptionsFromSchema}}
               {{/each}}

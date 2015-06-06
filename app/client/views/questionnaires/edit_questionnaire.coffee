@@ -1,17 +1,16 @@
+AutoForm.hooks
+  questionnaireForm:
+    onSubmit: (insertDoc, updateDoc, currentDoc) ->
+      @done()
+      false
+
 Template.editQuestionnaire.helpers
-  questions: ->
-    Questions.find
-      questionnaireId: @_id
-
-  questionnaireFormId: ->
-    @_id+"_form"
-
   questionnaireFormSchema: ->
     schema = {}
     Questions.find(
       questionnaireId: @_id
     ).forEach (q) ->
-      s = _.pickDeep q, 'type', 'label', 'min', 'max', 'decimal', 'options', 'options.label', 'options.value'
+      s = _.pickDeep q, 'type', 'label', 'optional', 'min', 'max', 'decimal', 'options', 'options.label', 'options.value'
       switch q.type
         when "string"
           s.type = String
@@ -26,12 +25,6 @@ Template.editQuestionnaire.helpers
           s.autoform = 
             type: "select-radio-inline"
             options: q.options
-            #options: ->
-            #  [
-            #    {label: "1", value: "1"}
-            #    {label: "2", value: "2"}
-            #    {label: "3", value: "3"}
-            #  ]
       delete s.options
       schema[q._id.toString()] = s
     console.log "questionnaireFormSchema"
@@ -48,8 +41,6 @@ Template.editQuestionnaire.helpers
       _id: id
 
   #this: selectedQuestion
-  questionFormId: ->
-    @_id+"_form"
   questionFormSchema: ->
     schema =
       label:
@@ -68,6 +59,10 @@ Template.editQuestionnaire.helpers
               {label: "Date", value: "date"},
               {label: "Multiple Choice", value: "multipleChoice"},
             ]
+      optional:
+        label: "Optional"
+        type: Boolean
+
     switch @type
       when "string"
         _.extend schema, 
@@ -114,6 +109,9 @@ Template.editQuestionnaire.events
       label: "What's the question?"
       type: "text"
     Session.set 'selectedQuestionId', id
+
+  "click #validate": (evt) ->
+    AutoForm.validateForm("questionnaireForm")
 
   "click .questionnaireForm > .form-group": (evt) ->
     target = $(evt.target)
