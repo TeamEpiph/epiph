@@ -1,0 +1,29 @@
+<template name="questionnaires">
+<div class="questionnaires">
+  <div class="row">
+    <div class="col-xs-12 col-md-2 col-md-push-10 text-right">
+      <button id="createQuestionnaire" class="btn btn-default">
+        Create new Questionnaire <i class="fa fa-file-text-o"></i>
+      </button>
+    </div>
+    <div class="col-xs-12 col-md-10 col-md-pull-2">
+      <h3>Questionnaires</h3>
+    </div>
+  </div>
+  {{#each questionnaires}}
+  <div class="row">
+    <div class="col-xs-12 col-md-3">
+      {{_id}}
+    </div>
+    <div class=".hidden-xs col-md-7">
+      <i class="fa fa-4x fa-file-o"></i>
+      <i class="fa fa-4x fa-file-o"></i>
+      <i class="fa fa-4x fa-file-o"></i>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      {{> editRemoveTableButtons}}
+    </div>
+  </div>
+  {{/each}}
+</div>
+</template>

@@ -18,3 +18,16 @@ Meteor.publish "patients", ->
   Patients.find
     therapistId: @userId
 
+#####################################
+onlyIfUser = ->
+  if !@userId
+    @ready()
+    return
+
+Meteor.publish "questionnaires", ->
+  onlyIfUser.call(@) 
+  Questionnaires.find()
+Meteor.publish "questions", (questionnaireId)->
+  onlyIfUser.call(@) 
+  Questions.find
+    questionnaireId: questionnaireId

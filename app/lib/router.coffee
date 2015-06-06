@@ -27,6 +27,24 @@ Router.map ->
         Meteor.subscribe("patients")
       ]
 
+  @route "questionnaires",
+    path: "questionnaires"
+    waitOn: ->
+      [
+        Meteor.subscribe("questionnaires")
+      ]
+
+  @route "editQuestionnaire",
+    path: "questionnaires/edit/:_id"
+    waitOn: ->
+      [
+        Meteor.subscribe("questionnaires")
+        Meteor.subscribe("questions", @params._id)
+      ]
+    data: ->
+      Questionnaires.findOne {_id: @params._id}
+
+
   @route "users",
     path: "users"
     waitOn: ->

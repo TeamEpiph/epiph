@@ -1,0 +1,44 @@
+<template name="editQuestionnaire">
+<div class="questions">
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>Questionnaire</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+      {{#autoForm doc=null schema=questionnaireFormSchema id=questionnaireFormId type="insert" class="questionnaireForm" validation="keyup"}}
+        {{#each afFieldNames}}
+          {{> afQuickField name=this.name options=afOptionsFromSchema}}
+        {{/each}}
+        <button type="reset" class="btn btn-warning">Reset</button>
+      {{/autoForm}}
+    </div>
+    <div class="col-xs-12 col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Question editor</div>
+        <div class="panel-body">
+          {{#with selectedQuestion}}
+            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id=questionFormId type="update" class="questionForm" autosave=true}}
+              {{#each afFieldNames}}
+                {{> afQuickField name=this.name options=afOptionsFromSchema}}
+              {{/each}}
+              <!--
+              <button type="submit" class="btn btn-primary">Save</button>
+              -->
+            {{/autoForm}}
+          {{/with}}
+        </div>
+      </div>
+      <br>
+      <button id="addQuestion" class="btn btn-default">
+        Add Question <i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+    </div>
+  </div>
+</div>
+</template>

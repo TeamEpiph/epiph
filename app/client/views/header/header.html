@@ -22,6 +22,11 @@
             Patients
           </a>
         </li>
+        <li class="{{activeRouteClass 'questionnaires'}}">
+          <a href="{{pathFor 'questionnaires'}}">
+            Questionnaires
+          </a>
+        </li>
         {{/if}}
         {{/if}}
         {{#if isInRole 'admin'}}
