@@ -13,5 +13,6 @@ Questionnaires.before.update BeforeUpdateTimestampHook
 Meteor.methods
   "createQuestionnaire": (title) ->
     _id = Questionnaires.insert
+      title: "new Questionnaire"
       creatorId: Meteor.userId()
     _id

@@ -55,6 +55,20 @@ Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
 
 Template.editQuestionnaire.helpers
+  questionnaireSchema: ->
+    schema = 
+      title:
+        type: String
+      key:
+        type: String
+        optional: true
+    new SimpleSchema(schema)
+
+  hasQuestions: ->
+    Questions.find(
+      questionnaireId: @_id
+    ).count() > 0
+
   questionnaireFormSchema: ->
     schema = {}
     Questions.find(
@@ -196,6 +210,9 @@ Template.editQuestionnaire.helpers
       
 
 Template.editQuestionnaire.events
+  "click #editQuestionnaire": (evt) ->
+    Session.set 'selectedQuestionId', null
+
   "click #addQuestion": (evt) ->
     numQuestions = Questions.find
       questionnaireId: @_id
