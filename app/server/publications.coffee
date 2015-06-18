@@ -27,7 +27,10 @@ onlyIfUser = ->
 Meteor.publish "questionnaires", ->
   onlyIfUser.call(@) 
   Questionnaires.find()
-Meteor.publish "questions", (questionnaireId)->
+Meteor.publish "questions", ->
+  onlyIfUser.call(@) 
+  Questions.find()
+Meteor.publish "questionsForQuestionnaire", (questionnaireId)->
   onlyIfUser.call(@) 
   Questions.find
     questionnaireId: questionnaireId

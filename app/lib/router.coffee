@@ -32,6 +32,7 @@ Router.map ->
     waitOn: ->
       [
         Meteor.subscribe("questionnaires")
+        Meteor.subscribe("questions")
       ]
 
   @route "editQuestionnaire",
@@ -39,7 +40,7 @@ Router.map ->
     waitOn: ->
       [
         Meteor.subscribe("questionnaires")
-        Meteor.subscribe("questions", @params._id)
+        Meteor.subscribe("questionsForQuestionnaire", @params._id)
       ]
     data: ->
       Questionnaires.findOne {_id: @params._id}
