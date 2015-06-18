@@ -3,6 +3,11 @@ onlyIfAdmin = ->
     @ready()
     return
 
+
+Meteor.publish "studies", ->
+  onlyIfAdmin.call(@) 
+  Studies.find()
+
 Meteor.publish "users", ->
   onlyIfAdmin.call(@) 
   Meteor.users.find()

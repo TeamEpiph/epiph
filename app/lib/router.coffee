@@ -46,6 +46,13 @@ Router.map ->
       Questionnaires.findOne {_id: @params._id}
 
 
+  @route "studies",
+    path: "studies"
+    waitOn: ->
+      [
+        Meteor.subscribe("studies")
+      ]
+
   @route "users",
     path: "users"
     waitOn: ->
