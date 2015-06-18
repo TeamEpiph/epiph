@@ -25,3 +25,8 @@ mistereo:identicon
 momentjs:moment
 aslagle:reactive-table
 mizzao:user-status
+aldeed:autoform-bs-datetimepicker
+aldeed:autoform-bs-datepicker
+rajit:bootstrap3-datepicker
+tsega:bootstrap3-datetimepicker@=3.1.3_3
+mrt:jquery-ui-sortable
