@@ -20,7 +20,7 @@
         {{#each openPatients}}
         <li role="presentation" class={{patientTabClasses}}>
           <a href="" class="selectPatient" data-id={{_id}}>
-            {{patientAbbrev _id}}
+            {{id}}
             {{#if isSelectedPatient}}
             <i class="fa fa-times cursorPointer hoverOpaque closePatient"></i>
             {{/if}}
@@ -29,7 +29,7 @@
         {{/each}}
         <li role="presentation">
           <form id="openPatient">
-            <input type="text" class="form-control" name="patientId" placeholder="enter patient token">
+            <input type="text" class="form-control" name="patientId" placeholder="enter patient ID">
           </form>
         </li>
       </ul>

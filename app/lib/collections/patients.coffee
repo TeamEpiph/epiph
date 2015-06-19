@@ -7,12 +7,9 @@ class @Patient
     new Patient(doc)
 )
 
+if Meteor.isServer
+  Patients._ensureIndex( { id: 1 }, { unique: true } )
+
+
 Patients.before.insert BeforeInsertTimestampHook
 Patients.before.update BeforeUpdateTimestampHook
-
-Meteor.methods
-  "createPatient": ->
-    checkIfTherapist()
-    _id = Patients.insert
-      therapistId: Meteor.userId()
-    _id

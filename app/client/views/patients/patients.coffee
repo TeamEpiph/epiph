@@ -42,11 +42,13 @@ Template.patients.events
     evt.preventDefault()
     patientId = evt.target.patientId.value
     console.log "openPatient #{patientId}"
+    patient = Patients.findOne id: patientId
+    throwError "A patient with the id '#{patientId}' could not be found." unless patient?
     openPatientIds = Session.get("openPatientIds") or []
-    openPatientIds.push patientId
+    openPatientIds.push patient._id
     openPatientIds = _.uniq openPatientIds
     Session.set "openPatientIds", openPatientIds
-    Session.set "selectedPatientId", patientId
+    Session.set "selectedPatientId", patient._id
     evt.target.patientId.value = ""
     evt.target.patientId.blur()
 
@@ -69,10 +71,3 @@ Template.patients.events
       Session.set("selectedPatientId", null)
     Session.set "openPatientIds", openPatientIds
     return
-
-
-Template.registerHelper "patientAbbrev", (patientId) ->
-  if patientId?
-    "@#{patientId.substring(0, 6)}"
-  else
-    "patientAbbrev no patientId: #{patientId}"
