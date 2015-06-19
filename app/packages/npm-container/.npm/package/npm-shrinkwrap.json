@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "human-readable-ids": {
+      "version": "1.0.1",
+      "dependencies": {
+        "knuth-shuffle": {
+          "version": "1.0.1"
+        }
+      }
+    }
+  }
+}
