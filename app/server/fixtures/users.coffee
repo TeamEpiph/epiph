@@ -11,23 +11,37 @@ if Meteor.users.find().count() is 0
     {
     name: "Lukas Fürer"
     email: "lukas.fuerer@unibas.ch"
-    username: "lüsche"
+    username: "lukas.fuerer"
     password: "asdfasdf"
     roles: ["admin", "therapist", "analyst"]
     }
     {
     name: "Ronan Zimmermann"
     email: "ronan.zimmermann@unibas.ch"
-    username: "ronan"
+    username: "ronan.zimmermann"
     password: "asdfasdf"
     roles: ["admin", "therapist", "analyst"]
     }
     {
-    name: "Doktor Sommer"
-    email: "doktor.sommer@patpat.ch"
-    username: "drsommer"
+    name: "Sigmund Freud"
+    email: "sigmund.freud@patpat.ch"
+    username: "sigmund.freud"
     password: "asdfasdf"
     roles: ["therapist"]
+    }
+    {
+    name: "Carl Gustav Jung"
+    email: "carl.jung@patpat.ch"
+    username: "carl.jung"
+    password: "asdfasdf"
+    roles: ["therapist"]
+    }
+    {
+    name: "Karl Popper"
+    email: "karl.popper@patpat.ch"
+    username: "karl.popper"
+    password: "asdfasdf"
+    roles: ["analyst"]
     }
   ]
   _.each users, (user) ->
