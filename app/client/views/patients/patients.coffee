@@ -6,7 +6,7 @@ Template.patients.helpers
     openPatientIds = Session.get("openPatientIds")
     return null if !openPatientIds? or openPatientIds.length is 0
     Patients.find
-      _id: {$in: Session.get("openPatientIds")}
+      _id: {$in: openPatientIds}
 
   selectedPatient: ->
     return null if !Session.get("selectedPatientId")?

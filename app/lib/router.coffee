@@ -53,6 +53,17 @@ Router.map ->
         Meteor.subscribe("studies")
       ]
 
+  @route "editStudy",
+    path: "studies/edit/:_id/:page?"
+    waitOn: ->
+      [
+        Meteor.subscribe("study", @params._id )
+        Meteor.subscribe("patientsForStudy", @params._id )
+        Meteor.subscribe("therapists")	
+      ]
+    data: ->
+      Studies.findOne {_id: @params._id}
+
   @route "users",
     path: "users"
     waitOn: ->

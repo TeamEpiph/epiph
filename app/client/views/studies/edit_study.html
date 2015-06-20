@@ -1,0 +1,74 @@
+<template name="editStudy">
+<div class="questions">
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>{{title}}
+        <small>{{key}}</small>
+        <!--
+        <button id="editStudy" class="btn btn-img btn-hdr hoverOpaque">
+          <i class="fa fa-lg fa-pencil"></i>
+        </button>
+        -->
+      </h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <ul class="nav nav-tabs">
+        {{#each pages}}
+        <li role="presentation" class={{pageTabClasses}}>
+        <a href="" id={{aID}} data-id={{../_id}}>
+            {{title}}
+          </a>
+        </li>
+        {{/each}}
+      </ul>
+      <div id="studyPage">
+        {{> Template.dynamic template=template data=this}}
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+<template name="editStudyDesigns">
+  coming soon
+</template>
+
+<template name="editStudyPatients">
+<div class="row">
+  <div class="col-xs-12 col-md-2 col-md-push-10 text-right">
+    <div class="panel panel-info">
+      <div class="panel-heading">{{editingPanelTitle}}</div>
+      <div class="panel-body">
+        {{#if numPatientsEditing}}
+          {{#autoForm doc=formDoc schema=editSessionPatientsSchema id="editSessionPatientsForm" type="normal" autosave=false}}
+            {{#each afFieldNames}}
+              {{> afQuickField name=this.name options=afOptionsFromSchema}}
+            {{/each}}
+            <button type="submit" class="btn btn-primary">Save</button>
+          {{/autoForm}}
+        {{else}}
+          <i class="fa fa-hand-o-left"></i> Select patients to edit them.<br>
+        {{/if}}
+      </div>
+    </div>
+
+    <button id="createPatient" class="btn btn-default">
+      Create new Patient <i class="fa fa-user-plus"></i>
+    </button>
+  </div>
+  <div class="col-xs-12 col-md-10 col-md-pull-2">
+    {{> reactiveTable collection=patients settings=patientsRTS}}
+  </div>
+</div>
+</template>
+<template name="studyPatientsTableButtons">
+  <div class="btn-group">
+    <button class="btn btn-primary show" data-id={{_id}} title="show">
+      <i class="fa fa-lg fa-info"></i>
+    </button>
+    <button class="btn btn-danger remove" data-id={{_id}} title="remove">
+      <i class="fa fa-lg fa-trash"></i>
+    </button>
+  </div>
+</template>

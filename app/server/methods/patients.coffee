@@ -1,6 +1,7 @@
 Meteor.methods
-  "createPatient": ->
-    checkIfTherapist()
+  "createPatient": (studyId) ->
+    checkIfAdmin()
+    check(studyId, String)
     _id = null
     tries = 0
     loop
@@ -8,7 +9,8 @@ Meteor.methods
         _id = Patients.insert
           id: readableRandom(6)
           hrid: hri.random()
-          therapistId: Meteor.userId()
+          creatorId: Meteor.userId()
+          studyId: studyId
       catch e
         console.log "Error: createPatient"
         console.log e
