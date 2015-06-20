@@ -72,5 +72,5 @@ if Meteor.isClient
 Meteor.startup ->
   AccountsEntry.config
     homeRoute: '/' #redirect to this path after sign-out
-    dashboardRoute: '/dashboard'  #redirect to this path after sign-in
+    dashboardRoute: '/patients'  #redirect to this path after sign-in
     passwordSignupFields: 'USERNAME_AND_EMAIL'
