@@ -16,12 +16,15 @@
     <div id="navbar-collapse" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         {{#if currentUser}}
-        {{#if isInRole 'admin' 'therapist'}}
+        {{#if isInRole 'admin, therapist'}}
         <li class="{{activeRouteClass 'patients'}}">
           <a href="{{pathFor 'patients'}}">
             Patients
           </a>
         </li>
+        {{/if}}
+        {{/if}}
+        {{#if isInRole 'admin'}}
         <li class="{{activeRouteClass 'questionnaires'}}">
           <a href="{{pathFor 'questionnaires'}}">
             Questionnaires
@@ -32,9 +35,6 @@
             Studies
           </a>
         </li>
-        {{/if}}
-        {{/if}}
-        {{#if isInRole 'admin'}}
         <li class="{{activeRouteClass 'users'}}">
           <a href="{{pathFor 'users'}}">
             Users
