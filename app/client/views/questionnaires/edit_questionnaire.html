@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-12 col-md-8">
+    <div class="col-xs-12 col-md-9">
       {{#if hasQuestions}}
       {{#autoForm doc=null schema=questionnaireFormSchema id="questionnaireForm" type="normal" class="questionnaireForm"}}
         {{#each afFieldNames}}
@@ -32,7 +32,7 @@
         This questionnaire contains no questions yet.
       {{/if}}
     </div>
-    <div class="col-xs-12 col-md-4">
+    <div class="col-xs-12 col-md-3">
       <div class="panel panel-info">
         {{#with selectedQuestion}}
         <div class="panel-heading">Question #{{index}}</div>

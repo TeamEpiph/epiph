@@ -51,7 +51,6 @@ Template.autoForm.rendered = ->
 
 
 Template.editQuestionnaire.rendered = ->
-  console.log "rendered #{@data._id}"
   Session.set 'editingQuestionnaireId', @data._id
 
 Template.editQuestionnaire.helpers
