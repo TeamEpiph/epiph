@@ -213,18 +213,30 @@ Template.editQuestionnaire.events
     Session.set 'selectedQuestionId', null
 
   "click #addQuestion": (evt) ->
-    numQuestions = Questions.find
-      questionnaireId: @_id
-    .count()
-    maxIndex = numQuestions-1
-    maxIndex = 0 if maxIndex < 0
-
-    id = Questions.insert
+    question =
       questionnaireId: @_id
       label: "How do you feel today?"
       type: "text"
-      index: maxIndex
-    Session.set 'selectedQuestionId', id
+    Meteor.call "insertQuestion", question, (error, _id) ->
+      throwError error if error?
+      Session.set 'selectedQuestionId', _id
+
+  "click #copyQuestion": (evt) ->
+    sid = Session.get 'selectedQuestionId'
+    selectedQuestion = Questions.findOne
+      _id: sid
+    delete selectedQuestion._id
+    delete selectedQuestion.index
+    Meteor.call "insertQuestion", selectedQuestion, (error, _id) ->
+      throwError error if error?
+      Session.set 'selectedQuestionId', _id
+
+  "click #removeQuestion": (evt) ->
+    sid = Session.get 'selectedQuestionId'
+    if confirm("Delete Question?")
+      Meteor.call "removeQuestion", sid, (error, _id) ->
+        throwError error if error?
+        Session.set 'selectedQuestionId', null
 
   "click #validate": (evt) ->
     AutoForm.validateForm("questionnaireForm")
