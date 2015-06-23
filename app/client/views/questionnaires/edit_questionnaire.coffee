@@ -123,17 +123,17 @@ Template.editQuestionnaire.helpers
       optional:
         label: "Optional"
         type: Boolean
-      tag:
-        label: "Tag"
-        type: String
-        optional: true
-      legend:
-        label: "Scale legend"
-        type: String
-        optional: true
-        autoform:
-          afFieldInput:
-            type: "textarea"
+      #tag:
+      #  label: "Tag"
+      #  type: String
+      #  optional: true
+      #legend:
+      #  label: "Scale legend"
+      #  type: String
+      #  optional: true
+      #  autoform:
+      #    afFieldInput:
+      #      type: "textarea"
       type:
         label: "Type"
         type: String
