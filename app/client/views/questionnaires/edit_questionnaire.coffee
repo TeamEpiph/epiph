@@ -118,7 +118,7 @@ Template.editQuestionnaire.helpers
   questionFormSchema: ->
     schema =
       label:
-        label: "Label"
+        label: "Question"
         type: String
       optional:
         label: "Optional"
@@ -221,7 +221,7 @@ Template.editQuestionnaire.events
 
     id = Questions.insert
       questionnaireId: @_id
-      label: "What's the question?"
+      label: "How do you feel today?"
       type: "text"
       index: maxIndex
     Session.set 'selectedQuestionId', id
