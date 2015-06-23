@@ -34,6 +34,15 @@ Meteor.publish "users", ->
       createdAt: 1
   )
 
+Meteor.publish "userProfiles", ->
+  Meteor.users.find( {},
+    fields:
+      _id: 1
+      username: 1
+      emails: 1
+      profile: 1
+  )
+
 Meteor.publish "studies", ->
   return unless onlyIfAdmin.call(@) 
   Studies.find()

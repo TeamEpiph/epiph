@@ -33,6 +33,7 @@ Router.map ->
       [
         Meteor.subscribe("questionnaires")
         Meteor.subscribe("questions")
+        Meteor.subscribe("userProfiles")
       ]
 
   @route "editQuestionnaire",
@@ -51,6 +52,7 @@ Router.map ->
     waitOn: ->
       [
         Meteor.subscribe("studies")
+        Meteor.subscribe("userProfiles")
       ]
 
   @route "editStudy",

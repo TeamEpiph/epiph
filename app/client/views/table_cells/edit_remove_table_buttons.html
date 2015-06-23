@@ -1,4 +1,5 @@
 <template name="editRemoveTableButtons">
+  {{#unless editingNotAllowed}}
   <div class="btn-group">
     <button class="btn btn-primary edit" data-id={{_id}} title="edit">
       <i class="fa fa-lg fa-pencil"></i>
@@ -7,5 +8,6 @@
       <i class="fa fa-lg fa-trash"></i>
     </button>
   </div>
+  {{/unless}}
 </template>
 

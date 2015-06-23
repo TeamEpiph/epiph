@@ -2,6 +2,12 @@ class @Study
   constructor: (doc) ->
     _.extend this, doc
 
+  creator: ->
+    Meteor.users.findOne _id: @creatorId
+
+  editingNotAllowed: ->
+    Meteor.userId() isnt @creatorId
+
 @Studies = new Meteor.Collection("studies",
   transform: (doc) ->
     new Study(doc)

@@ -2,6 +2,12 @@ class @Questionnaire
   constructor: (doc) ->
     _.extend this, doc
 
+  creator: ->
+    Meteor.users.findOne _id: @creatorId
+
+  editingNotAllowed: ->
+    Meteor.userId() isnt @creatorId
+
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->
     new Questionnaire(doc)
