@@ -171,30 +171,30 @@ Template.editQuestionnaire.helpers
             decimal: true
           decimal:
             type: Boolean
-      when "date"
-        _.extend schema, 
-          min:
-            type: Date
-            optional: true
-            #autoform:
-            #  type: "bootstrap-datepicker"
-          max:
-            type: Date
-            optional: true
-            #autoform:
-            #  type: "bootstrap-datepicker"
-      when "dateTime"
-        _.extend schema, 
-          min:
-            type: Date
-            optional: true
-            #autoform:
-            #  type: "bootstrap-datetimepicker"
-          max:
-            type: Date
-            optional: true
-            #autoform:
-            #  type: "bootstrap-datetimepicker"
+      #when "date"
+      #  _.extend schema, 
+      #    min:
+      #      type: Date
+      #      optional: true
+      #      #autoform:
+      #      #  type: "bootstrap-datepicker"
+      #    max:
+      #      type: Date
+      #      optional: true
+      #      #autoform:
+      #      #  type: "bootstrap-datepicker"
+      #when "dateTime"
+      #  _.extend schema, 
+      #    min:
+      #      type: Date
+      #      optional: true
+      #      #autoform:
+      #      #  type: "bootstrap-datetimepicker"
+      #    max:
+      #      type: Date
+      #      optional: true
+      #      #autoform:
+      #      #  type: "bootstrap-datetimepicker"
       when "multipleChoice"
         _.extend schema, 
           choices:
