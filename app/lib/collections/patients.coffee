@@ -10,6 +10,10 @@ class @Patient
     return null unless @studyId?
     Studies.findOne _id: @studyId
 
+  studyDesign: ->
+    return null unless @studyDesignId?
+    StudyDesigns.findOne _id: @studyDesignId
+
 @Patients = new Meteor.Collection("patients",
   transform: (doc) ->
     new Patient(doc)

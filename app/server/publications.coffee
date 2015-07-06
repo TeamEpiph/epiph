@@ -62,6 +62,10 @@ Meteor.publish "studyForPatient", (_id) ->
       return Studies.find _id: patient.studyId
   @ready()
 
+Meteor.publish "studyDesignsForStudy", (studyId) ->
+  return unless onlyIfAdmin.call(@) 
+  StudyDesigns.find(studyId: studyId)
+
 Meteor.publish "patients", ->
   if Roles.userIsInRole(@userId, ['admin'])
     return Patients.find()

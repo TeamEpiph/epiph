@@ -20,6 +20,9 @@ Router.map ->
     onBeforeAction: (pause)->
       @redirect "/patients"
 
+  @route "dashboard",
+    path: "dashboard"
+
   @route "patients",
     path: "patients"
     waitOn: ->
@@ -62,6 +65,8 @@ Router.map ->
         Meteor.subscribe("study", @params._id )
         Meteor.subscribe("patientsForStudy", @params._id )
         Meteor.subscribe("therapists")	
+        Meteor.subscribe("studyDesignsForStudy", @params._id )
+        Meteor.subscribe("questionnaires")
       ]
     data: ->
       Studies.findOne {_id: @params._id}

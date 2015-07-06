@@ -25,6 +25,8 @@ Studies.allow
   remove: (userId, doc) ->
     false
 
+#TODO: attach a schema
+
 Meteor.methods
   "createStudy": (title) ->
     _id = Studies.insert

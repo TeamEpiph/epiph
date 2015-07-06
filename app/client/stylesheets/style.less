@@ -98,6 +98,25 @@ body {
 }
 
 ////////////////////////////////
+// editStudy
+.editStudyDesigns {
+  .studyDesignTable {
+    & th:not(:first-child) {
+      text-align: center;
+    }
+    & td:not(:first-child) {
+      text-align: center;
+    }
+    //& td:nth-of-type(even) {
+    //  width: 80px;
+    //}
+  }
+  .questionnairePresent {
+    color: @brand-primary
+  }
+}
+
+////////////////////////////////
 // segmentation
 .row-fill {
   overflow-y: scroll;
@@ -171,6 +190,12 @@ body {
 
 .hoverOpaque {
   opacity: 0.6;
+  &:hover {
+    opacity: 1.0;
+  }
+}
+.hoverOpaqueExtreme {
+  opacity: 0.4;
   &:hover {
     opacity: 1.0;
   }
