@@ -15,9 +15,9 @@
   <div class="row">
     <div class="col-xs-12">
       <ul class="nav nav-tabs">
-        {{#each pages}}
-        <li role="presentation" class={{pageTabClasses}}>
-        <a href="" id={{aID}} data-id={{../_id}}>
+        {{#each tabs}}
+        <li role="presentation" class={{tabClasses}}>
+          <a href="" class="switchTab" data-id={{../_id}}>
             {{title}}
           </a>
         </li>
@@ -29,130 +29,4 @@
     </div>
   </div>
 </div>
-</template>
-
-<template name="editStudyDesigns">
-<div class="text-warning" style="font-size: 24pt;">
-  <i class="fa fa-warning"></i>
-  work in progress
-  <i class="fa fa-warning"></i>
-</div>
-<div class="editStudyDesigns">
-  <div class="row">
-    <div class="col-xs-12">
-    <button id="createStudyDesign" class="btn btn-default">
-      Create new Design <i class="fa fa-plus"></i>
-    </button>
-    {{#each designs}}
-      <div class="row">
-        <div class="col-xs-12">
-          <h3>{{title}} <small>{{_id}}</small></h3>
-          <table class="table studyDesignTable">
-            <thead>
-              <tr>
-                <th></th>
-                {{#each visits}}
-                  {{#if day}}
-                    <th>{{day}} d</th>
-                  {{/if}}
-                  <th>{{fullDate date}}</th>
-                {{/each}}
-                <th>
-                  <form id="addVisit">
-                    <!-- TODO: add instructions (i) -->
-                    <input type="text" class="form-control" name="offset" placeholder="enter an offset">
-                  </form>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each questionnaires}}
-              <tr>
-                <th scope="row">{{title}}</th>
-                {{#each ../visits}}
-                {{> visitTd visit=this questionnaire=.. studyDesign=../..}}
-                {{/each}}
-              </tr>
-              {{/each}}
-              <tr>
-                <th scope="row">
-                  <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    add Questionnaire
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="addQuestionnaireDropdown">
-                    {{#each remainingQuestionnaires}}
-                      <li><a href="" class="addQuestionnaire" data-id={{_id}}>{{title}}</a></li>
-                    {{/each}}
-                  </ul>
-                </div> 
-               </th>
-              </tr>
-              <!--
-              <tr>
-                <th scope="row">Record physiological data</th>
-              </tr>
-              <tr>
-                <th scope="row">Record movie</th>
-              </tr>
-              -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    {{/each}}
-    </div>
-  </div>
-</div>
-</template>
-
-<template name="editStudyPatients">
-<div class="row">
-  <div class="col-xs-12 col-md-3 col-md-push-9 text-right">
-    <div class="panel panel-info">
-      <div class="panel-heading">{{editingPanelTitle}}</div>
-      <div class="panel-body">
-        {{#if numPatientsEditing}}
-          {{#autoForm doc=formDoc schema=editSessionPatientsSchema id="editSessionPatientsForm" type="normal" autosave=false}}
-            {{#each afFieldNames}}
-              {{> afQuickField name=this.name options=afOptionsFromSchema}}
-            {{/each}}
-            <button type="submit" class="btn btn-primary">Save</button>
-          {{/autoForm}}
-        {{else}}
-          <i class="fa fa-hand-o-left"></i> Select patients to edit them.<br>
-        {{/if}}
-      </div>
-    </div>
-
-    <button id="createPatient" class="btn btn-default">
-      Create new Patient <i class="fa fa-user-plus"></i>
-    </button>
-  </div>
-  <div class="col-xs-12 col-md-9 col-md-pull-3">
-    {{> reactiveTable collection=patients settings=patientsRTS}}
-  </div>
-</div>
-</template>
-
-<template name="visitTd">
-  <td>
-    <div class="mapQuestionnaireToVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
-      <i class="fa fa-file-text-o fa-lg {{iconClass}}"></i>
-    </div>
-  </td>
-  <td>
-  </td>
-</template>
-
-<template name="studyPatientsTableButtons">
-  <div class="btn-group">
-    <button class="btn btn-primary show" data-id={{_id}} title="show">
-      <i class="fa fa-lg fa-info"></i>
-    </button>
-    <button class="btn btn-danger remove" data-id={{_id}} title="remove">
-      <i class="fa fa-lg fa-trash"></i>
-    </button>
-  </div>
 </template>

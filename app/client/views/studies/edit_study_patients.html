@@ -1,0 +1,39 @@
+<template name="editStudyPatients">
+<div class="row">
+  <div class="col-xs-12 col-md-3 col-md-push-9 text-right">
+    <div class="panel panel-info">
+      <div class="panel-heading">{{editingPanelTitle}}</div>
+      <div class="panel-body">
+        {{#if numPatientsEditing}}
+          {{#autoForm doc=formDoc schema=editSessionPatientsSchema id="editSessionPatientsForm" type="normal" autosave=false}}
+            {{#each afFieldNames}}
+              {{> afQuickField name=this.name options=afOptionsFromSchema}}
+            {{/each}}
+            <button type="submit" class="btn btn-primary">Save</button>
+          {{/autoForm}}
+        {{else}}
+          <i class="fa fa-hand-o-left"></i> Select patients to edit them.<br>
+        {{/if}}
+      </div>
+    </div>
+
+    <button id="createPatient" class="btn btn-default">
+      Create new Patient <i class="fa fa-user-plus"></i>
+    </button>
+  </div>
+  <div class="col-xs-12 col-md-9 col-md-pull-3">
+    {{> reactiveTable collection=patients settings=patientsRTS}}
+  </div>
+</div>
+</template>
+
+<template name="studyPatientsTableButtons">
+  <div class="btn-group">
+    <button class="btn btn-primary show" data-id={{_id}} title="show">
+      <i class="fa fa-lg fa-info"></i>
+    </button>
+    <button class="btn btn-danger remove" data-id={{_id}} title="remove">
+      <i class="fa fa-lg fa-trash"></i>
+    </button>
+  </div>
+</template>
