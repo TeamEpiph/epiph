@@ -31,6 +31,7 @@ Meteor.methods
   "createStudy": (title) ->
     _id = Studies.insert
       title: "new Study"
+      key: "new key"
       creatorId: Meteor.userId()
     _id
 

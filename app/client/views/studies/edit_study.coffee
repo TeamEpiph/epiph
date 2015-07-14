@@ -8,6 +8,7 @@ Template.editStudy.rendered = ->
   
 Template.editStudy.helpers
   titleEO: ->
+    self = @
     value: @title
     emptytext: "no title"
     success: (response, newVal) ->
@@ -15,6 +16,7 @@ Template.editStudy.helpers
         $set: {title: newVal}
       return
   keyEO: ->
+    self = @
     value: @key
     emptytext: "no key"
     success: (response, newVal) ->
