@@ -68,7 +68,7 @@ mongo@1.1.0
 mongo-livedata@1.0.8
 mrt:jquery-ui-sortable@1.10.3
 mrt:underscore-string-latest@2.3.3
-nemo64:bootstrap-data@3.3.4_1
+nemo64:bootstrap-data@3.3.5
 npm-bcrypt@0.7.8_2
 npm-container@1.0.0
 observe-sequence@1.0.6
@@ -98,3 +98,4 @@ underscore@1.0.3
 url@1.0.4
 webapp@1.2.0
 webapp-hashing@1.0.3
+workman:x-editable-reactive-template@1.0.1
