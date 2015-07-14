@@ -2,6 +2,7 @@
 @import "paper.import.less";
 
 @import "bs_sidedanv.import.less";
+@import "x_editable.import.less";
 
 @grid-float-breakpoint: 830px;
 
@@ -196,6 +197,12 @@ body {
 }
 .hoverOpaqueExtreme {
   opacity: 0.4;
+  &:hover {
+    opacity: 1.0;
+  }
+}
+.hoverOpaqueInvisible {
+  opacity: 0.1;
   &:hover {
     opacity: 1.0;
   }
