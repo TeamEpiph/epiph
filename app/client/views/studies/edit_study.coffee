@@ -7,6 +7,21 @@ Template.editStudy.rendered = ->
     
   
 Template.editStudy.helpers
+  titleEO: ->
+    value: @title
+    emptytext: "no title"
+    success: (response, newVal) ->
+      Studies.update self._id,
+        $set: {title: newVal}
+      return
+  keyEO: ->
+    value: @key
+    emptytext: "no key"
+    success: (response, newVal) ->
+      Studies.update self._id,
+        $set: {key: newVal}
+      return
+
   tabs: ->
     [
       title: "Designs"
