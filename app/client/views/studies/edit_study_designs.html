@@ -13,7 +13,9 @@
     {{#each designs}}
       <div class="row">
         <div class="col-xs-12">
-          <h3>{{title}} <small>{{_id}}</small></h3>
+          <h3>{{> xEditable titleEO}}
+            <small>{{> xEditable keyEO}}</small>
+          </h3>
           <table class="table studyDesignTable">
             <thead>
               <tr>
