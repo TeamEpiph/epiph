@@ -3,7 +3,7 @@ Template.editStudy.rendered = ->
   if !params.page
     Router.go "editStudy",
       _id: @data._id
-      page: "editStudyPatients"
+      page: "editStudyDesigns"
     
   
 Template.editStudy.helpers
