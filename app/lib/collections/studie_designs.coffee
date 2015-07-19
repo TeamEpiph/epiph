@@ -31,6 +31,8 @@ schema =
     optional: true
   'visits._id':
     type: String
+  'visits.title':
+    type: String
   'visits.index':
     type: Number
 #TODO: attach schema
@@ -51,6 +53,7 @@ Meteor.methods
         _id: new Meteor.Collection.ObjectID()._str
         day: 0
         index: 0
+        title: "baseline"
       ]
     _id
 
@@ -59,23 +62,28 @@ Meteor.methods
     StudyDesigns.remove
       _id: _id
 
-  "addStudyDesignVisit": (studyDesignId, day) ->
+  "addStudyDesignVisit": (studyDesignId, days) ->
     check studyDesignId, String
-    day = parseInt(day)
-    check day, Number
-    preVisit = StudyDesigns.findOne
-      _id: studyDesignId
-      visits:
-        $elemMatch: { day: { $lte: day } }
-    preVisit = preVisit.visits[0]
+    days = parseInt(days)
+    check days, Number
 
+    design = StudyDesigns.findOne
+      _id: studyDesignId
+    throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
+
+    preVisit = design.visits[design.visits.length-1]
+    day = preVisit.day+days
     if preVisit.day is day
       throw new Meteor.Error(500, "A visit on this day already exists") 
 
+    title = "visit #{design.visits.length}"
+    if design.visits.length is 0
+      title = "baseline"
     visit = 
       _id: new Meteor.Collection.ObjectID()._str
       day: day
       index: preVisit.index+1
+      title: title
        
     StudyDesigns.update
       _id: studyDesignId

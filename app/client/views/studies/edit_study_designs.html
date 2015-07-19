@@ -16,15 +16,18 @@
               <tr>
                 <th></th>
                 {{#each visits}}
-                  {{#if day}}
-                    <th>{{day}} d</th>
+                  {{#if daysBetween}}
+                    <th>{{daysBetween}} d</th>
                   {{/if}}
-                  <th>{{fullDate date}}</th>
+                  <th>
+                    {{title}}<br>
+                    <span class="text-muted">{{fullDate date}}</span>
+                  </th>
                 {{/each}}
                 <th>
                   <form id="addVisit">
                     <!-- TODO: add instructions (i) -->
-                    <input type="text" class="form-control" name="offset" placeholder="enter an offset">
+                    <input type="text" class="form-control" name="offset" placeholder="enter offset">
                   </form>
                 </th>
               </tr>
@@ -41,7 +44,7 @@
               <tr>
                 <th scope="row">
                   <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     add Questionnaire
                     <span class="caret"></span>
                   </button>
@@ -74,7 +77,7 @@
 <template name="visitTd">
   <td>
     <div class="mapQuestionnaireToVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
-      <i class="fa fa-file-text-o fa-lg {{iconClass}}"></i>
+      <i class="fa fa-lg {{iconClass}}"></i>
     </div>
   </td>
   <td>

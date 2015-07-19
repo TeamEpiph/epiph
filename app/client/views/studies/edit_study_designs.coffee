@@ -23,11 +23,15 @@ Template.editStudyDesigns.helpers
   visits: ->
     @visits.sort (a, b)->
       a.index - b.index
+    prevDay = 0
     @visits.map (v)->
+      daysBetween = v.day-prevDay
       _.extend v,
         date: moment().add(v.day, 'days').toDate()
-      if v.day is 0
-        delete v.day
+        daysBetween: daysBetween
+      prevDay = v.day
+      if daysBetween is 0
+        delete v.daysBetween
       v
   
   remainingQuestionnaires: ->
@@ -55,14 +59,14 @@ Template.visitTd.helpers
       v._id is visitId
     #
     found = false
-    if visit.questionnaireIds
+    if visit and visit.questionnaireIds
       _.some visit.questionnaireIds, (qId)->
         found = qId is self.questionnaire._id
         found
     if found
-      return "questionnairePresent"
+      return "fa-check-square-o brand-primary"
     else
-      return "hoverOpaqueExtreme"
+      return "fa-square-o hoverOpaqueExtreme"
       
 
 Template.editStudyDesigns.events
