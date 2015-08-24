@@ -2,7 +2,7 @@
 <div class="patient">
   <br>
   <div class="row profile">
-    <div class="col-xs-12 col-md-2"><!-- col-md-push-9 text-right"> -->
+    <div class="col-xs-12 col-md-3 col-lg-2"><!-- col-md-push-9 text-right"> -->
       <div class="well">
         <table class="table">
           <tr>
@@ -24,14 +24,81 @@
           </tr>
           <tr>
             <th>Visits</th>
-            <td>0</td>
+            <td>{{numVisits}}</td>
           </tr>
         </table>
       </div>
     </div>
-    <div class="col-xs-12 col-md-10"><!-- col-md-pull-3"> -->
-      visits
+    <div class="col-xs-12 col-md-9 col-lg-10"><!-- col-md-pull-3"> -->
+      <ul class="nav nav-tabs">
+        {{#each tabs}}
+        <li role="presentation" class={{tabClasses}}>
+          <a href="" class="switchTab" data-id={{../_id}}>
+            {{title}}
+          </a>
+        </li>
+        {{/each}}
+      </ul>
+      <div id="studyPage">
+        {{> Template.dynamic template=template data=this}}
+      </div>
     </div>
   </div>
+</div>
+</template>
+
+<template name="patientVisits">
+<div id="visits">
+  <div id="timeline"></div>
+  <div id="hoverRes">
+    <div class="coloredDiv"></div>
+    <div id="name"></div>
+    <div id="scrolled_date"></div>
+  </div>
+</div>
+<table class="table studyDesignTable">
+  <thead>
+    <tr>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each visits}}
+    <tr>
+      {{> patientVisitsTd visit=this patient=..}}
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</template>
+
+<template name="patientVisitsTd">
+  <td>{{visit.title}}</td>
+  <td class="openVisit"><i class="fa fa-lg fa-play-circle-o"></i></td>
+</template>
+
+
+<template name="patientVisit">
+<div id="visit">
+  {{#with visit}}
+    <h3>
+      {{title}} <!-- <small>{{_id}}</small> -->
+    </h3>
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <h4>Questionnaires <i class="fa fa-file-text-o"></i></h4>
+        <table class="table">
+        {{#each questionnaires}}
+          <tr>
+            <th>{{title}}</th>
+            <td><i class="fa fa-lg fa-pencil-square-o"></i></td>
+          </tr>
+        {{else}}
+          No questionnaires are scheduled for this visit.
+        {{/each}}
+        </table>
+      </div>
+    </div>
+  {{/with}}
 </div>
 </template>

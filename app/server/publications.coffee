@@ -61,6 +61,14 @@ Meteor.publish "studyForPatient", (_id) ->
     if patient?
       return Studies.find _id: patient.studyId
   @ready()
+Meteor.publish "studyDesignForPatient", (_id) ->
+	patient = Patients.findOne _id: _id
+	if patient?
+    studyDesign = StudyDesigns.find studyId: patient.studyId
+    if Roles.userIsInRole(@userId, ['admin']) or 
+    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+      return studyDesign
+  @ready()
 
 Meteor.publish "studyDesignsForStudy", (studyId) ->
   return unless onlyIfAdmin.call(@) 
@@ -80,6 +88,15 @@ Meteor.publish "patientsForStudy", (studyID) ->
   Patients.find
     studyId: studyID
 
+
+Meteor.publish "visitsForPatient", (patientId) ->
+	patient = Patients.findOne patientId
+	if patient?
+    if Roles.userIsInRole(@userId, ['admin']) or 
+    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+      return Visits.find
+        patientId: patientId
+  @ready()
 
 #####################################
 onlyIfTherapist = ->
