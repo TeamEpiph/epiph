@@ -73,6 +73,7 @@ Template.patientVisits.events
      
 
 Template.patientVisit.created = ->
+  @subscribe "empaticaRecordsForVisit", @data.activeVisitId
   @subscribe "questionnaires"
 
 Template.patientVisit.helpers
@@ -85,3 +86,19 @@ Template.patientVisit.helpers
     Questionnaires.find
       _id: {$in: qIds}
 
+  #this visit
+  showEmpaticaRecorder: ->
+    @recordPhysicalData and Meteor.isCordova
+
+  #this visit
+  empaticaSessionId: ->
+    #TODO add a dedicated empaticaSessionId to visit
+    #and use it here
+    @_id
+    
+  #this visit
+  empaticaRecords: ->
+    #TODO use empaticaSessionId
+    EmpaticaRecords.find()
+    #  sessionId: @activeVisitId
+    #)

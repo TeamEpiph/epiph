@@ -98,6 +98,18 @@ Meteor.publish "visitsForPatient", (patientId) ->
         patientId: patientId
   @ready()
 
+Meteor.publish "empaticaRecordsForVisit", (visitId) ->
+  visit = Visits.findOne visitId
+  if visit?
+    patient = Patients.findOne visit.patientId
+    if patient?
+      if Roles.userIsInRole(@userId, ['admin']) or 
+      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+        #use visit.empaticaSessionId
+        return EmpaticaRecords.find()
+        #  sessionId: visit._id
+  @ready()
+
 #####################################
 onlyIfTherapist = ->
   if Roles.userIsInRole(@userId, ['therapist'])

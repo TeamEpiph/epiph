@@ -98,6 +98,28 @@
         {{/each}}
         </table>
       </div>
+      <div class="col-xs-12 col-md-6">
+        <h4>Physical data <i class="fa fa-heartbeat"></i></h4>
+        {{#if recordPhysicalData}}
+          {{#if showEmpaticaRecorder}}
+            {{> empaticaRecorder sessionId=empaticaSessionId}}
+          {{/if}}
+          <h5>Records</h5>
+          <table class="table">
+          {{#each empaticaRecords}}
+            <tr>
+              <td>{{name}}</td>
+              <td>{{size}}B</td>
+              <td><a href="{{this.url}}" target="_blank"><i class="fa fa-download"></i></a></td>
+            </tr>
+          {{else}}
+            no records found.
+          {{/each}}
+          </table>
+        {{else}}
+          Recording physical data is not scheduled for this visit.
+        {{/if}}
+      </div>
     </div>
   {{/with}}
 </div>
