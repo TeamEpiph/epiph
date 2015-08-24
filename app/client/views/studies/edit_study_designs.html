@@ -2,6 +2,7 @@
 <div class="editStudyDesigns">
   <div class="row">
     <div class="col-xs-12">
+    <br>
     <button id="createStudyDesign" class="btn btn-default">
       Create new Design <i class="fa fa-plus"></i>
     </button>
@@ -11,75 +12,105 @@
           <h3>{{> xEditable titleEO}}
             <small>{{> xEditable keyEO}}</small>
           </h3>
-          <table class="table studyDesignTable">
-            <thead>
-              <tr>
-                <th></th>
-                {{#each visits}}
-                  {{#if daysBetween}}
-                    <th>{{daysBetween}} d</th>
-                  {{/if}}
-                  <th>
-                    {{title}}<br>
-                    <span class="text-muted">{{fullDate date}}</span>
-                  </th>
-                {{/each}}
-                <th>
-                  <form id="addVisit">
-                    <!-- TODO: add instructions (i) -->
-                    <input type="text" class="form-control" name="offset" placeholder="enter offset">
-                  </form>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each questionnaires}}
-              <tr>
-                <th scope="row">{{title}}</th>
-                {{#each ../visits}}
-                {{> visitTd visit=this questionnaire=.. studyDesign=../..}}
-                {{/each}}
-              </tr>
-              {{/each}}
-              <tr>
-                <th scope="row">
-                  <div class="dropdown">
-                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    add Questionnaire
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="addQuestionnaireDropdown">
-                    {{#each remainingQuestionnaires}}
-                      <li><a href="" class="addQuestionnaire" data-id={{_id}}>{{title}}</a></li>
+          <div class="row">
+            <div class="col-xs-8">
+              <table class="table studyDesignTable">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {{#each questionnaires}}
+                      <th>{{title}}</th>
                     {{/each}}
-                  </ul>
-                </div> 
-               </th>
-              </tr>
-              <!--
-              <tr>
-                <th scope="row">Record physiological data</th>
-              </tr>
-              <tr>
-                <th scope="row">Record movie</th>
-              </tr>
-              -->
-            </tbody>
-          </table>
+                    <th>record phys.</th>
+                    <th scope="row">
+                      {{#if hasRemainingQuestionnaires}}
+                      <div class="dropdown">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                          add Questionnaire
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="addQuestionnaireDropdown">
+                          {{#each remainingQuestionnaires}}
+                            <li><a href="" class="addQuestionnaire" data-id={{_id}}>{{title}}</a></li>
+                          {{/each}}
+                        </ul>
+                      </div> 
+                      {{/if}}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each visits}}
+                  {{#if daysBetween}}
+                  <tr>
+                    <td>{{daysBetween}} d</td>
+                  </tr>
+                  {{/if}}
+                  <tr>
+                    <th>
+                      {{title}}<br>
+                      <span class="text-muted">{{fullDate date}}</span>
+                    </th>
+                    {{#each designQuestionnaires}}
+                    {{> editVisitQuestionnaireTd visit=.. questionnaire=this studyDesign=../..}}
+                    {{/each}}
+                    {{> editVisitPhysTd visit=this studyDesign=..}}
+                  </tr>
+                  {{/each}}
+                  <tr>
+                    <td>
+                      <form id="addVisit">
+                        <!-- TODO: add instructions (i) -->
+                        <input type="text" class="form-control" name="offset" placeholder="enter offset">
+                      </form>
+                    </td>
+                  </tr>
+                  <!--
+                  <tr>
+                    <th scope="row">Record physiological data</th>
+                  </tr>
+                  <tr>
+                    <th scope="row">Record movie</th>
+                  </tr>
+                  -->
+                </tbody>
+              </table>
+            </div>
+            <div class="col-xs-4">
+              <div class="panel panel-info">
+                <div class="panel-heading">add multiple visits</div>
+                <div class="panel-body">
+                  {{#autoForm doc=null schema=generateVisitsSchema id="generateVisitsForm" type="normal" autosave=false}}
+                    {{#each afFieldNames}}
+                      {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                    {{/each}}
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                  {{/autoForm}}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <hr>
     {{/each}}
     </div>
   </div>
 </div>
 </template>
 
-<template name="visitTd">
-  <td>
-    <div class="mapQuestionnaireToVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
+<template name="editVisitQuestionnaireTd">
+  <td class="visitTd">
+    <div class="toggleQuestionnaireAtVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
       <i class="fa fa-lg {{iconClass}}"></i>
     </div>
   </td>
-  <td>
+</template>
+
+<template name="editVisitPhysTd">
+  <td class="visitTd" >
+    <div class="toggleRecordPhysicalDataAtVisit" data-visit-id={{_id}}>
+      <i class="fa fa-lg {{iconClass}}"></i>
+    </div>
   </td>
 </template>

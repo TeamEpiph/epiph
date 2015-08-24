@@ -82,7 +82,6 @@ Meteor.methods
     visit = 
       _id: new Meteor.Collection.ObjectID()._str
       day: day
-      index: preVisit.index+1
       title: title
        
     StudyDesigns.update
@@ -90,20 +89,72 @@ Meteor.methods
     ,
       $push:
         visits: visit
+
+  "addMultipleStudyDesignVisits": (params) ->
+    check params.studyDesignId, String
+    check params.title, String
+    check params.key, String
+    check params.startDay, Number
+    check params.numVisits, Number
+    check params.daysBetween, Number
+
+    design = StudyDesigns.findOne
+      _id: params.studyDesignId
+    throw new Meteor.Error(500, "StudyDesign #{params.studyDesignId} not found!") unless design?
+
+    visits = []
+    groupId = new Meteor.Collection.ObjectID()._str
+    for i in [0...params.numVisits] 
+      title = "#{params.title} #{i+1}"
+      key = "#{params.key}-#{i+1}"
+      visit = 
+        _id: new Meteor.Collection.ObjectID()._str
+        groupId: groupId
+        day: params.startDay+(i*params.daysBetween)
+        title: title
+        key: key
+      visits.push visit
+    
+    StudyDesigns.update
+      _id: design._id
+    ,
+      $pushAll:
+        visits: visits
+
       
-  "mapQuestionnaireToVisit": (studyDesignId, visitId, questionnaireId) ->
+  "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule, doAllOfGroup) ->
     check visitId, String
     check questionnaireId, String
-    n = StudyDesigns.update
+    if doSchedule
+      n = 0
+      n = StudyDesigns.update
+        _id: studyDesignId
+      ,
+        $push: 
+          questionnaireIds: questionnaireId
+      throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign found") unless n > 0
+    n = 0
+    find =
       _id: studyDesignId
-    ,
-      $push: 
-        questionnaireIds: questionnaireId
-    throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign found") unless n > 0
+      'visits._id': visitId
+
+    if doSchedule
+      n = StudyDesigns.update find,
+        $push: 
+          'visits.$.questionnaireIds': questionnaireId
+    else
+      n = StudyDesigns.update find,
+        $pull: 
+          'visits.$.questionnaireIds': questionnaireId
+    throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign with that visit found") unless n > 0
+
+  "scheduleRecordPhysicalDataAtVisit": (studyDesignId, visitId, doSchedule) ->
+    check visitId, String
+    check studyDesignId, String
     n = StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $push: 
-        'visits.$.questionnaireIds': questionnaireId
-    throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign with that visit found") unless n > 0
+      $set: 
+        'visits.$.recordPhysicalData': doSchedule
+    throw new Meteor.Error(500, "recordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
