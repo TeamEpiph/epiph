@@ -63,15 +63,12 @@ discover = ->
   Session.set("empatica_isDiscovering", true)
   window.plugins.Empatica.discoverDevices( (devices)->
     console.log "did discover devices!"
-    #devices = _.map devices, (device) ->
-    #  name: device
-    console.log devices
     Session.set("empatica_isDiscovering", false)
     Session.set("empatica_discoveredDevices", devices)
     #TODO set 1 to 2
-    if devices.length < 1
+    if devices.length < 2 and !Session.get('empatica_isConnecting') and !Session.get('empatica_isConnected')
       discover()
-    else if devices.length is 1
+    else if devices.length is 2
       connect()
   , (error) ->
     console.log "discovery error:"
