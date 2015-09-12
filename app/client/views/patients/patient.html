@@ -116,6 +116,26 @@
             no records found.
           {{/each}}
           </table>
+          <div class="panel panel-default">
+            <div class="panel-heading collapsed cursorPointer" data-toggle="collapse" data-target="#uploadPhysioRecords">
+              <h3 class="panel-title panel-title-inline">
+                <a class="accordion-toggle collapsed" >
+                  upload records manually
+                </a>
+              </h3>
+            </div>
+            <div id="uploadPhysioRecords" class="panel-collapse collapse">
+              <div class="panel-body">
+                {{#autoForm doc=this schema=uploadFormSchema id="uploadPhysioRecordForm" type="normal" class="uploadPhysioRecordForm"}}
+                  {{#each afFieldNames}}
+                    {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                  {{/each}}
+                  <button type="submit" class="btn btn-primary pull-right">Save</button>
+                  <button type="reset" class="btn btn-danger">Reset</button>
+                {{/autoForm}}
+              </div>
+            </div>
+          </div>
         {{else}}
           Recording physical data is not scheduled for this visit.
         {{/if}}
