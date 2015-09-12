@@ -73,7 +73,7 @@ Template.patientVisits.events
      
 
 Template.patientVisit.created = ->
-  @subscribe "empaticaRecordsForVisit", @data.activeVisitId
+  @subscribe "physioRecordsForVisit", @data.activeVisitId
   @subscribe "questionnaires"
 
 Template.patientVisit.helpers
@@ -92,13 +92,10 @@ Template.patientVisit.helpers
 
   #this visit
   empaticaSessionId: ->
-    #TODO add a dedicated empaticaSessionId to visit
-    #and use it here
     @_id
     
   #this visit
-  empaticaRecords: ->
-    #TODO use empaticaSessionId
-    EmpaticaRecords.find()
-    #  sessionId: @activeVisitId
-    #)
+  physioRecords: ->
+    PhysioRecords.find
+      'metadata.visitId': @_id
+

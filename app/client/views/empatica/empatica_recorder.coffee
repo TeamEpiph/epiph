@@ -1,8 +1,13 @@
 Template.empaticaRecorder.rendered = ->
-  Session.set 'empatica_sessionId', @data.sessionId
-  authenticate()
+  if !Session.get('empatica_isRecording')
+    Session.set 'empatica_sessionId', @data.sessionId
+    authenticate()
 
 Template.empaticaRecorder.helpers
+  isUsedForAnotherSession: ->
+    Session.get('empatica_isRecording') and Session.get("empatica_sessionId") and Session.get("empatica_sessionId") isnt @sessionId
+  sessionId: ->
+    Session.get("empatica_sessionId")
   isAuthenticating: ->
     Session.get("empatica_isAuthenticating")
   isAuthenticated: ->
@@ -146,19 +151,37 @@ stopRecording = ->
 uploadRecords = ->
   window.plugins.Empatica.listRecords( (records)->
     console.log "listRecords: "
-    sessionId = Session.get('empatica_sessionId')
+    regex = /(.*?)_(.*?)_(.*?).csv/g
     _.each records, (record) ->
       filename = record.substr(record.lastIndexOf('/')+1)
-      er = EmpaticaRecords.findOne
-        name: filename
-      unless er?
-        upload(record, sessionId)
+      console.log filename
+      match = regex.exec(filename)
+      if match? and match.length >= 4
+        sessionId = match[1]
+        deviceName = match[2]
+        sensor = match[3]
+        er = PhysioRecords.findOne
+          'metadata.visitId': sessionId
+          'metadata.deviceName': deviceName
+          'metadata.sensor': sensor
+          #name: filename
+        unless er?
+          console.log "creating new FS.File"
+          newFile = new FS.File(null)
+          newFile.metadata = 
+            visitId: sessionId
+            deviceName: deviceName
+            sensor: sensor
+          file = PhysioRecords.insert newFile
+          console.log "uploading new record"
+          console.log file
+          upload(record, file._id)
   , (error) ->
     console.log "listRecords error:"
     console.log error
   )
 
-upload = (fileURL, sessionId)->
+upload = (fileURL, fileId)->
   win = (r) ->
     console.log 'Code = ' + r.responseCode
     console.log 'Response = ' + r.response
@@ -178,9 +201,5 @@ upload = (fileURL, sessionId)->
   options.httpMethod = 'PUT'
   options.headers = 
     'Content-Type': "text/plain"
-  params = {}
-  params.filename = options.fileName
-  params.sessionId = sessionId
-  options.params = params
   ft = new FileTransfer
-  ft.upload fileURL, encodeURI(Meteor.absoluteUrl()+'/cfs/files/empaticaRecords?filename='+options.fileName), win, fail, options
+  ft.upload fileURL, encodeURI(Meteor.absoluteUrl()+'/cfs/files/physioRecords/'+fileId+'/'), win, fail, options

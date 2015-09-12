@@ -5,6 +5,21 @@ onlyIfAdmin = ->
     @ready()
     return 
 
+onlyIfTherapist = ->
+  if Roles.userIsInRole(@userId, ['therapist'])
+    return true
+  else
+    @ready()
+    return
+
+onlyIfUser = ->
+  if @userId
+    return true
+  else
+    @ready()
+    return
+
+#################################################
 
 Meteor.publish "therapists", ->
   return unless onlyIfAdmin.call(@) 
@@ -22,7 +37,7 @@ Meteor.publish "therapists", ->
   )
 
 Meteor.publish "users", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdmin.call(@)
   Meteor.users.find( {},
     fields:
       _id: 1
@@ -35,6 +50,7 @@ Meteor.publish "users", ->
   )
 
 Meteor.publish "userProfiles", ->
+  return unless onlyIfAdmin.call(@)
   Meteor.users.find( {},
     fields:
       _id: 1
@@ -98,33 +114,18 @@ Meteor.publish "visitsForPatient", (patientId) ->
         patientId: patientId
   @ready()
 
-Meteor.publish "empaticaRecordsForVisit", (visitId) ->
+Meteor.publish "physioRecordsForVisit", (visitId) ->
   visit = Visits.findOne visitId
   if visit?
     patient = Patients.findOne visit.patientId
     if patient?
       if Roles.userIsInRole(@userId, ['admin']) or 
       (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-        #use visit.empaticaSessionId
-        return EmpaticaRecords.find()
-        #  sessionId: visit._id
+        return PhysioRecords.find
+          'metadata.visitId': visit._id
   @ready()
 
 #####################################
-onlyIfTherapist = ->
-  if Roles.userIsInRole(@userId, ['therapist'])
-    return true
-  else
-    @ready()
-    return
-
-#####################################
-onlyIfUser = ->
-  if @userId
-    return true
-  else
-    @ready()
-    return
 
 Meteor.publish "questionnaires", ->
   return unless onlyIfUser.call(@) 

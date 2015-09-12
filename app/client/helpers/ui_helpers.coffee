@@ -26,3 +26,14 @@ Template.registerHelper "fullDate", (date) ->
     return "today"
   else
     return date.format("DD.MM.YYYY")
+
+Template.registerHelper "fileSizeSani", (size) ->
+  if size > 1000
+    "#{(size/1000).toFixed(1)} kB"
+  else if size > 1000000
+    "#{(size/1000000).toFixed(1)} MB"
+  else if size > 1000000000
+    "#{(size/1000000000).toFixed(1)} GB"
+  else
+    "#{(size)} B"
+
