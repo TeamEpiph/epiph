@@ -77,8 +77,6 @@ Template.editQuestionnaire.helpers
         index: 1
     ).forEach (q) ->
       schema[q._id.toString()] = q.getSchemaDict()
-    console.log "questionnaireFormSchema"
-    console.log schema
     new SimpleSchema(schema)
 
   selectedQuestion: ->
