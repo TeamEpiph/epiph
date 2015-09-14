@@ -4,6 +4,7 @@
       path: '~/physio_records'
     ) 
   ]
+  #FIXME
   beforeWrite: (fileObj) ->
     console.log fileObj
     name = "#{fileObj.metadata.visitId}_#{fileObj.metadata.sensor}.csv"
@@ -14,7 +15,6 @@
     }
 )
 
-#FIXME
 allowPhysioRecordAccess = (userId, doc) ->
   if doc.metadata? and doc.metadata.visitId?
     visit = Visits.findOne doc.metadata.visitId
