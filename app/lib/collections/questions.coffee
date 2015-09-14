@@ -159,7 +159,7 @@ Meteor.methods
     check(question.type, String)
 
     numQuestions = Questions.find
-      questionnaireId: @_id
+      questionnaireId: questionnaire._id
     .count()
     nextIndex = numQuestions-1
     nextIndex = 0 if nextIndex < 0
