@@ -125,6 +125,18 @@ Meteor.publish "physioRecordsForVisit", (visitId) ->
           'metadata.visitId': visit._id
   @ready()
 
+Meteor.publish "answersForVisitAndQuestionnaire", (visitId, questionnaireId) ->
+  visit = Visits.findOne visitId
+  if visit?
+    patient = Patients.findOne visit.patientId
+    if patient?
+      if Roles.userIsInRole(@userId, ['admin']) or 
+      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+        return Answers.find
+          visitId: visit._id
+          questionnaireId: questionnaireId
+  @ready()
+
 #####################################
 
 Meteor.publish "questionnaires", ->

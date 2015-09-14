@@ -89,10 +89,7 @@
         <h4>Questionnaires <i class="fa fa-file-text-o"></i></h4>
         <table class="table">
         {{#each questionnaires}}
-          <tr>
-            <th>{{title}}</th>
-            <td><i class="fa fa-lg fa-pencil-square-o"></i></td>
-          </tr>
+          {{> answerQuestionnaireRow questionnaire=this visit=.. patient=../..}}
         {{else}}
           No questionnaires are scheduled for this visit.
         {{/each}}
@@ -143,4 +140,11 @@
     </div>
   {{/with}}
 </div>
+</template>
+
+<template name="answerQuestionnaireRow">
+<tr class="answerQuestionnaire">
+  <th>{{questionnaire.title}}</th>
+  <td><i class="fa fa-lg fa-pencil-square-o"></i></td>
+</tr>
 </template>

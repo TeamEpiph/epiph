@@ -130,3 +130,10 @@ Template.patientVisit.helpers
             label: 'Choose file'
     new SimpleSchema(schema)
   
+
+Template.answerQuestionnaireRow.events
+  #this: {questionnaire, visit, patient}
+  "click .answerQuestionnaire": (evt, tmpl) ->
+    #Session.set("answeringQuestionnaireId", @_id)
+    Modal.show('questionnaireWizzard', @)
+    false

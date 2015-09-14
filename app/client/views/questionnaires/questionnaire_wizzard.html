@@ -1,0 +1,30 @@
+<template name="questionnaireWizzard">
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{questionnaire.title}}</h4>
+      </div>
+
+      <div class="modal-body">
+        {{#if questionFormSchema}}
+        {{#autoForm doc=doc collection="Answers" schema=questionFormSchema id="questionForm" type="normal" class="questionForm" fields="answer"}}
+          {{#each afFieldNames}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+          {{/each}}
+          <button type="submit" class="btn btn-primary pull-right">Next</button>
+          <button type="button" id="back" class="btn btn-primary">Back</button>
+          <button type="reset" class="btn btn-warning">Reset</button>
+        {{/autoForm}}
+        {{else}}
+          Question not found, sorry!
+        {{/if}}
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
