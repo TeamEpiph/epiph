@@ -59,11 +59,31 @@ Template.questionnaireWizzard.helpers
       visitId: @visit._id
       questionnaireId: @questionnaire._id
       questionId: TemplateVar.get("questionId")
-    
+
+  allQuestions: ->
+    answers = {}
+    Answers.find
+      visitId: @visit._id
+      questionnaireId: @questionnaire._id
+    .forEach (answer) ->
+      answers[answer.questionId] = answer
+    activeIndex = questionIndex.get()
+    Questions.find
+      questionnaireId: @questionnaire._id
+    .map (question) ->
+      if answers[question._id]?
+        question.css = "answered"
+      if question.index is activeIndex
+        question.css = "active"
+      question
+        
 
 Template.questionnaireWizzard.events
   "click #back": (evt, tmpl) ->
     index = questionIndex.get()
     index = index-1 if index > 0
     questionIndex.set index
+
+  "click .jumpToQuestion": (evt) ->
+    questionIndex.set @index
     
