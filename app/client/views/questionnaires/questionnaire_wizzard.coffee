@@ -19,7 +19,7 @@ Template.questionnaireWizzard.created = ->
   template = @
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
   @subscribe("answersForVisitAndQuestionnaire", @data.visit._id, @data.questionnaire._id)
-  questionIndex.set 0
+  questionIndex.set 1
 
 Template.questionnaireWizzard.helpers
   questionFormSchema: ->

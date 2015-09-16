@@ -161,8 +161,7 @@ Meteor.methods
     numQuestions = Questions.find
       questionnaireId: questionnaire._id
     .count()
-    nextIndex = numQuestions-1
-    nextIndex = 0 if nextIndex < 0
+    nextIndex = numQuestions+1
     if (question.index? and question.index > nextIndex) or !question.index?
       question.index = nextIndex 
 
