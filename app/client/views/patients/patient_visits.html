@@ -1,0 +1,29 @@
+<template name="patientVisits">
+<div id="visits">
+  <div id="timeline"></div>
+  <div id="hoverRes">
+    <div class="coloredDiv"></div>
+    <div id="name"></div>
+    <div id="scrolled_date"></div>
+  </div>
+</div>
+<table class="table studyDesignTable">
+  <thead>
+    <tr>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each visits}}
+    <tr>
+      {{> patientVisitsTd visit=this patient=..}}
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</template>
+
+<template name="patientVisitsTd">
+  <td>{{visit.title}}</td>
+  <td class="openVisit"><i class="fa fa-lg fa-play-circle-o"></i></td>
+</template>
