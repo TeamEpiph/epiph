@@ -25,7 +25,11 @@
         <div class="modal-footer">
           <span class="pull-left questionOverview">
             {{#each allQuestions}}
-              <span class="badge cursorPointer jumpToQuestion {{css}}">{{index}}</span>
+              <span class="fa-stack fa-lg cursorPointer jumpToQuestion {{css}}">
+                <i class="fa fa-circle fa-stack-2x activeCircle"></i>
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <strong class="fa-stack-1x">{{index}}</strong>
+              </span>
             {{/each}}
           </span>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

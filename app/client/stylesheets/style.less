@@ -152,11 +152,18 @@ body {
 // questionnaireWizzard
 .questionnaireWizzard {
   .questionOverview {
+    color: white;
+    i { color: grey; }
     .active {
-      background-color: @brand-info;
+      .activeCircle { 
+        color: @brand-info; 
+        font-size: 2.5em;
+        top: -4px;
+        left: -1.5px;
+      }
     }
     .answered {
-      background-color: @brand-success;
+      i { color: @brand-success; }
     }
   }
 }

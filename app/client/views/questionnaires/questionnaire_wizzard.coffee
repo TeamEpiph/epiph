@@ -74,7 +74,7 @@ Template.questionnaireWizzard.helpers
       if answers[question._id]?
         question.css = "answered"
       if question.index is activeIndex
-        question.css = "active"
+        question.css += " active"
       question
         
 
