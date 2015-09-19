@@ -8,7 +8,6 @@ Meteor.methods
       try
         _id = Patients.insert
           id: readableRandom(6)
-          hrid: hri.random()
           creatorId: Meteor.userId()
           studyId: studyId
       catch e

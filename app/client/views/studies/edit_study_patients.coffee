@@ -80,10 +80,11 @@ Template.editStudyPatients.helpers
     ids = Session.get('editingPatientIds')
     if ids? and ids.length is 1
       schema = _.extend schema, 
-        key:
-          label: "Key"
+        hrid:
+          label: "HRID"
           type: String
           optional: true
+          max: 5
     new SimpleSchema(schema)
 
 Template.editStudyPatients.events
