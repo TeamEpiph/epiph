@@ -1,9 +1,32 @@
 <template name="patientVisit">
 <div id="visit">
   {{#with visit}}
-    <h3>
-      {{title}} <!-- <small>{{_id}}</small> -->
-    </h3>
+    <div class="header">
+      <h3 class="pull-left">
+        {{title}} <!-- <small>{{_id}}</small> -->
+      </h3>
+      <div class="headerRight pull-right text-right">
+        <table class="tight">
+          {{#if startedAt}}
+          <tr><td>started: {{agoOrDateTime startedAt}}</td></tr>
+        {{/if}}
+        {{#if endedAt}}
+          <tr><td>ended: {{agoOrDateTime endedAt}}</td></tr>
+        {{/if}}
+        </table>
+        {{#if isRunning}}
+        <button class="btn btn-warning pull-right stopVisit" title="stop visit">
+          Stop Visit&nbsp;<i class="fa fa-lg fa-stop"></i>
+        </button>
+        {{else}}
+          {{#if canStart}}
+          <button class="btn btn-success pull-right startVisit" title="start visit">
+            Start Visit&nbsp;<i class="fa fa-lg fa-play"></i>
+          </button>
+          {{/if}}
+        {{/if}}
+      </div>
+    </div>
     <div class="row">
       <div class="questionnaires col-xs-12 col-md-6">
         <h4>Questionnaires <i class="fa fa-file-text-o"></i></h4>

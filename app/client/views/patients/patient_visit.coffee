@@ -10,14 +10,22 @@ AutoForm.hooks
       false
 
 Template.patientVisit.created = ->
-  @subscribe "physioRecordsForVisit", @data.activeVisitId
+  id = @data.visitId
+  @subscribe "physioRecordsForVisit", id
   @subscribe "questionnaires"
 
 Template.patientVisit.helpers
+  #this templateData
   visit: ->
-    Visits.findOne @activeVisitId
+    Visits.findOne @visitId
 
   #this visit
+  isRunning: ->
+    @startedAt? and !@endedAt?
+
+  canStart: ->
+    !@endedAt?
+
   questionnaires: ->
     qIds = @questionnaireIds or []
     Questionnaires.find
@@ -55,6 +63,22 @@ Template.patientVisit.helpers
             label: 'Choose file'
     new SimpleSchema(schema)
   
+
+Template.patientVisit.events
+  "click .startVisit": (evt) ->
+    Visits.update @_id,
+      $set:
+        startedAt: Date.now()
+    Patients.update @patientId,
+      $set:
+        runningVisitId: @_id
+  "click .stopVisit": (evt) ->
+    Visits.update @_id,
+      $set:
+        endedAt: Date.now()
+    Patients.update @patientId,
+      $unset:
+        runningVisitId: @_id
 
 Template.answerQuestionnaireRow.events
   #this: {questionnaire, visit, patient}

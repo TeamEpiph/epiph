@@ -1,8 +1,8 @@
 Template.patientVisits.helpers
   visits: ->
-    studyDesign = @studyDesign()
+    studyDesign = @patient.studyDesign()
     if studyDesign?
-      visits = @studyDesign().visits
+      visits = studyDesign.visits
       visits
 
 Template.patientVisits.events
@@ -23,8 +23,13 @@ Template.patientVisits.events
       id = Visits.insert visit
       visit = Visits.findOne id
 
-    Patients.update @patient._id,
-      $set:
-        activeVisitId: visit._id
-    Session.set("patientTabTemplate", "patientVisit")
+    openPatientVisit = Session.get("openPatientVisit") or {}
+    openPatientVisit[@patient._id] = 
+      title: visit.title
+      _id: visit._id
+    Session.set("openPatientVisit", openPatientVisit)
+    Session.set "patientTab", 
+      title: visit.title
+      visitId: visit._id
+      template: "patientVisit"
     false

@@ -7,17 +7,22 @@
     <div id="scrolled_date"></div>
   </div>
 </div>
+<br>
 <table class="table studyDesignTable">
+  <!--
   <thead>
     <tr>
       <th></th>
     </tr>
   </thead>
+  -->
   <tbody>
     {{#each visits}}
     <tr>
-      {{> patientVisitsTd visit=this patient=..}}
+      {{> patientVisitsTd visit=this patient=../patient}}
     </tr>
+    {{else}}
+      This patient either isn't mapped to an study design or this design has no visits scheduled.
     {{/each}}
   </tbody>
 </table>

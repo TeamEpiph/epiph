@@ -27,6 +27,15 @@ Template.registerHelper "fullDate", (date) ->
   else
     return date.format("DD.MM.YYYY")
 
+Template.registerHelper "agoOrDateTime", (date) ->
+  date = moment(date)
+  if date.diff(moment(), 'days') < 11
+    return date.fromNow()
+  if date.dayOfYear() is moment().dayOfYear()
+    return "today #{date.format('HH:mm')}"
+  else
+    return date.format("DD.MM.YYYY HH:mm")
+
 Template.registerHelper "fileSizeSani", (size) ->
   if size > 1000
     "#{(size/1000).toFixed(1)} kB"
