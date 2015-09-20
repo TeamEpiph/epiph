@@ -70,17 +70,20 @@ Template.patientVisit.helpers
 
 Template.patientVisit.events
   "click .startVisit": (evt) ->
-    Meteor.call "startVisit", @_id, (error, id) ->
+    Meteor.call "startVisit", @_id, (error) ->
       throwError error if error?
       return
   "click .stopVisit": (evt) ->
-    Meteor.call "stopVisit", @_id, (error, id) ->
+    Meteor.call "stopVisit", @_id, (error) ->
       throwError error if error?
       return
 
 Template.answerQuestionnaireRow.events
   #this: {questionnaire, visit, patient}
   "click .answerQuestionnaire": (evt, tmpl) ->
-    #Session.set("answeringQuestionnaireId", @_id)
-    Modal.show('questionnaireWizzard', @)
+    Session.set("answeringQuestionnaireId", @_id)
+    if !@patient.runningVisitId? or @patient.runningVisitId isnt @visit._id
+      alert("This visit must be running to answer it's questionnaires.")
+    else
+      Modal.show('questionnaireWizzard', @)
     false

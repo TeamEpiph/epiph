@@ -9,7 +9,8 @@ AutoForm.hooks
       insertDoc.questionnaireId = currentDoc.questionnaireId 
       insertDoc._id = currentDoc._id if currentDoc._id? 
       unless currentDoc.answer? and currentDoc.answer is insertDoc.answer
-        Meteor.call "upsertAnswer", insertDoc
+        Meteor.call "upsertAnswer", insertDoc, (error) ->
+          throwError error if error?
 
       questionIndex.set questionIndex.get()+1
       @done()
