@@ -9,10 +9,10 @@
         <table class="tight">
           {{#if startedAt}}
           <tr><td>started: {{agoOrDateTime startedAt}}</td></tr>
-        {{/if}}
-        {{#if endedAt}}
+          {{/if}}
+          {{#if endedAt}}
           <tr><td>ended: {{agoOrDateTime endedAt}}</td></tr>
-        {{/if}}
+          {{/if}}
         </table>
         {{#if isRunning}}
         <button class="btn btn-warning pull-right stopVisit" title="stop visit">

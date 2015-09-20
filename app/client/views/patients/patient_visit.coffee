@@ -23,9 +23,12 @@ Template.patientVisit.helpers
   isRunning: ->
     @startedAt? and !@endedAt?
 
+  #this visit
   canStart: ->
-    !@endedAt?
+    patient = Template.parentData().patient
+    !@endedAt? and !patient.runningVisitId?
 
+  #this visit
   questionnaires: ->
     qIds = @questionnaireIds or []
     Questionnaires.find
@@ -44,6 +47,7 @@ Template.patientVisit.helpers
     PhysioRecords.find
       'metadata.visitId': @_id
 
+  #this visit
   uploadFormSchema: ->
     schema =
       sensor:
@@ -66,19 +70,13 @@ Template.patientVisit.helpers
 
 Template.patientVisit.events
   "click .startVisit": (evt) ->
-    Visits.update @_id,
-      $set:
-        startedAt: Date.now()
-    Patients.update @patientId,
-      $set:
-        runningVisitId: @_id
+    Meteor.call "startVisit", @_id, (error, id) ->
+      throwError error if error?
+      return
   "click .stopVisit": (evt) ->
-    Visits.update @_id,
-      $set:
-        endedAt: Date.now()
-    Patients.update @patientId,
-      $unset:
-        runningVisitId: @_id
+    Meteor.call "stopVisit", @_id, (error, id) ->
+      throwError error if error?
+      return
 
 Template.answerQuestionnaireRow.events
   #this: {questionnaire, visit, patient}
