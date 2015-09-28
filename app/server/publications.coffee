@@ -85,38 +85,6 @@ Meteor.publish "patientsForStudy", (studyID) ->
     studyId: studyID
 
 
-#Meteor.publish "visitsForPatient", (patientId) ->
-#	patient = Patients.findOne patientId
-#	if patient?
-#    if Roles.userIsInRole(@userId, ['admin']) or 
-#    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-#      return Visits.find
-#        patientId: patientId
-#  @ready()
-
-#Meteor.publish "physioRecordsForVisit", (visitId) ->
-#  visit = Visits.findOne visitId
-#  if visit?
-#    patient = Patients.findOne visit.patientId
-#    if patient?
-#      if Roles.userIsInRole(@userId, ['admin']) or 
-#      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-#        return PhysioRecords.find
-#          'metadata.visitId': visit._id
-#  @ready()
-#
-#Meteor.publish "answersForVisitAndQuestionnaire", (visitId, questionnaireId) ->
-#  visit = Visits.findOne visitId
-#  if visit?
-#    patient = Patients.findOne visit.patientId
-#    if patient?
-#      if Roles.userIsInRole(@userId, ['admin']) or 
-#      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-#        return Answers.find
-#          visitId: visit._id
-#          questionnaireId: questionnaireId
-#  @ready()
-
 Meteor.publish "studyForPatient", (_id) ->
   if Roles.userIsInRole(@userId, ['admin'])
     patient = Patients.findOne _id: _id
@@ -191,29 +159,6 @@ Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
           'metadata.visitId': visit._id
     ]
   ]
-
-#  find visitIds and questionnaireIds
-#  qIds = []
-#  vIds = Visits.find
-#    patientId: patientId
-#  .map (v) ->
-#    qIds = qIds.concat(v.questionnaireIds)
-#    v._id
-#  studyDesign = StudyDesigns.findOne(studyId: patient.studyId)
-#  qIds.concat studyDesign.questionnaireIds
-#  qIds = _.unique qIds
-#return [
-#  Visits.find
-#    patientId: patientId
-#  Questionnaires.find
-#    _id: {$in: qIds}
-#  Questions.find
-#    questionnaireId: {$in: qIds}
-#  Answers.find
-#    visitId: {$in: vIds}
-#  PhysioRecords.find
-#    'metadata.visitId': {$in: vIds}
-#      ]
 
 
 #####################################
