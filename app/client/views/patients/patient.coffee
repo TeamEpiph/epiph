@@ -26,9 +26,14 @@ Template.patient.created = ->
 
 Template.patient.helpers
   numVisits: ->
-    Visits.find(
-      patientId: @_id
-    ).count()
+    #Visits.find(
+    #  patientId: @_id
+    #).count()
+    studyDesign = @studyDesign()
+    if studyDesign?
+      studyDesign.visits.length
+    else
+      0
     
   tabs: ->
     tabs = [
