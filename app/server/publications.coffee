@@ -65,26 +65,6 @@ Meteor.publish "studies", ->
 Meteor.publish "study", (_id) ->
   return unless onlyIfAdmin.call(@) 
   Studies.find(_id: _id)
-Meteor.publish "studyForPatient", (_id) ->
-  if Roles.userIsInRole(@userId, ['admin'])
-    patient = Patients.findOne _id: _id
-    if patient?
-      return Studies.find _id: patient.studyId
-  else if Roles.userIsInRole(@userId, ['therapist'])
-    patient = Patients.findOne
-      _id: _id
-      therapistId: @userId
-    if patient?
-      return Studies.find _id: patient.studyId
-  @ready()
-Meteor.publish "studyDesignForPatient", (_id) ->
-	patient = Patients.findOne _id: _id
-	if patient?
-    studyDesign = StudyDesigns.find studyId: patient.studyId
-    if Roles.userIsInRole(@userId, ['admin']) or 
-    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-      return studyDesign
-  @ready()
 
 Meteor.publish "studyDesignsForStudy", (studyId) ->
   return unless onlyIfAdmin.call(@) 
@@ -105,37 +85,136 @@ Meteor.publish "patientsForStudy", (studyID) ->
     studyId: studyID
 
 
-Meteor.publish "visitsForPatient", (patientId) ->
-	patient = Patients.findOne patientId
+#Meteor.publish "visitsForPatient", (patientId) ->
+#	patient = Patients.findOne patientId
+#	if patient?
+#    if Roles.userIsInRole(@userId, ['admin']) or 
+#    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+#      return Visits.find
+#        patientId: patientId
+#  @ready()
+
+#Meteor.publish "physioRecordsForVisit", (visitId) ->
+#  visit = Visits.findOne visitId
+#  if visit?
+#    patient = Patients.findOne visit.patientId
+#    if patient?
+#      if Roles.userIsInRole(@userId, ['admin']) or 
+#      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+#        return PhysioRecords.find
+#          'metadata.visitId': visit._id
+#  @ready()
+#
+#Meteor.publish "answersForVisitAndQuestionnaire", (visitId, questionnaireId) ->
+#  visit = Visits.findOne visitId
+#  if visit?
+#    patient = Patients.findOne visit.patientId
+#    if patient?
+#      if Roles.userIsInRole(@userId, ['admin']) or 
+#      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+#        return Answers.find
+#          visitId: visit._id
+#          questionnaireId: questionnaireId
+#  @ready()
+
+Meteor.publish "studyForPatient", (_id) ->
+  if Roles.userIsInRole(@userId, ['admin'])
+    patient = Patients.findOne _id: _id
+    if patient?
+      return Studies.find _id: patient.studyId
+  else if Roles.userIsInRole(@userId, ['therapist'])
+    patient = Patients.findOne
+      _id: _id
+      therapistId: @userId
+    if patient?
+      return Studies.find _id: patient.studyId
+  @ready()
+
+Meteor.publish "studyDesignForPatient", (_id) ->
+	patient = Patients.findOne _id: _id
 	if patient?
+    studyDesign = StudyDesigns.find studyId: patient.studyId
     if Roles.userIsInRole(@userId, ['admin']) or 
     (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-      return Visits.find
-        patientId: patientId
+      return studyDesign
   @ready()
 
-Meteor.publish "physioRecordsForVisit", (visitId) ->
-  visit = Visits.findOne visitId
-  if visit?
-    patient = Patients.findOne visit.patientId
+
+Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
+  find: ->
+    patient = Patients.findOne _id: patientId
     if patient?
       if Roles.userIsInRole(@userId, ['admin']) or 
       (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-        return PhysioRecords.find
-          'metadata.visitId': visit._id
-  @ready()
-
-Meteor.publish "answersForVisitAndQuestionnaire", (visitId, questionnaireId) ->
-  visit = Visits.findOne visitId
-  if visit?
-    patient = Patients.findOne visit.patientId
+        return Patients.find _id: patientId
+    return null
+  children: [
+    find: (patient) ->
+      Studies.find _id: patient.studyId
+  ,
+    find: (patient) ->
+      StudyDesigns.find _id: patient.studyDesignId
+    children: [
+      find: (studyDesign) ->
+        #FIXME
+        qIds = _.unique studyDesign.questionnaireIds
+        Questionnaires.find
+          _id: {$in: qIds }
+      children: [
+        find: (questionnaire) ->
+          Questions.find
+            questionnaireId: questionnaire._id
+      ]
+    ]
+  ]
+        
+    
+Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
+  find: ->
+    patient = Patients.findOne patientId
     if patient?
       if Roles.userIsInRole(@userId, ['admin']) or 
       (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-        return Answers.find
+        return Patients.find _id: patientId
+    return null
+  children: [
+    find: (patient) ->
+      Visits.find
+        patientId: patient._id
+    children: [
+      find: (visit) ->
+        Answers.find
           visitId: visit._id
-          questionnaireId: questionnaireId
-  @ready()
+    ,
+      find: (visit) ->
+        PhysioRecords.find
+          'metadata.visitId': visit._id
+    ]
+  ]
+
+#  find visitIds and questionnaireIds
+#  qIds = []
+#  vIds = Visits.find
+#    patientId: patientId
+#  .map (v) ->
+#    qIds = qIds.concat(v.questionnaireIds)
+#    v._id
+#  studyDesign = StudyDesigns.findOne(studyId: patient.studyId)
+#  qIds.concat studyDesign.questionnaireIds
+#  qIds = _.unique qIds
+#return [
+#  Visits.find
+#    patientId: patientId
+#  Questionnaires.find
+#    _id: {$in: qIds}
+#  Questions.find
+#    questionnaireId: {$in: qIds}
+#  Answers.find
+#    visitId: {$in: vIds}
+#  PhysioRecords.find
+#    'metadata.visitId': {$in: vIds}
+#      ]
+
 
 #####################################
 

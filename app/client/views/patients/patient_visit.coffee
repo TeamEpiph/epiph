@@ -9,11 +9,6 @@ AutoForm.hooks
       @done()
       false
 
-Template.patientVisit.created = ->
-  id = @data.visitId
-  @subscribe "physioRecordsForVisit", id
-  @subscribe "questionnaires"
-
 Template.patientVisit.helpers
   #this templateData
   visit: ->
