@@ -12,22 +12,15 @@ AutoForm.hooks
 Template.patientVisit.helpers
   #this templateData
   visit: ->
-    Visits.findOne @visitId
-
-  #this visit
-  isRunning: ->
-    @startedAt? and !@endedAt?
+    v = Visits.findOne(@visitId)
+    if v?
+      v.validatedDoc()
+    else v
 
   #this visit
   canStart: ->
     patient = Template.parentData().patient
     !@endedAt? and !patient.runningVisitId?
-
-  #this visit
-  questionnaires: ->
-    qIds = @questionnaireIds or []
-    Questionnaires.find
-      _id: {$in: qIds}
 
   #this visit
   showEmpaticaRecorder: ->
@@ -37,11 +30,6 @@ Template.patientVisit.helpers
   empaticaSessionId: ->
     @_id
     
-  #this visit
-  physioRecords: ->
-    PhysioRecords.find
-      'metadata.visitId': @_id
-
   #this visit
   uploadFormSchema: ->
     schema =
@@ -73,10 +61,15 @@ Template.patientVisit.events
       throwError error if error?
       return
 
-Template.answerQuestionnaireRow.events
+
+Template.questionnaireRow.helpers
+  questionnaireCSS: ->
+    return "valid" if @questionnaire.answered
+    "invalid"
+
+Template.questionnaireRow.events
   #this: {questionnaire, visit, patient}
   "click .answerQuestionnaire": (evt, tmpl) ->
-    Session.set("answeringQuestionnaireId", @_id)
     if !@patient.runningVisitId? or @patient.runningVisitId isnt @visit._id
       alert("This visit must be running to answer it's questionnaires.")
     else

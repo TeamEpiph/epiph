@@ -14,6 +14,10 @@ Template.registerHelper "headDescription", (desc) ->
   ""
 
 Template.registerHelper "fullDateTime", (date) ->
+  fullDateTime(date)
+
+@fullDateTime = (date)->
+  return null unless date?
   date = moment(date)
   if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
     return "today #{date.format('HH:mm')}"
@@ -21,6 +25,7 @@ Template.registerHelper "fullDateTime", (date) ->
     return date.format("DD.MM.YYYY HH:mm")
 
 Template.registerHelper "fullDate", (date) ->
+  return null unless date?
   date = moment(date)
   if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
     return "today"
@@ -28,6 +33,7 @@ Template.registerHelper "fullDate", (date) ->
     return date.format("DD.MM.YYYY")
 
 Template.registerHelper "agoOrDateTime", (date) ->
+  return null unless date?
   date = moment(date)
   if date.diff(TimeSync.serverTime(), 'days') < 11
     return date.fromNow()

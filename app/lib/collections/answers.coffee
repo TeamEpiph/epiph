@@ -27,24 +27,20 @@ Meteor.methods
     throw new Meteor.Error(403, "visit must be started first") unless visit.startedAt?
     throw new Meteor.Error(403, "visit must be running, this visit ended already") unless !visit.endedAt?
 
-    check(answer.patientId, String)
     patient = Patients.findOne
-      _id:  answer.patientId
+      _id:  visit.patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
-    throw new Meteor.Error(403, "patientId doesn't match visit.patientId") unless visit.patientId is patient._id
     throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
-
-    check(answer.questionnaireId, String)
-    questionnaire = Questionnaires.findOne
-      _id:  answer.questionnaireId
-    throw new Meteor.Error(403, "questionnaire can't be found.") unless questionnaire?
-    #TODO check if questionnaire is scheduled at visit
 
     check(answer.questionId, String)
     question = Questions.findOne
       _id:  answer.questionId
     throw new Meteor.Error(403, "question can't be found.") unless question?
-    throw new Meteor.Error(403, "question doesn't belong to questionnaire") unless question.questionnaireId is questionnaire._id
+
+    questionnaire = Questionnaires.findOne
+      _id:  question.questionnaireId
+    throw new Meteor.Error(403, "questionnaire can't be found.") unless questionnaire?
+    #TODO check if questionnaire is scheduled at visit
 
     if answer._id?
       a = Answers.findOne _.pick answer, 'questionnaireId', 'patientId', 'visitId', 'questionId', '_id'
@@ -55,6 +51,6 @@ Meteor.methods
           answer: answer.answer
       answer._id
     else
-      answer = _.pick answer, 'questionnaireId', 'patientId', 'visitId', 'questionId', 'answer'
+      answer = _.pick answer, 'visitId', 'questionId', 'answer'
       _id = Answers.insert answer
       _id

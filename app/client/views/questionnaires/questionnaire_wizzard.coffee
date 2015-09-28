@@ -3,10 +3,8 @@ questionIndex = new ReactiveVar(0)
 AutoForm.hooks
   questionForm:
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      insertDoc.patientId = currentDoc.patientId 
       insertDoc.visitId = currentDoc.visitId 
       insertDoc.questionId = currentDoc.questionId
-      insertDoc.questionnaireId = currentDoc.questionnaireId 
       insertDoc._id = currentDoc._id if currentDoc._id? 
       unless currentDoc.answer? and currentDoc.answer is insertDoc.answer
         Meteor.call "upsertAnswer", insertDoc, (error) ->
@@ -32,13 +30,7 @@ Template.questionnaireWizzard.helpers
       _id:
         type: String
         optional: true
-      patientId:
-        type: String
-        optional: true
       visitId:
-        type: String
-        optional: true
-      questionnaireId:
         type: String
         optional: true
       questionId:
@@ -49,21 +41,21 @@ Template.questionnaireWizzard.helpers
     
   doc: ->
     a = Answers.findOne
-      patientId: @patient._id
       visitId: @visit._id
-      questionnaireId: @questionnaire._id
       questionId: TemplateVar.get("questionId")
     a or 
-      patientId: @patient._id
       visitId: @visit._id
-      questionnaireId: @questionnaire._id
       questionId: TemplateVar.get("questionId")
 
   allQuestions: ->
     answers = {}
+    questionIds = Questions.find
+      questionnaireId: @questionnaire._id
+    .map (question) ->
+      question._id
     Answers.find
       visitId: @visit._id
-      questionnaireId: @questionnaire._id
+      questionId: {$in: questionIds}
     .forEach (answer) ->
       answers[answer.questionId] = answer
     activeIndex = questionIndex.get()

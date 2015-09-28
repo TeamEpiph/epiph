@@ -24,6 +24,9 @@ table.tight {
     padding-bottom: 0;
   }
 }
+table.collapsed {
+  width: inherit;
+}
 
 .reactive-table {
   th {
@@ -58,6 +61,16 @@ table.tight {
   }
 }
 
+////////////////////////////////
+// generic
+.valid {
+  color: @brand-success;
+}
+.invalid {
+  color: @brand-warning;
+  alpha: 0.5;
+}
+    
 
 ////////////////////////////////
 // patient
@@ -81,6 +94,8 @@ table.tight {
       }
     }
   }
+  #visits {
+  }
   #visit {
     .header {
       height: 83px;
@@ -91,6 +106,15 @@ table.tight {
         }
         button {
           margin-left: 1em;
+        }
+      }
+    }
+    .questionnaires {
+      table {
+        width: initial;
+        font-size: 20px;
+        td:not(:first-child) {
+          padding-left: 15px;
         }
       }
     }

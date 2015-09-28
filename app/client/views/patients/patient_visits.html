@@ -1,34 +1,66 @@
 <template name="patientVisits">
 <div id="visits">
+  <!--
   <div id="timeline"></div>
   <div id="hoverRes">
     <div class="coloredDiv"></div>
     <div id="name"></div>
     <div id="scrolled_date"></div>
   </div>
-</div>
-<br>
-<table class="table studyDesignTable">
-  <!--
-  <thead>
-    <tr>
-      <th></th>
-    </tr>
-  </thead>
   -->
-  <tbody>
-    {{#each visits}}
-    <tr>
-      {{> patientVisitsTd visit=this patient=../patient}}
-    </tr>
-    {{else}}
-      This patient either isn't mapped to an study design or this design has no visits scheduled.
-    {{/each}}
-  </tbody>
-</table>
+  <br>
+  <table class="table table-striped collapsed">
+    <!--
+    <thead>
+      <tr>
+        <th></th>
+      </tr>
+    </thead>
+    -->
+    <tbody>
+      {{#each visits}}
+        {{> patientVisitsTr visit=this patient=../patient}}
+      {{else}}
+        This patient either isn't mapped to an study design or this design has no visits scheduled.
+      {{/each}}
+    </tbody>
+  </table>
+</div>
 </template>
 
-<template name="patientVisitsTd">
-  <td>{{visit.title}}</td>
-  <td class="openVisit"><i class="fa fa-lg fa-play-circle-o"></i></td>
+<template name="patientVisitsTr">
+<tr class="openVisit cursorPointer">
+  {{#with visit}}
+    <td><b>{{title}}</b></td>
+
+    <td>{{statusText}}</td>
+
+    <td>
+    {{#each validatedQuestionnaires}}
+      <div class="text-center {{questionnaireCSS}}" style="display: inline-block;">
+        <i class="fa fa-lg fa-file-text-o"></i>
+        <p>{{title}}</p>
+      </div>
+    {{/each}}
+    </td>
+
+    <td>
+      {{#if recordPhysicalData}}
+        <i class="fa fa-lg fa-heartbeat {{physioRecordsCSS}}"></i>
+      {{/if}}
+    </td>
+
+    <!--
+    <td class="{{visitCSS}}">
+    {{#if isValid}}
+      <i class="fa fa-lg fa-check"></i>
+    {{else}}
+      <i class="fa fa-lg fa-warning"></i>
+    {{/if}}
+    </td>
+    -->
+
+  {{/with}}
+  <td class="openVisit"><i class="fa fa-2x fa-arrow-circle-right"></i></td>
+</tr>
 </template>

@@ -1,16 +1,39 @@
 Template.patientVisits.helpers
   visits: ->
-    studyDesign = @patient.studyDesign()
+    patient = @patient
+    studyDesign = patient.studyDesign()
     if studyDesign?
-      visits = studyDesign.visits
+      visits = studyDesign.visits.map (designVisit) ->
+        visit = Visits.findOne
+          designVisitId: designVisit._id
+          patientId: patient._id
+        visit = new Visit(designVisit) if !visit?
+        visit.validatedDoc()
       visits
+
+Template.patientVisitsTr.helpers
+  #this visit
+  visitCSS: ->
+    return "valid" if @valid
+    "invalid"
+  #this questionnaire
+  questionnaireCSS: ->
+    return "valid" if @answered
+    "invalid"
+  #this visit
+  physioRecordsCSS: ->
+    return "valid" if @physioValid
+    "invalid"
+
 
 Template.patientVisits.events
   "click .openVisit": (evt) ->
     visit = Visits.findOne
+      _id: @visit._id
       patientId: @patient._id
-      designVisitId: @visit._id
     unless visit?
+      if @visit.patientId?
+        throw new Meteor.Error(403, "patient visit not found")
       #we copy the data here from the visit template to
       #an actuall existing visit here
       #TODO cleanup copy
