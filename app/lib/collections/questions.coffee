@@ -38,6 +38,10 @@ class @Question
       label:
         label: "Question"
         type: String
+      code:
+        label: "Code"
+        type: String
+        optional: true
       optional:
         label: "Optional"
         type: Boolean
