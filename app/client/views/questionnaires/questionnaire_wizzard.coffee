@@ -17,9 +17,7 @@ AutoForm.hooks
       false
 
 Template.questionnaireWizzard.created = ->
-  template = @
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
-  @subscribe("answersForVisitAndQuestionnaire", @data.visit._id, @data.questionnaire._id)
   questionIndex.set 1
 
 Template.questionnaireWizzard.helpers
