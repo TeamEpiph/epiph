@@ -26,7 +26,7 @@ class @Question
         s.autoform = 
           type: "bootstrap-datetimepicker"
       when "multipleChoice"
-        s.type = String
+        s.type = Number
         s.autoform = 
           type: "select-radio-inline"
           options: @choices
