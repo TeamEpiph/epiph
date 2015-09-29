@@ -134,10 +134,10 @@ table.collapsed {
 
 ////////////////////////////////
 // editQuestionnaire
-.questionnaireForm {
-  .form-group {
+.questions {
+  .question {
     cursor: pointer;
-    padding: 0px 10px;
+    padding: 10px 10px;
     &:nth-child(even) {
       background-color: #f5f5f5;
     }
@@ -147,14 +147,15 @@ table.collapsed {
         margin-right: 40px;
       }
     }
+    &.selectedQuestion {
+      border: 1px solid @brand-info;
+      border-radius: 2px;
+      //padding: 10px 5px;
+    }
+    .control-label {
+      font-weight: bold;
+    }
   }
-  .selectedQuestion {
-    border: 1px solid @brand-info;
-    border-radius: 2px;
-    padding: 10px 5px;
-  }
-}
-.questions {
 }
 
 ////////////////////////////////

@@ -153,7 +153,7 @@ Questions.allow
     questionnaire.creatorId is userId
 
 Meteor.methods
-  "insertQuestion": (question) ->
+  insertQuestion: (question) ->
     check(question.questionnaireId, String)
     questionnaire = Questionnaires.findOne
       _id:  question.questionnaireId
@@ -173,7 +173,7 @@ Meteor.methods
     _id = Questions.insert question
     _id
 
-  "removeQuestion": (_id) ->
+  removeQuestion: (_id) ->
     check(_id, String)
     question = Questions.findOne _id
     questionnaire = Questionnaires.findOne
@@ -181,3 +181,46 @@ Meteor.methods
     throw new Meteor.Error(403, "Only the creator of the questionnaire is allowed to edit it's questions.") unless questionnaire.creatorId is Meteor.userId()
 
     Questions.remove _id
+
+    Questions.update
+      questionnaireId: questionnaire._id
+      index: { $gt: question.index }
+    ,
+      $inc: { index: -1 }
+    ,
+      multi: true
+
+
+  moveQuestion: (questionnaireId, oldIndex, newIndex) ->
+    check(questionnaireId, String)
+    check(oldIndex, Match.Integer)
+    check(newIndex, Match.Integer)
+
+    questionnaire = Questionnaires.findOne
+      _id:  questionnaireId
+    throw new Meteor.Error(403, "Only the creator of the questionnaire is allowed to edit it's questions.") unless questionnaire.creatorId is Meteor.userId()
+
+    question = Questions.findOne
+      questionnaireId: questionnaireId
+      index: oldIndex
+    throw new Meteor.Error(403, "question with index #{oldIndex} not found.") unless question?
+
+    Questions.update
+      questionnaireId: questionnaireId
+      index: { $gt: oldIndex }
+    ,
+      $inc: { index: -1 }
+    ,
+      multi: true
+    Questions.update
+      questionnaireId: questionnaireId
+      index: { $gte: newIndex }
+    ,
+      $inc: { index: 1 }
+    ,
+      multi: true
+    Questions.update
+      _id: question._id
+    ,
+      $set: { index: newIndex}
+    null

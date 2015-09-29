@@ -4,51 +4,6 @@ AutoForm.hooks
       @done()
       false
 
-sortableTimeout = null
-Template.autoForm.rendered = ->
-  @autorun ->
-    id = Session.get 'selectedQuestionId'
-    #selectedQuestion = Questions.findOne
-    #  _id: id
-    $(".form-group").removeClass("selectedQuestion")
-    $(".form-group:has(input[data-schema-key=#{id}])").addClass("selectedQuestion")
-    $(".form-group:has(div[data-schema-key=#{id}])").addClass("selectedQuestion")
-    $(".form-group:has(textarea[data-schema-key=#{id}])").addClass("selectedQuestion")
-
-  Meteor.clearTimeout(sortableTimeout) if sortableTimeout?
-  sortableTimeout = Meteor.setTimeout( ->
-    try
-      $(".questionnaireForm").sortable("destroy")
-    $(".questionnaireForm").sortable
-      items: ".form-group:not(.ui-sortable-disabled)"
-      helper : 'clone'
-      start: (e, ui) ->
-        index = parseInt ui.item.data("index")
-        jIndex = parseInt ui.item.index()
-        #throwError "index(#{index}) and jIndex(#{jIndex}) don't match"
-        $(this).attr 'data-pIndex', jIndex
-        #$(".ui-sortable-disabled").hide()
-        return
-      stop: (event, ui) -> # fired when an item is dropped
-        newIndex = parseInt(ui.item.index())
-        oldIndex = parseInt($(this).attr('data-pIndex'))
-        $(this).removeAttr 'data-pIndex'
-        questionnaireId  = Session.get 'editingQuestionnaireId'
-        console.log "#{questionnaireId} #{oldIndex} -> #{newIndex}"
-        if newIndex is oldIndex
-          $(".questionnaireForm").sortable("cancel")
-        else
-          Meteor.call "moveQuestion", questionnaireId, oldIndex, newIndex, (error) ->
-            if error?
-              $(".questionnaireForm").sortable("cancel")
-              throwError error
-            #else
-              #$(".questionnaireForm").sortable("refreshPositions")
-              #$(".questionnaireForm").sortable("refresh")
-              #$(".ui-sortable-disabled").show()
-        return
-    , 800)
-
 
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
@@ -68,16 +23,18 @@ Template.editQuestionnaire.helpers
       questionnaireId: @_id
     ).count() > 0
 
-  questionnaireFormSchema: ->
-    schema = {}
+  questionSchemas: ->
+    console.log "questionsSChemas"
     Questions.find(
       questionnaireId: @_id
     ,
       sort:
         index: 1
-    ).forEach (q) ->
+    ).map (q) ->
+      schema = {}
       schema[q._id.toString()] = q.getSchemaDict()
-    new SimpleSchema(schema)
+      q.schema = new SimpleSchema(schema)
+      q
 
   selectedQuestion: ->
     id = Session.get 'selectedQuestionId'
@@ -119,15 +76,61 @@ Template.editQuestionnaire.events
         throwError error if error?
         Session.set 'selectedQuestionId', null
 
-  "click #validate": (evt) ->
-    AutoForm.validateForm("questionnaireForm")
 
-  "click .questionnaireForm > .form-group": (evt) ->
-    target = $(evt.target)
-    id = target.closest(".form-group").find("input").data('schema-key')
-    if !id?
-      id = target.closest(".form-group").find("div").data('schema-key')
-    if !id?
-      id = target.closest(".form-group").find("textarea").data('schema-key')
-      
-    Session.set 'selectedQuestionId', id
+
+Template.editQuestionnaireQuestion.helpers
+  #this question
+  questionCSS: ->
+    if @_id is Session.get("selectedQuestionId")
+      "selectedQuestion"
+    else
+      ""
+
+Template.editQuestionnaireQuestion.events
+  "click .question": (evt) ->
+    Session.set 'selectedQuestionId', @_id
+
+
+sortableTimeout = null
+Template.editQuestionnaireQuestion.rendered = ->
+  Meteor.clearTimeout(sortableTimeout) if sortableTimeout?
+  sortableTimeout = Meteor.setTimeout( ->
+    #try
+    #  $(".questions").sortable("destroy")
+    $(".questions").sortable
+      items: ".question:not(.ui-sortable-disabled)"
+      #helper : 'clone'
+      #don't trust ui! after (d'n'd) the DOM is updated
+      #correctly by blaze ui.item will still hold
+      #the old item with the old index! WTF!
+      #so we can't use ui.item.data("index")
+      start: (e, ui) ->
+        #$(".ui-sortable-disabled").hide()
+        #console.log parseInt(ui.item.data("index"))
+        #our indices begin at 1
+        index = ui.item.index()+1
+        #console.log index
+        $(this).attr('data-pIndex', index)
+        return
+      stop: (event, ui) -> # fired when an item is dropped
+        #our indices begin at 1
+        newIndex = parseInt(ui.item.index())+1
+        #oldIndex = parseInt(ui.item.data("index"))
+        oldIndex = parseInt($(this).attr('data-pIndex'))
+
+        questionnaireId  = Session.get 'editingQuestionnaireId'
+        #console.log "#{questionnaireId} #{oldIndex} -> #{newIndex}"
+        if newIndex is oldIndex
+          $(".questions").sortable("cancel")
+        else
+          Meteor.call "moveQuestion", questionnaireId, oldIndex, newIndex, (error) ->
+            if error?
+              $(".questions").sortable("cancel")
+              throwError error
+            else
+              #$(".questionnaireForm").sortable("refreshPositions")
+              $(".questionnaireForm").sortable("refresh")
+              #$(".ui-sortable-disabled").show()
+        return
+    , 800)
+

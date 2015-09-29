@@ -1,5 +1,20 @@
+<template name="editQuestionnaireQuestion">
+<div class="question {{questionCSS}} row" data-index={{index}}>
+  <div class="col-xs-1">
+    {{index}}
+  </div>
+  <div class="col-xs-11">
+  {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
+    {{#each afFieldNames}}
+      {{> afQuickField name=this.name options=afOptionsFromSchema}}
+    {{/each}}
+  {{/autoForm}}
+  </div>
+</div>
+</template>
+
 <template name="editQuestionnaire">
-<div class="questions">
+<div class="editQuestionnaire">
   <div class="row">
     <div class="col-xs-12">
       <h3>{{title}}
@@ -13,21 +28,11 @@
   <div class="row">
     <div class="col-xs-12 col-md-8">
       {{#if hasQuestions}}
-      {{#autoForm doc=null schema=questionnaireFormSchema id="questionnaireForm" type="normal" class="questionnaireForm"}}
-        {{#each afFieldNames}}
-          {{> afQuickField name=this.name options=afOptionsFromSchema}}
+      <div class="questions">
+        {{#each questionSchemas}}
+          {{> editQuestionnaireQuestion}}
         {{/each}}
-        <button type="button" id="validate" class="btn btn-primary">Validate</button>
-        <button type="reset" class="btn btn-warning">Reset</button>
-      {{/autoForm}}
-      <!--
-      <div id="indexButtons">
-        <div class="btn-group-vertical" role="group" aria-label="...">
-          <button type="button" class="btn btn-default">Left</button>
-          <button type="button" class="btn btn-default">Left</button>
-        </div>
       </div>
-      -->
       {{else}}
         This questionnaire contains no questions yet.
       {{/if}}
