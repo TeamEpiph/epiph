@@ -30,32 +30,33 @@ class @Question
         s.autoform = 
           type: "select-radio-inline"
           options: @choices
+      when "markdown"
+        s.type = String
+        s.label = ' ' 
+        s.autoform = 
+          type: "markdown"
     delete s.options
     s
 
   getMetaSchemaDict: ->
-    schema =
-      label:
-        label: "Question"
-        type: String
-      code:
-        label: "Code"
-        type: String
-        optional: true
-      optional:
-        label: "Optional"
-        type: Boolean
-      #tag:
-      #  label: "Tag"
-      #  type: String
-      #  optional: true
-      #legend:
-      #  label: "Scale legend"
-      #  type: String
-      #  optional: true
-      #  autoform:
-      #    afFieldInput:
-      #      type: "textarea"
+    schema = {}
+
+    if @type isnt "markdown"
+      _.extend schema, 
+        code:
+          label: "Code"
+          type: String
+          optional: true
+        label:
+          label: "Question"
+          type: String
+          autoform:
+            type: "textarea"
+        optional:
+          label: "Optional"
+          type: Boolean
+
+    _.extend schema, 
       type:
         label: "Type"
         type: String
@@ -70,7 +71,17 @@ class @Question
               {label: "Date", value: "date"},
               {label: "Date & Time", value: "dateTime"},
               {label: "Multiple Choice", value: "multipleChoice"},
+              {label: "Description (no question)", value: "markdown"},
             ]
+
+    if @type is "markdown"
+      _.extend schema, 
+        label:
+          label: "Text"
+          type: String
+          autoform:
+            type: "textarea"
+            rows: 10
 
     switch @type
       when "string", "text"

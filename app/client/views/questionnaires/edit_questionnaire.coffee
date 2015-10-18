@@ -4,7 +4,6 @@ AutoForm.hooks
       @done()
       false
 
-
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
 
@@ -24,7 +23,6 @@ Template.editQuestionnaire.helpers
     ).count() > 0
 
   questionSchemas: ->
-    console.log "questionsSChemas"
     Questions.find(
       questionnaireId: @_id
     ,

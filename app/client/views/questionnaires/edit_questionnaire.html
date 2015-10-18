@@ -1,15 +1,21 @@
 <template name="editQuestionnaireQuestion">
 <div class="question {{questionCSS}} row" data-index={{index}}>
-  <div class="col-xs-1">
-    {{index}}
-  </div>
-  <div class="col-xs-11">
-  {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
-    {{#each afFieldNames}}
-      {{> afQuickField name=this.name options=afOptionsFromSchema}}
-    {{/each}}
-  {{/autoForm}}
-  </div>
+  {{#if eq type "markdown"}}
+    <div class="col-xs-12">
+      {{#markdown}}{{label}}{{/markdown}}
+    </div>
+  {{else}}
+    <div class="col-xs-1">
+      {{index}}
+    </div>
+    <div class="col-xs-11">
+      {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
+        {{#each afFieldNames}}
+          {{> afQuickField name=this.name options=afOptionsFromSchema}}
+        {{/each}}
+      {{/autoForm}}
+    </div>
+  {{/if}}
 </div>
 </template>
 
@@ -27,15 +33,23 @@
   </div>
   <div class="row">
     <div class="col-xs-12 col-md-8">
-      {{#if hasQuestions}}
-      <div class="questions">
-        {{#each questionSchemas}}
-          {{> editQuestionnaireQuestion}}
-        {{/each}}
-      </div>
-      {{else}}
+      {{#unless hasQuestions}}
         This questionnaire contains no questions yet.
-      {{/if}}
+      {{else}}
+      <div class="questionnaire">
+        <div class="questions">
+          {{#each questionSchemas}}
+            {{> editQuestionnaireQuestion}}
+          {{/each}}	
+        </div>
+      </div>
+      {{/unless}}
+      <button id="addQuestion" class="btn btn-default">
+        Add Question <i class="fa fa-plus"></i>
+      </button>
+      <button id="addText" class="btn btn-default">
+        Add text <i class="fa fa-plus"></i>
+      </button>
     </div>
     <div class="col-xs-12 col-md-4">
       <div class="panel panel-info">
