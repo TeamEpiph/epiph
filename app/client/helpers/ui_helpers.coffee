@@ -52,3 +52,11 @@ Template.registerHelper "fileSizeSani", (size) ->
   else
     "#{(size)} B"
 
+Template.registerHelper "eq", (a,b) ->
+  a is b
+Template.registerHelper "neq", (a,b) ->
+  a isnt b
+Template.registerHelper "eq_or0", (a,b) ->
+  a is b or b is 0
+Template.registerHelper "or", (a,b) ->
+  a isnt 0 or b isnt 0
