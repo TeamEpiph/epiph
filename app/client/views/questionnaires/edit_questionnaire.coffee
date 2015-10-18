@@ -51,7 +51,7 @@ Template.editQuestionnaire.events
   "click #addQuestion": (evt) ->
     question =
       questionnaireId: @_id
-      label: "How do you feel today?"
+      label: " "
       type: "text"
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
