@@ -9,11 +9,18 @@
       {{index}}
     </div>
     <div class="col-xs-11">
-      {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
-        {{#each afFieldNames}}
-          {{> afQuickField name=this.name options=afOptionsFromSchema}}
-        {{/each}}
-      {{/autoForm}}
+      {{#if eq type "table"}}
+        <b>{{label}}</b>
+        {{#with question=this}}
+          {{> questionTable}}
+        {{/with}}
+      {{else}}
+        {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
+          {{#each afFieldNames}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+          {{/each}}
+        {{/autoForm}}
+      {{/if}}
     </div>
   {{/if}}
 </div>

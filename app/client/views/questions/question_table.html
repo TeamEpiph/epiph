@@ -1,0 +1,32 @@
+<template name="questionTable">
+<table class="table questionTable">
+  <thead>
+    <tr>
+      <td></td>
+      {{#each question.choices}}
+      <td>
+        {{label}}
+      </td>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each question.subquestions}}
+    {{#let subquestionIndex = @index}}
+    <tr>
+      <td>
+        {{this}}
+      </td>
+      {{#each ../question.choices}}
+      <td>
+        {{#with answer=../../answer subquestionIndex=subquestionIndex choice=.}}
+        <input data-subquestion_index={{subquestionIndex}} data-choice_value={{choice.value}} type="checkbox" checked={{checked}} />
+        {{/with}}
+      </td>
+      {{/each}}
+    </tr>
+    {{/let}}
+    {{/each}}
+  </tbody>
+</table>
+</template>

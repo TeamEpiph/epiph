@@ -43,14 +43,14 @@ Meteor.methods
     #TODO check if questionnaire is scheduled at visit
 
     if answer._id?
-      a = Answers.findOne _.pick answer, 'questionnaireId', 'patientId', 'visitId', 'questionId', '_id'
+      a = Answers.findOne _.pick answer, 'visitId', 'questionId', '_id'
       throw new Meteor.Error(403, "answer to update can't be found.") unless answer?
       
       Answers.update answer._id,
         $set:
-          answer: answer.answer
+          value: answer.value
       answer._id
     else
-      answer = _.pick answer, 'visitId', 'questionId', 'answer'
+      answer = _.pick answer, 'visitId', 'questionId', 'value'
       _id = Answers.insert answer
       _id

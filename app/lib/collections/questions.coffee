@@ -30,6 +30,12 @@ class @Question
         s.autoform = 
           type: "select-radio-inline"
           options: @choices
+      when "table"
+        s.type = Number
+        #s.autoform = 
+        #  options: @choices
+        #  afFormGroup:
+        #    template: "bootstrap3_table"
       when "markdown"
         s.type = String
         s.label = ' ' 
@@ -71,6 +77,7 @@ class @Question
               {label: "Date", value: "date"},
               {label: "Date & Time", value: "dateTime"},
               {label: "Multiple Choice", value: "multipleChoice"},
+              {label: "Table", value: "table"},
               {label: "Description (no question)", value: "markdown"},
             ]
 
@@ -128,7 +135,14 @@ class @Question
       #      optional: true
       #      #autoform:
       #      #  type: "bootstrap-datetimepicker"
-      when "multipleChoice"
+      when "table"
+        _.extend schema, 
+          subquestions:
+            type: [String]
+            label: "Subquestions"
+            minCount: 1
+    switch @type
+      when "multipleChoice", "table"
         _.extend schema, 
           choices:
             type: [Object]

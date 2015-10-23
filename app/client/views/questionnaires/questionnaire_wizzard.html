@@ -8,18 +8,35 @@
         </div>
 
         <div class="modal-body">
-          {{#if questionFormSchema}}
-          {{#autoForm doc=doc collection="Answers" schema=questionFormSchema id="questionForm" type="normal" class="questionForm" fields="answer"}}
-            {{#each afFieldNames}}
-              {{> afQuickField name=this.name options=afOptionsFromSchema}}
-            {{/each}}
-            <button type="submit" class="btn btn-primary pull-right">Next</button>
-            <button type="button" id="back" class="btn btn-primary">Back</button>
-            <button type="reset" class="btn btn-warning">Reset</button>
-          {{/autoForm}}
+          <!-- augment with question and answer -->
+          {{#with patient=patient questionnaire=questionnaire visit=visit question=question answer=answer}}
+            {{#if eq question.type "markdown"}}
+              {{#markdown}}{{question.label}}{{/markdown}}
+            {{else}}
+              {{#if eq question.type "table"}}
+                <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
+                  <div class="form-group" data-required="true">
+                    <label class="control-label">{{title}}</label>
+                    {{> questionTable}}
+                    <button type="submit" class="btn btn-primary pull-right">Next</button>
+                    <button type="button" id="back" class="btn btn-primary">Back</button>
+                    <button type="reset" class="btn btn-warning">Reset</button>
+                  </div>
+                </form>
+              {{else}}
+                {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
+                  {{#each afFieldNames}}
+                    {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                  {{/each}}
+                  <button type="submit" class="btn btn-primary pull-right">Next</button>
+                  <button type="button" id="back" class="btn btn-primary">Back</button>
+                  <button type="reset" class="btn btn-warning">Reset</button>
+                {{/autoForm}}
+              {{/if}}
+            {{/if}}
           {{else}}
             Question not found, sorry!
-          {{/if}}
+          {{/with}}
         </div>
 
         <div class="modal-footer">
