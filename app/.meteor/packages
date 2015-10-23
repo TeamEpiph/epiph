@@ -4,7 +4,6 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-platform
 coffeescript
 accounts-password
 alanning:roles
@@ -15,7 +14,6 @@ jabbslad:basic-auth
 less
 meteorhacks:aggregate
 iron:router
-joshowens:accounts-entry
 ian:accounts-ui-bootstrap-3
 sacha:spin
 matb33:collection-hooks
@@ -32,7 +30,6 @@ mrt:jquery-ui-sortable
 meteorhacks:npm
 
 
-npm-container
 d3js:d3
 workman:x-editable-reactive-template
 cfs:standard-packages
@@ -44,3 +41,24 @@ reactive-var
 mizzao:timesync
 reywood:publish-composite
 q42:autoform-markdown
+aldeed:template-extension
+
+
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+jquery
+tracker
+logging
+reload
+random
+ejson
+spacebars
+check
+
+
+npm-container
+joshowens:accounts-entry-1.2
