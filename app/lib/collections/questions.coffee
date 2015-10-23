@@ -26,16 +26,16 @@ class @Question
         s.autoform = 
           type: "bootstrap-datetimepicker"
       when "multipleChoice"
-        s.type = Number
         s.autoform = 
-          type: "select-radio-inline"
           options: @choices
+        if @mode is "radio"
+          s.type = Number
+          s.autoform.type = "select-radio-inline"
+        else if @mode is "checkbox"
+          s.type = [Number]
+          s.autoform.type = "select-checkbox-inline"
       when "table"
         s.type = Number
-        #s.autoform = 
-        #  options: @choices
-        #  afFormGroup:
-        #    template: "bootstrap3_table"
       when "markdown"
         s.type = String
         s.label = ' ' 
@@ -81,6 +81,21 @@ class @Question
               {label: "Description (no question)", value: "markdown"},
             ]
 
+    if @type is "multipleChoice" or "table"
+      _.extend schema, 
+        mode:
+          label: "Mode"
+          type: String
+          autoform:
+            type: "select-radio-inline"
+            options: [
+              label: "single selection (radios)"
+              value: "radio"
+            ,
+              label: "multiple selection (checkboxes)"
+              value: "checkbox"
+            ]
+
     if @type is "markdown"
       _.extend schema, 
         label:
@@ -89,6 +104,11 @@ class @Question
           autoform:
             type: "textarea"
             rows: 10
+
+    #_.extend schema, 
+    #  break:
+    #    label: "Break after this question"
+    #    type: Boolean
 
     switch @type
       when "string", "text"

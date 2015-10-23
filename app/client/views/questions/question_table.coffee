@@ -8,3 +8,6 @@ Template.questionTable.helpers
       values.subquestionIndex is subquestionIndex and
       values.choiceValues.indexOf(choiceValue) > -1
     )?
+
+  type: ->
+    @question.mode

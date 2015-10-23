@@ -19,8 +19,8 @@
       </td>
       {{#each ../question.choices}}
       <td>
-        {{#with answer=../../answer subquestionIndex=subquestionIndex choice=.}}
-        <input data-subquestion_index={{subquestionIndex}} data-choice_value={{choice.value}} type="checkbox" checked={{checked}} />
+        {{#with answer=../../answer question=../../question subquestionIndex=subquestionIndex choice=.}}
+        <input data-subquestion_index={{subquestionIndex}} data-choice_value={{choice.value}} name={{subquestionIndex}} type={{type}} checked={{checked}} />
         {{/with}}
       </td>
       {{/each}}
