@@ -66,7 +66,7 @@ class @Visit
           visitId: visit._id
           questionId: question._id
         .fetch()
-        question.answered = answers.length > 0
+        question.answered = answers.length > 0 or question.type is "markdown"
         question.answers = answers 
         if question.answered 
           quest.numAnswered += 1
