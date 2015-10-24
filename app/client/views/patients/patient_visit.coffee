@@ -18,11 +18,6 @@ Template.patientVisit.helpers
     else v
 
   #this visit
-  canStart: ->
-    patient = Template.parentData().patient
-    !@endedAt? and !patient.runningVisitId?
-
-  #this visit
   showEmpaticaRecorder: ->
     @recordPhysicalData and Meteor.isCordova
 
@@ -50,17 +45,6 @@ Template.patientVisit.helpers
             label: 'Choose file'
     new SimpleSchema(schema)
   
-
-Template.patientVisit.events
-  "click .startVisit": (evt) ->
-    Meteor.call "startVisit", @_id, (error) ->
-      throwError error if error?
-      return
-  "click .stopVisit": (evt) ->
-    Meteor.call "stopVisit", @_id, (error) ->
-      throwError error if error?
-      return
-
 
 Template.questionnaireRow.helpers
   questionnaireCSS: ->

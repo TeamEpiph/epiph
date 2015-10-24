@@ -24,8 +24,6 @@ Meteor.methods
     visit = Visits.findOne
       _id:  answer.visitId
     throw new Meteor.Error(403, "visit can't be found.") unless visit?
-    throw new Meteor.Error(403, "visit must be started first") unless visit.startedAt?
-    throw new Meteor.Error(403, "visit must be running, this visit ended already") unless !visit.endedAt?
 
     patient = Patients.findOne
       _id:  visit.patientId
