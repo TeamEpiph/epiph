@@ -1,4 +1,13 @@
-questionIndex = new ReactiveVar(0)
+_questionIndex = new ReactiveVar(0)
+_numQuestions = new ReactiveVar(0)
+
+nextQuestion = ->
+  questionIndex = _questionIndex.get()
+  unless questionIndex is _numQuestions.get()
+    _questionIndex.set questionIndex+1
+  else
+    Modal.hide('viewQuestionnaire') 
+
 
 AutoForm.hooks
   questionForm:
@@ -9,20 +18,23 @@ AutoForm.hooks
       unless currentDoc.value? and currentDoc.value is insertDoc.value
         Meteor.call "upsertAnswer", insertDoc, (error) ->
           throwError error if error?
-
-      questionIndex.set questionIndex.get()+1
+      nextQuestion()
       @done()
       false
 
 Template.questionnaireWizzard.created = ->
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
-  questionIndex.set 1
+  count = Questions.find
+    questionnaireId: @data.questionnaire._id
+  .count()
+  _numQuestions.set count
+  _questionIndex.set 1
 
 Template.questionnaireWizzard.helpers
   question: ->
     q = Questions.findOne
       questionnaireId: @questionnaire._id
-      index: questionIndex.get()
+      index: _questionIndex.get()
     TemplateVar.set("questionId", q._id)
     q
 
@@ -62,7 +74,7 @@ Template.questionnaireWizzard.helpers
       questionId: {$in: questionIds}
     .forEach (answer) ->
       answers[answer.questionId] = answer
-    activeIndex = questionIndex.get()
+    activeIndex = _questionIndex.get()
     Questions.find
       questionnaireId: @questionnaire._id
     ,
@@ -77,13 +89,13 @@ Template.questionnaireWizzard.helpers
 
 Template.questionnaireWizzard.events
   "click #back": (evt, tmpl) ->
-    index = questionIndex.get()
+    index = _questionIndex.get()
     index = index-1 if index > 0
-    questionIndex.set index
+    _questionIndex.set index
     false
 
   "click .jumpToQuestion": (evt) ->
-    questionIndex.set @index
+    _questionIndex.set @index
     false
     
   "submit #questionTableForm": (evt) ->
@@ -108,5 +120,5 @@ Template.questionnaireWizzard.events
     console.log answer
     Meteor.call "upsertAnswer", answer, (error) ->
       throwError error if error?
-      questionIndex.set questionIndex.get()+1
+      nextQuestion()
     false
