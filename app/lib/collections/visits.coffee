@@ -72,3 +72,12 @@ class @Visit
 
 Visits.before.insert BeforeInsertTimestampHook
 Visits.before.update BeforeUpdateTimestampHook
+
+#TODO migrate to method calls
+Visits.allow
+	insert: (userId, doc) ->
+		true
+	update: (userId, doc, fieldNames, modifier) ->
+		true
+	remove: (userId, doc) ->
+		true

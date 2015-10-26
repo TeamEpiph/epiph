@@ -43,6 +43,7 @@ Template.patientVisits.events
         title: @visit.title
         questionnaireIds: @visit.questionnaireIds
         recordPhysicalData: @visit.recordPhysicalData
+      #TODO migrate to method call
       id = Visits.insert visit
       visit = Visits.findOne id
 

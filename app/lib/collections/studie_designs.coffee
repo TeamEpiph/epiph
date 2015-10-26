@@ -10,15 +10,6 @@ class @StudyDesign
 StudyDesigns.before.insert BeforeInsertTimestampHook
 StudyDesigns.before.update BeforeUpdateTimestampHook
 
-#FIXME
-StudyDesigns.allow
-  insert: (userId, doc) ->
-    false
-  update: (userId, doc, fieldNames, modifier) ->
-    true
-  remove: (userId, doc) ->
-    false 
-
 schema =
   'title':
     type: String
@@ -56,6 +47,13 @@ Meteor.methods
         title: "baseline"
       ]
     _id
+
+  "changeStudyDesignTitle": (_id, title) ->
+    check(_id, String)
+    check(title, String)
+    #TODO: check if allowed
+    StudyDesigns.update _id,
+      $set: {title: title}
 
   "removeStudyDesign": (_id) ->
     #TODO: check if allowed

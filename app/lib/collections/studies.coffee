@@ -16,24 +16,21 @@ class @Study
 Studies.before.insert BeforeInsertTimestampHook
 Studies.before.update BeforeUpdateTimestampHook
 
-#FIXME
-Studies.allow
-  insert: (userId, doc) ->
-    false
-  update: (userId, doc, fieldNames, modifier) ->
-    true
-  remove: (userId, doc) ->
-    false
-
-#TODO: attach a schema
-
 Meteor.methods
   "createStudy": (title) ->
+    #TODO: check if allowed
     _id = Studies.insert
       title: "new Study"
       key: "new key"
       creatorId: Meteor.userId()
     _id
+
+  "changeStudyTitle": (_id, title) ->
+    check(_id, String)
+    check(title, String)
+    #TODO: check if allowed
+    Studies.update _id,
+      $set: {title: title}
 
   "removeStudy": (_id) ->
     #TODO: check if allowed

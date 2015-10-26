@@ -183,20 +183,6 @@ class @Question
 Questions.before.insert BeforeInsertTimestampHook
 Questions.before.update BeforeUpdateTimestampHook
 
-Questions.allow
-  insert: (userId, doc) ->
-    questionnaire = Questionnaires.findOne
-      _id: doc.questionnaireId
-    questionnaire.creatorId is userId
-  update: (userId, doc, fieldNames, modifier) ->
-    questionnaire = Questionnaires.findOne
-      _id: doc.questionnaireId
-    questionnaire.creatorId is userId
-  remove: (userId, doc) ->
-    questionnaire = Questionnaires.findOne
-      _id: doc.questionnaireId
-    questionnaire.creatorId is userId
-
 Meteor.methods
   insertQuestion: (question) ->
     check(question.questionnaireId, String)

@@ -25,3 +25,21 @@ if Meteor.isServer
 
 Patients.before.insert BeforeInsertTimestampHook
 Patients.before.update BeforeUpdateTimestampHook
+
+Meteor.methods
+  'updatePatients': (ids, update) ->
+    check(ids, [String])
+    check(update, Object)
+    #TODO check if allowed
+
+    #pick whitelisted keys
+    update = _.pickDeep update,
+    "$set.therapistId",
+    "$set.studyDesignId",
+    "$set.hrid",
+    "$unset.therapistId",
+    "$unset.studyDesignId",
+    "$unset.hrid"
+
+    ids.forEach (id) ->
+      Patients.update _id: id, update

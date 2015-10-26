@@ -1,9 +1,13 @@
 AutoForm.hooks
   editSessionPatientsForm:
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      Session.get('editingPatientIds').forEach (id) ->
-        Patients.update _id: id, updateDoc
-      @done()
+      self = @
+      ids = Session.get 'editingPatientIds'
+      if ids.length > 1
+        updateDoc = _.pickDeep updateDoc, "$set.therapistId", "$set.studyDesignId", "$set. hrid"
+      Meteor.call "updatePatients", Session.get('editingPatientIds'), updateDoc, (error) ->
+        self.done()
+        throwError error if error?
       false
 
 Template.editStudyPatients.rendered = ->

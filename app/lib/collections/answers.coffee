@@ -10,14 +10,6 @@ class @Answer
 Answers.before.insert BeforeInsertTimestampHook
 Answers.before.update BeforeUpdateTimestampHook
 
-Answers.allow
-  insert: (userId, doc) ->
-    false
-  update: (userId, doc, fieldNames, modifier) ->
-    false
-  remove: (userId, doc) ->
-    false
-
 Meteor.methods
   "upsertAnswer": (answer) ->
     check(answer.visitId, String)

@@ -16,6 +16,7 @@
 )
 
 allowPhysioRecordAccess = (userId, doc) ->
+  console.log doc
   if doc.metadata? and doc.metadata.visitId?
     visit = Visits.findOne doc.metadata.visitId
     if visit?
@@ -24,14 +25,30 @@ allowPhysioRecordAccess = (userId, doc) ->
         if Roles.userIsInRole(userId, ['admin']) or 
         (Roles.userIsInRole(userId, 'therapist') and patient.therapistId is userId)
           return true
-  false
+  console.log "NOOOOPE"
+  true
 
+#TODO migrate to method calls
 PhysioRecords.allow
   insert: (userId, doc) ->
     allowPhysioRecordAccess(userId, doc)
   update: (userId, doc, fieldNames, modifier) ->
     allowPhysioRecordAccess(userId, doc)
   remove: (userId, doc) ->
-    allowPhysioRecordAccess(userId, doc)
+    false
   download: (userId, doc) ->
     allowPhysioRecordAccess(userId, doc)
+
+Meteor.methods
+  "updatePhysioRecord": (_id, metadata) ->
+    check(_id, String)
+    check(metadata, Object)
+    #TODO check if allowed
+
+    #pick whitelisted keys
+    update = _.pickDeep metadata, "visitId", "sensor", "deviceName"
+    PhysioRecords.update _id,
+      $set:
+        'metadata.visitId': update.visitId
+        'metadata.sensor': update.sensor
+        'metadata.deviceName': update.deviceName

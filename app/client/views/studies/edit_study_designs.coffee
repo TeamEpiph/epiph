@@ -12,9 +12,8 @@ Template.editStudyDesigns.helpers
     value: @title
     emptytext: "no title"
     success: (response, newVal) ->
-      StudyDesigns.update self._id,
-        $set: {title: newVal}
-      return
+      Meteor.call 'changeStudyDesignTitle', self._id, newVal, (error) ->
+        throwError error if error?
       return
 
   designs: ->

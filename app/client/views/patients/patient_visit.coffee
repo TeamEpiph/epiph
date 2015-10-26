@@ -1,12 +1,14 @@
 AutoForm.hooks
   uploadPhysioRecordForm:
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      PhysioRecords.update insertDoc.physioRecordId,
-        $set:
-          'metadata.visitId': currentDoc._id
-          'metadata.sensor': insertDoc.sensor
-          'metadata.deviceName': insertDoc.deviceName
-      @done()
+      metadata =
+        visitId: currentDoc._id
+        sensor: insertDoc.sensor
+        deviceName: insertDoc.deviceName
+      self = @
+      Meteor.call "updatePhysioRecordMetadata", insertDoc.physioRecordId, metadata, (error) ->
+        self.done()
+        throwError error if error?
       false
 
 Template.patientVisit.helpers
@@ -58,4 +60,8 @@ Template.questionnaireRow.events
       alert("This visit must be running to answer it's questionnaires.")
     else
       Modal.show('questionnaireWizzard', @)
+    false
+
+  "click .showQuestionnaire": (evt, tmpl) ->
+    Modal.show('viewQuestionnaire', @)
     false
