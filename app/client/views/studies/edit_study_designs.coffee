@@ -15,13 +15,6 @@ Template.editStudyDesigns.helpers
       StudyDesigns.update self._id,
         $set: {title: newVal}
       return
-  keyEO: ->
-    self = @
-    value: @key
-    emptytext: "no key"
-    success: (response, newVal) ->
-      StudyDesigns.update self._id,
-        $set: {key: newVal}
       return
 
   designs: ->
