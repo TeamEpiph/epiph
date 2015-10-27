@@ -16,6 +16,13 @@ class @Questionnaire
 Questionnaires.before.insert BeforeInsertTimestampHook
 Questionnaires.before.update BeforeUpdateTimestampHook
 
+Questionnaires.allow
+  update: (userId, doc, fieldNames, modifier) ->
+    #TODO check if allowed
+    notAllowedFields = _.without fieldNames, 'title', 'key', 'updatedAt'
+    return false if notAllowedFields.length > 0
+    true
+
 Meteor.methods
   "createQuestionnaire": (title) ->
     _id = Questionnaires.insert
