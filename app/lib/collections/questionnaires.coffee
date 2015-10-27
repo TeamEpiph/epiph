@@ -6,7 +6,7 @@ class @Questionnaire
     Meteor.users.findOne _id: @creatorId
 
   editingNotAllowed: ->
-    Meteor.userId() isnt @creatorId
+    false
 
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->
