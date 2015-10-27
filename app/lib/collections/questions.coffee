@@ -202,7 +202,6 @@ Meteor.methods
     check(question.questionnaireId, String)
     questionnaire = Questionnaires.findOne
       _id:  question.questionnaireId
-    throw new Meteor.Error(403, "Only the creator of the questionnaire is allowed to edit it's questions.") unless questionnaire.creatorId is Meteor.userId()
 
     check(question.label, String)
     check(question.type, String)
@@ -223,7 +222,6 @@ Meteor.methods
     question = Questions.findOne _id
     questionnaire = Questionnaires.findOne
       _id:  question.questionnaireId
-    throw new Meteor.Error(403, "Only the creator of the questionnaire is allowed to edit it's questions.") unless questionnaire.creatorId is Meteor.userId()
 
     Questions.remove _id
 
@@ -243,7 +241,6 @@ Meteor.methods
 
     questionnaire = Questionnaires.findOne
       _id:  questionnaireId
-    throw new Meteor.Error(403, "Only the creator of the questionnaire is allowed to edit it's questions.") unless questionnaire.creatorId is Meteor.userId()
 
     question = Questions.findOne
       questionnaireId: questionnaireId
