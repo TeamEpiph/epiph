@@ -81,7 +81,7 @@ class @Question
               {label: "Description (no question)", value: "markdown"},
             ]
 
-    if @type is "multipleChoice" or "table"
+    if @type is "multipleChoice" or @type is "table"
       _.extend schema, 
         mode:
           label: "Mode"
