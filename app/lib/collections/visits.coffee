@@ -73,11 +73,33 @@ class @Visit
 Visits.before.insert BeforeInsertTimestampHook
 Visits.before.update BeforeUpdateTimestampHook
 
-#TODO migrate to method calls
-Visits.allow
-	insert: (userId, doc) ->
-		true
-	update: (userId, doc, fieldNames, modifier) ->
-		true
-	remove: (userId, doc) ->
-		true
+Meteor.methods
+  "initVisit": (designVisitId, patientId) ->
+    check designVisitId, String
+    check patientId, String
+
+    patient = Patients.findOne
+      _id:  patientId
+    throw new Meteor.Error(403, "patient can't be found.") unless patient?
+    throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+
+    # use query from Patient
+    studyDesign = patient.studyDesign()
+    throw new Meteor.Error(403, "studyDesign can't be found.") unless studyDesign?
+
+    visitTemplate = _.find studyDesign.visits, (visit) ->
+      return visit if visit._id is designVisitId
+      false
+    throw new Meteor.Error(403, "studyDesign visit can't be found.") unless visitTemplate?
+
+    #we copy the data here from the visit template to
+    #an actuall existing visit here
+    visit = 
+      patientId: patient._id
+      designVisitId: visitTemplate._id
+      title: visitTemplate.title
+      questionnaireIds: visitTemplate.questionnaireIds
+      recordPhysicalData: visitTemplate.recordPhysicalData
+
+    _id = Visits.insert visit
+    _id

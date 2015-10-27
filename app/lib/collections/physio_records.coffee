@@ -25,10 +25,8 @@ allowPhysioRecordAccess = (userId, doc) ->
         if Roles.userIsInRole(userId, ['admin']) or 
         (Roles.userIsInRole(userId, 'therapist') and patient.therapistId is userId)
           return true
-  console.log "NOOOOPE"
   true
 
-#TODO migrate to method calls
 PhysioRecords.allow
   insert: (userId, doc) ->
     allowPhysioRecordAccess(userId, doc)

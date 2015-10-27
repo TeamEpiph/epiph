@@ -29,6 +29,12 @@ schema =
 #TODO: attach schema
 #StudyDesigns.attachSchema new SimpleSchema(schema)
 
+StudyDesigns.allow
+  update: (userId, doc, fieldNames, modifier) ->
+    #TODO check if allowed
+    notAllowedFields = _.without fieldNames, 'title', 'updatedAt'
+    return false if notAllowedFields.length > 0
+    true
 
 #TODO secure methods
 Meteor.methods
@@ -47,13 +53,6 @@ Meteor.methods
         title: "baseline"
       ]
     _id
-
-  "changeStudyDesignTitle": (_id, title) ->
-    check(_id, String)
-    check(title, String)
-    #TODO: check if allowed
-    StudyDesigns.update _id,
-      $set: {title: title}
 
   "removeStudyDesign": (_id) ->
     #TODO: check if allowed

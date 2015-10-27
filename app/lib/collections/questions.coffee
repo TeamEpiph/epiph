@@ -183,6 +183,16 @@ class @Question
 Questions.before.insert BeforeInsertTimestampHook
 Questions.before.update BeforeUpdateTimestampHook
 
+#TODO check if allowed
+#TODO check consistency
+Questions.allow
+  insert: (userId, doc) ->
+    true
+  update: (userId, doc, fieldNames, modifier) ->
+    true
+  remove: (userId, doc) ->
+    true
+
 Meteor.methods
   insertQuestion: (question) ->
     check(question.questionnaireId, String)

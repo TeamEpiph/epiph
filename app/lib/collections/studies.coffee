@@ -16,21 +16,20 @@ class @Study
 Studies.before.insert BeforeInsertTimestampHook
 Studies.before.update BeforeUpdateTimestampHook
 
+Studies.allow
+  update: (userId, doc, fieldNames, modifier) ->
+    #TODO check if allowed
+    notAllowedFields = _.without fieldNames, 'title', 'updatedAt'
+    return false if notAllowedFields.length > 0
+    true
+
 Meteor.methods
   "createStudy": (title) ->
     #TODO: check if allowed
     _id = Studies.insert
       title: "new Study"
-      key: "new key"
       creatorId: Meteor.userId()
     _id
-
-  "changeStudyTitle": (_id, title) ->
-    check(_id, String)
-    check(title, String)
-    #TODO: check if allowed
-    Studies.update _id,
-      $set: {title: title}
 
   "removeStudy": (_id) ->
     #TODO: check if allowed

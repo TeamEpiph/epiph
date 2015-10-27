@@ -12,8 +12,8 @@ Template.editStudy.helpers
     value: @title
     emptytext: "no title"
     success: (response, newVal) ->
-      Meteor.call 'changeStudyTitle', self._id, newVal, (error) ->
-        throwError error if error?
+      Studies.update self._id,
+        $set: {title: newVal}
       return
 
   tabs: ->
