@@ -161,6 +161,10 @@ class @Question
             type: [String]
             label: "Subquestions"
             minCount: 1
+          'subquestions.$':
+            type: String
+            autoform:
+              type: "textarea"
     switch @type
       when "multipleChoice", "table"
         _.extend schema, 
