@@ -56,10 +56,7 @@ Template.questionnaireRow.helpers
 Template.questionnaireRow.events
   #this: {questionnaire, visit, patient}
   "click .answerQuestionnaire": (evt, tmpl) ->
-    if !@patient.runningVisitId? or @patient.runningVisitId isnt @visit._id
-      alert("This visit must be running to answer it's questionnaires.")
-    else
-      Modal.show('questionnaireWizzard', @)
+    Modal.show('questionnaireWizzard', @)
     false
 
   "click .showQuestionnaire": (evt, tmpl) ->
