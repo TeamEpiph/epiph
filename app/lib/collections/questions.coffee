@@ -5,8 +5,6 @@ class @Question
   getSchemaDict: ->
     s = _.pickDeep @, 'type', 'label', 'optional', 'min', 'max', 'decimal', 'options', 'options.label', 'options.value'
     switch @type
-      when "string"
-        s.type = String
       when "text"
         s.type = String
         s.autoform = 
@@ -70,7 +68,6 @@ class @Question
           type: "select"
           options: ->
             [
-              {label: "String", value: "string"},
               {label: "Text", value: "text"},
               {label: "Number", value: "number"},
               {label: "Boolean", value: "boolean"},
