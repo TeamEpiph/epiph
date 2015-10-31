@@ -106,17 +106,18 @@ Template.questionnaireWizzard.events
       questionId: @question._id
       value: []
       _id: @answer._id if @answer?
-    for subquestion, i in @question.subquestions
-      inputs = $("#questionTableForm input[data-subquestion_index=#{i}]:checked")
-      choiceValues=[]
-      inputs.each ->
+    for subquestion in @question.subquestions
+      inputs = $("#questionTableForm input[data-subquestion_code=#{subquestion.code}]:checked")
+      checkedChoices=[]
+      inputs.each -> #checked choices
         input = $(@)
-        choiceValue = input.data('choice_value')
-        choiceValues.push choiceValue
-      if choiceValues.length > 0
+        checkedChoices.push 
+          value: input.data('choice_value')
+          variable: input.data('choice_variable')
+      if checkedChoices.length > 0
         answer.value.push 
-          subquestionIndex: i
-          choiceValues: choiceValues
+          code: subquestion.code
+          checkedChoices: checkedChoices
     console.log answer
     Meteor.call "upsertAnswer", answer, (error) ->
       throwError error if error?

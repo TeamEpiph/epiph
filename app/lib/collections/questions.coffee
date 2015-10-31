@@ -148,13 +148,15 @@ class @Question
       when "table"
         _.extend schema, 
           subquestions:
-            type: [String]
+            type: [Object]
             label: "Subquestions"
             minCount: 1
-          'subquestions.$':
+          'subquestions.$.label':
             type: String
             autoform:
               type: "textarea"
+          'subquestions.$.code':
+            type: String
     switch @type
       when "multipleChoice", "table"
         _.extend schema, 
@@ -166,6 +168,8 @@ class @Question
             type: String
           'choices.$.value':
             type: Number
+          'choices.$.variable':
+            type: String
     schema
     
 
