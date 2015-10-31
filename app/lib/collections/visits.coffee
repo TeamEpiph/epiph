@@ -46,6 +46,7 @@ class @Visit
       quest.numAnswered = 0
       questions = Questions.find
         questionnaireId: quest._id
+        type: {$ne: "markdown"} #filter out descriptions
       .map (question) ->
         answers = Answers.find
           visitId: visit._id
