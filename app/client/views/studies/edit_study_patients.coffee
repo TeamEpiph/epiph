@@ -88,7 +88,7 @@ Template.editStudyPatients.helpers
           label: "HRID"
           type: String
           optional: true
-          max: 5
+          max: 8
     new SimpleSchema(schema)
 
 Template.editStudyPatients.events
