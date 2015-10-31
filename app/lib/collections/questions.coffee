@@ -111,14 +111,6 @@ class @Question
     #    type: Boolean
 
     switch @type
-      when "string", "text"
-        _.extend schema, 
-          min:
-            type: Number
-            optional: true
-          max:
-            type: Number
-            optional: true
       when "number"
         _.extend schema, 
           min:
