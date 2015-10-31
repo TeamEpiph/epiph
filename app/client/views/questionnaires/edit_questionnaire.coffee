@@ -57,6 +57,15 @@ Template.editQuestionnaire.events
       throwError error if error?
       Session.set 'selectedQuestionId', _id
 
+  "click #addText": (evt) ->
+    question =
+      questionnaireId: @_id
+      label: " "
+      type: "markdown"
+    Meteor.call "insertQuestion", question, (error, _id) ->
+      throwError error if error?
+      Session.set 'selectedQuestionId', _id
+
   "click #copyQuestion": (evt) ->
     sid = Session.get 'selectedQuestionId'
     selectedQuestion = Questions.findOne
