@@ -54,6 +54,7 @@ class @Question
         label:
           label: "Question"
           type: String
+          optional: (@type is "table")
           autoform:
             type: "textarea"
         optional:
