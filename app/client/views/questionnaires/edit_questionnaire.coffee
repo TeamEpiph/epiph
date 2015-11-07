@@ -4,8 +4,20 @@ AutoForm.hooks
       @done()
       false
 
+
+resizeQuestionEditor = ->
+  qe = $('#questionEditor')
+  parent = qe.parent() 
+  qe.width( parent.width() )
+
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
+  $(window).resize(resizeQuestionEditor)
+  resizeQuestionEditor()
+
+Template.editQuestionnaire.destroyed = ->
+  $(window).off("resize", resizeQuestionEditor)
+
 
 Template.editQuestionnaire.helpers
   questionnaireSchema: ->
