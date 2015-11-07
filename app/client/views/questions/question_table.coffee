@@ -1,3 +1,10 @@
+Template.questionTable.rendered = ->
+  max = 0
+  @$('.question-table td:not(:first-child)').each ->
+    width = $(this).width()
+    max = width if width > max
+  @$('.question-table td:not(:first-child)').css('width', max)
+
 Template.questionTable.helpers
   checked: ->
     code = @subquestion.code
