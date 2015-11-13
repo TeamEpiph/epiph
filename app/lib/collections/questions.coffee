@@ -52,7 +52,7 @@ class @Question
           type: String
           optional: true
         label:
-          label: "Question"
+          label: if (@type is "table") then "Title" else "Question"
           type: String
           optional: (@type is "table")
           autoform:
