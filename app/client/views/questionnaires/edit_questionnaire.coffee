@@ -12,6 +12,11 @@ resizeQuestionEditor = ->
 
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
+  #qe = $('#questionEditor')
+  #qe.affix
+  #  offset:
+  #    top: 200
+  #    bottom: 10
   $(window).resize(resizeQuestionEditor)
   resizeQuestionEditor()
 
