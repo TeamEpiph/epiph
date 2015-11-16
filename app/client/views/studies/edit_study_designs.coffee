@@ -1,11 +1,3 @@
-AutoForm.hooks
-  generateVisitsForm:
-    onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      Meteor.call "addMultipleStudyDesignVisits", insertDoc, (error) ->
-        throwError error if error?
-      @done()
-      false
-
 Template.editStudyDesigns.helpers
   titleEO: ->
     self = @
@@ -68,44 +60,6 @@ Template.editStudyDesigns.helpers
     qIds = _.union(qIds, (Session.get('editStudyDesignsQuestionnaireIds') or []) )
     Questionnaires.find
       _id: {$in: qIds}
-
-  generateVisitsSchema: ->
-    schema =
-      studyDesignId:
-        type: String
-        defaultValue: @_id
-        autoform:
-          type: "hidden"
-          label: false
-      title:
-        label: "Title"
-        type: String
-        optional: false
-      key:
-        label: "Key"
-        type: String
-        optional: false
-      startDay:
-        label: "start at day"
-        type: Number
-        optional: false
-        defaultValue: 1
-        min: 1
-      numVisits:
-        label: "number of visits"
-        type: Number
-        optional: false
-        defaultValue: 1
-        min: 1
-        max: 120
-      daysBetween:
-        label: "days between visits"
-        type: Number
-        optional: false
-        defaultValue: 1
-        min: 1
-    new SimpleSchema(schema)
-
       
 #this: { studyDesign:StudyDesign visit:StudyDesign.visit questionnaire:Questionnaire }
 Template.editVisitQuestionnaireTd.helpers

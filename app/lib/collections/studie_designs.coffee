@@ -87,36 +87,6 @@ Meteor.methods
       $push:
         visits: visit
 
-  "addMultipleStudyDesignVisits": (params) ->
-    check params.studyDesignId, String
-    check params.title, String
-    check params.key, String
-    check params.startDay, Number
-    check params.numVisits, Number
-    check params.daysBetween, Number
-
-    design = StudyDesigns.findOne
-      _id: params.studyDesignId
-    throw new Meteor.Error(500, "StudyDesign #{params.studyDesignId} not found!") unless design?
-
-    visits = []
-    groupId = new Meteor.Collection.ObjectID()._str
-    for i in [0...params.numVisits] 
-      title = "#{params.title} #{i+1}"
-      key = "#{params.key}-#{i+1}"
-      visit = 
-        _id: new Meteor.Collection.ObjectID()._str
-        groupId: groupId
-        day: params.startDay+(i*params.daysBetween)
-        title: title
-        key: key
-      visits.push visit
-    
-    StudyDesigns.update
-      _id: design._id
-    ,
-      $pushAll:
-        visits: visits
 
       
   "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule, doAllOfGroup) ->
