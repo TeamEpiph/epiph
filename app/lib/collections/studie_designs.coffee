@@ -71,16 +71,16 @@ Meteor.methods
     preVisit = design.visits[design.visits.length-1]
     day = preVisit.day+days
     if preVisit.day is day
-      throw new Meteor.Error(500, "A visit on this day already exists") 
+      throw new Meteor.Error(500, "A visit on this day already exists")
 
     title = "visit #{design.visits.length}"
     if design.visits.length is 0
       title = "baseline"
-    visit = 
+    visit =
       _id: new Meteor.Collection.ObjectID()._str
       day: day
       title: title
-       
+
     StudyDesigns.update
       _id: studyDesignId
     ,
@@ -88,7 +88,6 @@ Meteor.methods
         visits: visit
 
 
-      
   "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule, doAllOfGroup) ->
     check visitId, String
     check questionnaireId, String
@@ -97,7 +96,7 @@ Meteor.methods
       n = StudyDesigns.update
         _id: studyDesignId
       ,
-        $push: 
+        $push:
           questionnaireIds: questionnaireId
       throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign found") unless n > 0
     n = 0
@@ -107,11 +106,11 @@ Meteor.methods
 
     if doSchedule
       n = StudyDesigns.update find,
-        $push: 
+        $push:
           'visits.$.questionnaireIds': questionnaireId
     else
       n = StudyDesigns.update find,
-        $pull: 
+        $pull:
           'visits.$.questionnaireIds': questionnaireId
     throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign with that visit found") unless n > 0
 
@@ -122,6 +121,6 @@ Meteor.methods
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $set: 
+      $set:
         'visits.$.recordPhysicalData': doSchedule
     throw new Meteor.Error(500, "recordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
