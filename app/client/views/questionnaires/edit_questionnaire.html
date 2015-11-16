@@ -15,11 +15,18 @@
           {{> questionTable}}
         {{/with}}
       {{else}}
+        {{#if eq type "table_polar"}}
+          <b>{{label}}</b>
+          {{#with question=this}}
+            {{> questionTablePolar}}
+          {{/with}}
+        {{else}}
         {{#autoForm doc=null schema=schema id="questionnaireForm" type="normal" class="questionnaireForm"}}
           {{#each afFieldNames}}
             {{> afQuickField name=this.name options=afOptionsFromSchema}}
           {{/each}}
         {{/autoForm}}
+        {{/if}}
       {{/if}}
     </div>
   {{/if}}

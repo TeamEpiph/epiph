@@ -24,14 +24,26 @@
                   </div>
                 </form>
               {{else}}
-                {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
-                  {{#each afFieldNames}}
-                    {{> afQuickField name=this.name options=afOptionsFromSchema}}
-                  {{/each}}
-                  <button type="submit" class="btn btn-primary pull-right">Next</button>
-                  <button type="button" id="back" class="btn btn-primary">Previous</button>
-                  <button type="reset" class="btn btn-warning">Reset</button>
-                {{/autoForm}}
+                {{#if eq question.type "table_polar"}}
+                  <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
+                    <div class="form-group" data-required="true">
+                      <label class="control-label">{{title}}</label>
+                      {{> questionTablePolar}}
+                      <button type="submit" class="btn btn-primary pull-right">Next</button>
+                      <button type="button" id="back" class="btn btn-primary">Previous</button>
+                      <button type="reset" class="btn btn-warning">Reset</button>
+                    </div>
+                  </form>
+                {{else}}
+                  {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
+                    {{#each afFieldNames}}
+                      {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                    {{/each}}
+                    <button type="submit" class="btn btn-primary pull-right">Next</button>
+                    <button type="button" id="back" class="btn btn-primary">Previous</button>
+                    <button type="reset" class="btn btn-warning">Reset</button>
+                  {{/autoForm}}
+                {{/if}}
               {{/if}}
             {{/if}}
           {{else}}

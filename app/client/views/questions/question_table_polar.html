@@ -1,0 +1,33 @@
+<template name="questionTablePolar">
+<table class="table question-table question-table-polar">
+  <thead>
+    <tr>
+      <td></td>
+      {{#each question.choices}}
+      <td>
+      </td>
+      {{/each}}
+    </tr>
+  </thead>
+  <tbody>
+    {{#each question.subquestions}}
+    <tr>
+      <td>
+        {{minLabel}}
+      </td>
+      {{#each ../question.choices}}
+      <td>
+        {{#with answer=../../answer question=../../question subquestion=.. choice=.}}
+        <input data-subquestion_code={{subquestion.code}} data-choice_variable={{choice.variable}} data-choice_value={{choice.value}} name={{subquestion.code}} type={{type}} checked={{checked}} />
+        <p>{{choice.label}}</p>
+        {{/with}}
+      </td>
+      {{/each}}
+      <td>
+        {{maxLabel}}
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</template>

@@ -42,6 +42,7 @@ class @Question
     delete s.options
     s
 
+
   getMetaSchemaDict: ->
     schema = {}
 
@@ -75,11 +76,12 @@ class @Question
               {label: "Date", value: "date"},
               {label: "Date & Time", value: "dateTime"},
               {label: "Multiple Choice", value: "multipleChoice"},
-              {label: "Table", value: "table"},
+              {label: "Table Multiple Choice", value: "table"},
+              {label: "Table Polar", value: "table_polar"},
               {label: "Description (no question)", value: "markdown"},
             ]
 
-    if @type is "multipleChoice" or @type is "table"
+    if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema, 
         mode:
           label: "Mode"
@@ -103,73 +105,61 @@ class @Question
             type: "textarea"
             rows: 10
 
-    #_.extend schema, 
-    #  break:
-    #    label: "Break after this question"
-    #    type: Boolean
+    if @type is "number"
+      _.extend schema, 
+        min:
+          type: Number
+          optional: true
+          decimal: true
+        max:
+          type: Number
+          optional: true
+          decimal: true
+        decimal:
+          type: Boolean
 
-    switch @type
-      when "number"
-        _.extend schema, 
-          min:
-            type: Number
-            optional: true
-            decimal: true
-          max:
-            type: Number
-            optional: true
-            decimal: true
-          decimal:
-            type: Boolean
-      #when "date"
-      #  _.extend schema, 
-      #    min:
-      #      type: Date
-      #      optional: true
-      #      #autoform:
-      #      #  type: "bootstrap-datepicker"
-      #    max:
-      #      type: Date
-      #      optional: true
-      #      #autoform:
-      #      #  type: "bootstrap-datepicker"
-      #when "dateTime"
-      #  _.extend schema, 
-      #    min:
-      #      type: Date
-      #      optional: true
-      #      #autoform:
-      #      #  type: "bootstrap-datetimepicker"
-      #    max:
-      #      type: Date
-      #      optional: true
-      #      #autoform:
-      #      #  type: "bootstrap-datetimepicker"
-      when "table"
-        _.extend schema, 
-          subquestions:
-            type: [Object]
-            label: "Subquestions"
-            minCount: 1
-          'subquestions.$.label':
-            type: String
-            autoform:
-              type: "textarea"
-          'subquestions.$.code':
-            type: String
-    switch @type
-      when "multipleChoice", "table"
-        _.extend schema, 
-          choices:
-            type: [Object]
-            label: "Choices"
-            minCount: 1
-          'choices.$.label':
-            type: String
-          'choices.$.value':
-            type: Number
-          'choices.$.variable':
-            type: String
+    if @ype is "table"
+      _.extend schema, 
+        subquestions:
+          type: [Object]
+          label: "Subquestions"
+          minCount: 1
+        'subquestions.$.label':
+          type: String
+          autoform:
+            type: "textarea"
+        'subquestions.$.code':
+          type: String
+
+    if @type is "table_polar"
+      _.extend schema, 
+        subquestions:
+          type: [Object]
+          label: "Subquestions"
+          minCount: 1
+        'subquestions.$.minLabel':
+          label: "min label"
+          type: String
+        'subquestions.$.maxLabel':
+          label: "max label"
+          type: String
+        'subquestions.$.code':
+          type: String
+
+    if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
+      _.extend schema, 
+        choices:
+          type: [Object]
+          label: "Choices"
+          minCount: 1
+        'choices.$.label':
+          type: String
+          optional: true
+        'choices.$.value':
+          type: Number
+        'choices.$.variable':
+          type: String
+
     schema
     
 
