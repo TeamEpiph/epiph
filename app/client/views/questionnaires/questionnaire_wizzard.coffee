@@ -8,6 +8,10 @@ nextQuestion = ->
   else
     Modal.hide('viewQuestionnaire') 
 
+previousQuestion = ->
+  index = _questionIndex.get()
+  index = index-1 if index > 1
+  _questionIndex.set index
 
 AutoForm.hooks
   questionForm:
@@ -36,9 +40,7 @@ Template.questionnaireWizzard.helpers
       nextQuestion()
 
     'swiperight div': (evt, templateInstance) ->
-      index = _questionIndex.get()
-      index = index-1 if index > 1
-      _questionIndex.set index
+      previousQuestion()
 
   question: ->
     q = Questions.findOne
@@ -98,9 +100,7 @@ Template.questionnaireWizzard.helpers
 
 Template.questionnaireWizzard.events
   "click #back": (evt, tmpl) ->
-    index = _questionIndex.get()
-    index = index-1 if index > 0
-    _questionIndex.set index
+    previousQuestion()
     false
 
   "click .jumpToQuestion": (evt) ->
