@@ -31,6 +31,15 @@ Template.questionnaireWizzard.created = ->
   _questionIndex.set 1
 
 Template.questionnaireWizzard.helpers
+  templateGestures:
+    'swipeleft div': (evt, templateInstance) ->
+      nextQuestion()
+
+    'swiperight div': (evt, templateInstance) ->
+      index = _questionIndex.get()
+      index = index-1 if index > 1
+      _questionIndex.set index
+
   question: ->
     q = Questions.findOne
       questionnaireId: @questionnaire._id
