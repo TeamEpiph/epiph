@@ -12,13 +12,14 @@ resizeQuestionEditor = ->
 
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
-  #qe = $('#questionEditor')
-  #qe.affix
-  #  offset:
-  #    top: 200
-  #    bottom: 10
   $(window).resize(resizeQuestionEditor)
   resizeQuestionEditor()
+  @autorun ->
+    sq = Session.get 'selectedQuestionId'
+    if $(document).width() > 992
+      $("#questionEditor").css("margin-top", $(".selectedQuestion").offset().top-150)
+    else
+      $("#questionEditor").css("margin-top", "")
 
 Template.editQuestionnaire.destroyed = ->
   $(window).off("resize", resizeQuestionEditor)
