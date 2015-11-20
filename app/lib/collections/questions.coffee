@@ -118,7 +118,7 @@ class @Question
         decimal:
           type: Boolean
 
-    if @ype is "table"
+    if @type is "table"
       _.extend schema, 
         subquestions:
           type: [Object]
