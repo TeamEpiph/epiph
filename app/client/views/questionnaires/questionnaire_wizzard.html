@@ -11,11 +11,11 @@
           <div class="modal-body">
             <!-- augment with question and answer -->
             {{#with patient=patient questionnaire=questionnaire visit=visit question=question answer=answer}}
-            {{#if eq_or question.type "markdown" "table" "table_polar"}}
+            {{#if eq_or question.type "description" "table" "table_polar"}}
             <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
               <div class="form-group" data-required="true">
 
-                {{#if eq question.type "markdown"}}
+                {{#if eq question.type "description"}}
                 {{#markdown}}{{question.label}}{{/markdown}}
                 {{/if}}
 

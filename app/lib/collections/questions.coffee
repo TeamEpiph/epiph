@@ -34,11 +34,11 @@ class @Question
           s.autoform.type = "select-checkbox-inline"
       when "table"
         s.type = Number
-      when "markdown"
+      when "description"
         s.type = String
         s.label = ' ' 
         s.autoform = 
-          type: "markdown"
+          type: "description"
     delete s.options
     s
 
@@ -46,7 +46,7 @@ class @Question
   getMetaSchemaDict: ->
     schema = {}
 
-    if @type isnt "markdown"
+    if @type isnt "description"
       _.extend schema, 
         code:
           label: "Code"
@@ -78,7 +78,7 @@ class @Question
               {label: "Multiple Choice", value: "multipleChoice"},
               {label: "Table Multiple Choice", value: "table"},
               {label: "Table Polar", value: "table_polar"},
-              {label: "Description (no question)", value: "markdown"},
+              {label: "Description (no question)", value: "description"},
             ]
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
@@ -96,7 +96,7 @@ class @Question
               value: "checkbox"
             ]
 
-    if @type is "markdown"
+    if @type is "description"
       _.extend schema, 
         label:
           label: "Text"

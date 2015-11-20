@@ -82,7 +82,7 @@ Template.editQuestionnaire.events
     question =
       questionnaireId: @_id
       label: " "
-      type: "markdown"
+      type: "description"
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id

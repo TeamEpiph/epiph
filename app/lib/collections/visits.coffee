@@ -46,13 +46,13 @@ class @Visit
       quest.numAnswered = 0
       questions = Questions.find
         questionnaireId: quest._id
-        type: {$ne: "markdown"} #filter out descriptions
+        type: {$ne: "description"} #filter out descriptions
       .map (question) ->
         answers = Answers.find
           visitId: visit._id
           questionId: question._id
         .fetch()
-        question.answered = answers.length > 0 or question.type is "markdown"
+        question.answered = answers.length > 0 or question.type is "description"
         question.answers = answers 
         if question.answered 
           quest.numAnswered += 1
