@@ -15,11 +15,14 @@ Template.editQuestionnaire.rendered = ->
   $(window).resize(resizeQuestionEditor)
   resizeQuestionEditor()
   @autorun ->
-    sq = Session.get 'selectedQuestionId'
-    if $(document).width() > 992
-      $("#questionEditor").css("margin-top", $(".selectedQuestion").offset().top-150)
-    else
-      $("#questionEditor").css("margin-top", "")
+    sqId = Session.get 'selectedQuestionId'
+    sq = $(".selectedQuestion")
+    if sq?
+      #FIXME breakpoint
+      if $(document).width() > 992
+        $("#questionEditor").css("margin-top", sq.offset().top-150)
+      else
+        $("#questionEditor").css("margin-top", "")
 
 Template.editQuestionnaire.destroyed = ->
   $(window).off("resize", resizeQuestionEditor)
