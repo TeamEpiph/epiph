@@ -1,72 +1,67 @@
 <template name="questionnaireWizzard">
-<div class="questionnaireWizzard">
-  {{#HammerTouchArea gestureMap=templateGestures}}
-  <div class="modal fade">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">{{questionnaire.title}}</h4>
-        </div>
+  <div class="questionnaireWizzard">
+    {{#HammerTouchArea gestureMap=templateGestures}}
+    <div class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">{{questionnaire.title}}</h4>
+          </div>
 
-        <div class="modal-body">
-          <!-- augment with question and answer -->
-          {{#with patient=patient questionnaire=questionnaire visit=visit question=question answer=answer}}
-            {{#if eq question.type "markdown"}}
-              {{#markdown}}{{question.label}}{{/markdown}}
-            {{else}}
-              {{#if eq question.type "table"}}
-                <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
-                  <div class="form-group" data-required="true">
-                    <label class="control-label">{{title}}</label>
-                    {{> questionTable}}
-                    <button type="submit" class="btn btn-primary pull-right">Next</button>
-                    <button type="button" id="back" class="btn btn-primary">Previous</button>
-                    <button type="reset" class="btn btn-warning">Reset</button>
-                  </div>
-                </form>
-              {{else}}
-                {{#if eq question.type "table_polar"}}
-                  <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
-                    <div class="form-group" data-required="true">
-                      <label class="control-label">{{title}}</label>
-                      {{> questionTablePolar}}
-                      <button type="submit" class="btn btn-primary pull-right">Next</button>
-                      <button type="button" id="back" class="btn btn-primary">Previous</button>
-                      <button type="reset" class="btn btn-warning">Reset</button>
-                    </div>
-                  </form>
-                {{else}}
-                  {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
-                    {{#each afFieldNames}}
-                      {{> afQuickField name=this.name options=afOptionsFromSchema}}
-                    {{/each}}
-                    <button type="submit" class="btn btn-primary pull-right">Next</button>
-                    <button type="button" id="back" class="btn btn-primary">Previous</button>
-                    <button type="reset" class="btn btn-warning">Reset</button>
-                  {{/autoForm}}
+          <div class="modal-body">
+            <!-- augment with question and answer -->
+            {{#with patient=patient questionnaire=questionnaire visit=visit question=question answer=answer}}
+            {{#if eq_or question.type "markdown" "table" "table_polar"}}
+            <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
+              <div class="form-group" data-required="true">
+
+                {{#if eq question.type "markdown"}}
+                {{#markdown}}{{question.label}}{{/markdown}}
                 {{/if}}
-              {{/if}}
-            {{/if}}
-          {{else}}
-            Question not found, sorry!
-          {{/with}}
-        </div>
 
-        <div class="modal-footer">
-          <span class="pull-left questionOverview">
-            {{#each allQuestions}}
+                {{#if eq question.type "table"}}
+                <label class="control-label">{{title}}</label>
+                {{> questionTable}}
+                {{/if}}
+
+                {{#if eq question.type "table_polar"}}
+                <label class="control-label">{{title}}</label>
+                {{> questionTablePolar}}
+                {{/if}}
+
+                <button type="submit" class="btn btn-primary pull-right">Next</button>
+                <button type="button" id="back" class="btn btn-primary">Previous</button>
+              </div>
+            </form>
+            {{else}}
+            {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
+            {{#each afFieldNames}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+            {{/each}}
+            <button type="submit" class="btn btn-primary pull-right">Next</button>
+            <button type="button" id="back" class="btn btn-primary">Previous</button>
+            {{/autoForm}}
+            {{/if}}
+            {{else}}
+            Question not found, sorry!
+            {{/with}}
+          </div>
+
+          <div class="modal-footer">
+            <span class="pull-left questionOverview">
+              {{#each allQuestions}}
               <span class="fa-stack fa-lg cursorPointer jumpToQuestion {{css}}">
                 <i class="fa fa-circle fa-stack-2x activeCircle"></i>
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <strong class="fa-stack-1x">{{index}}</strong>
               </span>
-            {{/each}}
-          </span>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              {{/each}}
+            </span>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
+    {{/HammerTouchArea}}
   </div>
-  {{/HammerTouchArea}}
-</div>
 </template>

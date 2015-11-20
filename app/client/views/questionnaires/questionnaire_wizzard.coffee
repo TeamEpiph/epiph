@@ -110,6 +110,9 @@ Template.questionnaireWizzard.events
   "submit #questionTableForm": (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
+    if @question.type is "markdown"
+      nextQuestion()
+      return
     answer = 
       visitId: @visit._id
       questionId: @question._id

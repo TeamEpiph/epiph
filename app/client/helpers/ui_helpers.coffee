@@ -60,3 +60,11 @@ Template.registerHelper "eq_or0", (a,b) ->
   a is b or b is 0
 Template.registerHelper "or", (a,b) ->
   a isnt 0 or b isnt 0
+Template.registerHelper "eq_or", () ->
+  a = arguments[0]
+  i = 1
+  while i < arguments.length
+    b = arguments[i]
+    return true if a is b
+    i++
+  return false
