@@ -80,6 +80,9 @@ class @Question
               {label: "Table Polar", value: "table_polar"},
               {label: "Description (no question)", value: "description"},
             ]
+      break:
+        label: "insert pagebreak after this item"
+        type: Boolean
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema, 
