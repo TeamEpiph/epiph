@@ -19,6 +19,11 @@ Template.patientVisit.helpers
       v.validatedDoc()
     else v
 
+  #with questionnaire=this visit=.. patient=../../patient
+  questionnaireCSS: ->
+    return "valid" if @questionnaire.answered
+    "invalid"
+
   #this visit
   showEmpaticaRecorder: ->
     @recordPhysicalData and Meteor.isCordova
@@ -48,17 +53,13 @@ Template.patientVisit.helpers
     new SimpleSchema(schema)
   
 
-Template.questionnaireRow.helpers
-  questionnaireCSS: ->
-    return "valid" if @questionnaire.answered
-    "invalid"
-
-Template.questionnaireRow.events
-  #this: {questionnaire, visit, patient}
+Template.patientVisit.events
+  #with questionnaire=this visit=.. patient=../../patient
   "click .answerQuestionnaire": (evt, tmpl) ->
     Modal.show('questionnaireWizzard', @)
     false
 
+  #this: {questionnaire, visit, patient}
   "click .showQuestionnaire": (evt, tmpl) ->
     Modal.show('viewQuestionnaire', @)
     false

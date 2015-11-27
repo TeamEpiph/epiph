@@ -11,7 +11,16 @@
         <h4>Questionnaires <i class="fa fa-file-text-o"></i></h4>
         <table class="table">
         {{#each validatedQuestionnaires}}
-          {{> questionnaireRow questionnaire=this visit=.. patient=../../patient}}
+          {{#with questionnaire=this visit=.. patient=../../patient}}
+            <tr>
+              <td class="{{questionnaireCSS}}">{{questionnaire.title}}</td>
+              <td class="{{questionnaireCSS}}">{{percentage questionnaire.numQuestions questionnaire.numAnswered}}</td>
+              <!--
+              <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
+              -->
+              <td class="cursorPointer answerQuestionnaire"><i class="fa fa-lg fa-pencil-square-o"></i></td>
+            </tr>
+          {{/with}}
         {{else}}
           No questionnaires are scheduled for this visit.
         {{/each}}
@@ -62,15 +71,4 @@
     </div>
   {{/with}}
 </div>
-</template>
-
-<template name="questionnaireRow">
-<tr>
-  <td class="{{questionnaireCSS}}">{{questionnaire.title}}</td>
-  <td class="{{questionnaireCSS}}">{{percentage questionnaire.numQuestions questionnaire.numAnswered}}</td>
-  <!--
-  <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
-  -->
-  <td class="cursorPointer answerQuestionnaire"><i class="fa fa-lg fa-pencil-square-o"></i></td>
-</tr>
 </template>
