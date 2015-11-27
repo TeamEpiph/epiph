@@ -74,6 +74,7 @@ Template.editQuestionnaire.events
       questionnaireId: @_id
       label: " "
       type: "text"
+      optional: true
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
