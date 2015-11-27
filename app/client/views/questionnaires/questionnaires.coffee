@@ -19,6 +19,7 @@ Template.questionnaires.events
   "click #createQuestionnaire": (evt) ->
     Meteor.call "createQuestionnaire", (error, id) ->
       throwError error if error?
+      Router.go('editQuestionnaire', {_id: id})
       return
 
    "click button.edit": (evt) ->
