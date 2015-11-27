@@ -67,7 +67,7 @@
 <template name="questionnaireRow">
 <tr>
   <td class="{{questionnaireCSS}}">{{questionnaire.title}}</td>
-  <td class="{{questionnaireCSS}}">{{questionnaire.numAnswered}} / {{questionnaire.numQuestions}}</td>
+  <td class="{{questionnaireCSS}}">{{percentage questionnaire.numQuestions questionnaire.numAnswered}}</td>
   <!--
   <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
   -->
