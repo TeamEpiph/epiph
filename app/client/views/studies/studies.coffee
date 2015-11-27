@@ -19,6 +19,7 @@ Template.studies.events
   "click #createStudy": (evt) ->
     Meteor.call "createStudy", (error, id) ->
       throwError error if error?
+      Router.go('editStudy', {_id: id})
       return
 
    "click button.edit": (evt) ->
