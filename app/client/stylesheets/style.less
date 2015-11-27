@@ -155,9 +155,6 @@ table.collapsed {
       border-radius: 2px;
       //padding: 10px 5px;
     }
-    .control-label {
-      font-weight: bold;
-    }
   }
   #questionEditor {
     margin-bottom: 20px;
@@ -166,12 +163,17 @@ table.collapsed {
 
 ////////////////////////////////
 // questions
-.question-table-polar {
-  td:not(:first-child):not(:last-child) {
-    text-align: center;
+.question {
+  .control-label {
+    font-weight: bold;
   }
-  td:last-child {
-    text-align: right;
+  .question-table-polar {
+    td:not(:first-child):not(:last-child) {
+      text-align: center;
+    }
+    td:last-child {
+      text-align: right;
+    }
   }
 }
 

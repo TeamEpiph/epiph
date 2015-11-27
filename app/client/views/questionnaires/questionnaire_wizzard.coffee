@@ -1,38 +1,93 @@
-_questionIndex = new ReactiveVar(0)
 _numQuestions = new ReactiveVar(0)
+_numPages = new ReactiveVar(0)
+_questionIdsForPage = new ReactiveVar({})
+_pageIndex = new ReactiveVar(0)
+_numFormsToSubmit = 0
 
-nextQuestion = ->
-  questionIndex = _questionIndex.get()
-  unless questionIndex is _numQuestions.get()
-    _questionIndex.set questionIndex+1
-  else
+nextPage = ->
+  if _pageIndex.get() is _numPages.get()-1
     Modal.hide('viewQuestionnaire') 
+  else
+    _pageIndex.set _pageIndex.get()+1
 
-previousQuestion = ->
-  index = _questionIndex.get()
-  index = index-1 if index > 1
-  _questionIndex.set index
+previousPage = ->
+  index = _pageIndex.get()
+  index -= 1 if index > 0
+  _pageIndex.set index
 
-AutoForm.hooks
-  questionForm:
-    onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      insertDoc.visitId = currentDoc.visitId 
-      insertDoc.questionId = currentDoc.questionId
-      insertDoc._id = currentDoc._id if currentDoc._id? 
-      unless currentDoc.value? and currentDoc.value is insertDoc.value
-        Meteor.call "upsertAnswer", insertDoc, (error) ->
-          throwError error if error?
-      nextQuestion()
-      @done()
-      false
+
+_gotoNextPage = null
+submitAllForms = (gotoNextPage) ->
+  _gotoNextPage = gotoNextPage
+  numFormsToSubmit = 0
+  $("form").each () ->
+    e = $(@)
+    classes = e.attr('class')
+    if classes? and classes.indexOf('question') > -1
+      numFormsToSubmit += 1
+  _numFormsToSubmit = numFormsToSubmit
+  $("form").each () ->
+    e = $(@)
+    classes = e.attr('class')
+    if classes? and classes.indexOf('question') > -1
+      e.submit()
+
+formSubmitted = ->
+  if (_numFormsToSubmit -= 1) <= 0
+    if _gotoNextPage
+      nextPage()
+    else
+      previousPage()
+
+
+autoformHooks = 
+  onSubmit: (insertDoc, updateDoc, currentDoc) ->
+    insertDoc.visitId = currentDoc.visitId 
+    insertDoc.questionId = currentDoc.questionId
+    insertDoc._id = currentDoc._id if currentDoc._id? 
+    console.log "submit questionAutoform"
+    console.log insertDoc
+    if insertDoc.value? and (!currentDoc.value? or (currentDoc.value? and currentDoc.value isnt insertDoc.value))
+      Meteor.call "upsertAnswer", insertDoc, (error) ->
+        throwError error if error?
+    formSubmitted()
+    @done()
+    false
+
 
 Template.questionnaireWizzard.created = ->
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
-  count = Questions.find
-    questionnaireId: @data.questionnaire._id
-  .count()
-  _numQuestions.set count
-  _questionIndex.set 1
+  self = @
+  @autorun ->
+    count = 0
+    page = 0
+    questionIdsForPage = {}
+    didBreakPage = false
+    autoformIds = []
+    Questions.find
+      questionnaireId: self.data.questionnaire._id
+    ,
+      sort: {index: 1}
+    .forEach (q) ->
+      if q.type isnt "description" and q._id isnt "table" and q._id isnt "table_polar"
+        autoformIds.push q._id
+      count += 1
+      if questionIdsForPage[page]?
+        questionIdsForPage[page].push q._id
+      else
+        questionIdsForPage[page] = [q._id]
+      didBreakPage = false
+      if q.break
+        page += 1
+        didBreakPage = true
+
+    page -= 1 if didBreakPage
+    _questionIdsForPage.set questionIdsForPage
+    _numQuestions.set count
+    _numPages.set page+1
+    _pageIndex.set 0
+    AutoForm.addHooks(autoformIds, autoformHooks)
+
 
 Template.questionnaireWizzard.helpers
   templateGestures:
@@ -42,20 +97,20 @@ Template.questionnaireWizzard.helpers
     'swiperight div': (evt, templateInstance) ->
       previousQuestion()
 
-  question: ->
-    q = Questions.findOne
+  questionsForPage: ->
+    questionIdsForPage = _questionIdsForPage.get()[_pageIndex.get()]
+    Questions.find
       questionnaireId: @questionnaire._id
-      index: _questionIndex.get()
-    TemplateVar.set("questionId", q._id)
-    q
+      _id: {$in: questionIdsForPage}
+    ,
+      sort: {index: 1}
 
-  answer: ->
+  answerForQuestion: (visitId, questionId) ->
     Answers.findOne
-      visitId: @visit._id
-      questionId: TemplateVar.get("questionId")
+      visitId: visitId
+      questionId: questionId
 
   answerFormSchema: ->
-    return null unless @question?
     schema = 
       _id:
         type: String
@@ -72,9 +127,9 @@ Template.questionnaireWizzard.helpers
   doc: ->
     @answer or 
       visitId: @visit._id
-      questionId: TemplateVar.get("questionId")
+      questionId: @question._id
 
-  allQuestions: ->
+  pages: ->
     answers = {}
     questionIds = Questions.find
       questionnaireId: @questionnaire._id
@@ -85,33 +140,47 @@ Template.questionnaireWizzard.helpers
       questionId: {$in: questionIds}
     .forEach (answer) ->
       answers[answer.questionId] = answer
-    activeIndex = _questionIndex.get()
-    Questions.find
-      questionnaireId: @questionnaire._id
-    ,
-      sort: {index: 1}
-    .map (question) ->
-      if answers[question._id]?
-        question.css = "answered"
-      if question.index is activeIndex
-        question.css += " active"
-      question
+    activeIndex = _pageIndex.get()
+    questionIdsForPage = _questionIdsForPage.get()
+    pages = []
+    for i in [0.._numPages.get()-1]
+      css = ""
+      allQuestionsAnsweredInPage = true
+      Questions.find
+        questionnaireId: @questionnaire._id
+        _id: {$in: questionIdsForPage[i]}
+      .forEach (question) ->
+        return if question.type is "description"
+        if !answers[question._id]?
+          allQuestionsAnsweredInPage = false
+      if allQuestionsAnsweredInPage
+        css = "answered"
+      if i is activeIndex
+        css += " active"
+      pages[i] = 
+        index: i+1
+        css: css
+    pages
         
 
 Template.questionnaireWizzard.events
-  "click #back": (evt, tmpl) ->
-    previousQuestion()
+  "click #next": (evt, tmpl) ->
+    submitAllForms(true)
     false
 
-  "click .jumpToQuestion": (evt) ->
-    _questionIndex.set @index
+  "click #back": (evt, tmpl) ->
+    submitAllForms(false)
+    false
+
+  "click .jumpToPage": (evt) ->
+    _pageIndex.set @index-1
     false
     
-  "submit #questionTableForm": (evt) ->
+  "submit .questionForm": (evt) ->
     evt.preventDefault()
     evt.stopPropagation()
     if @question.type is "description"
-      nextQuestion()
+      formSubmitted()
       return
     answer = 
       visitId: @visit._id
@@ -119,7 +188,7 @@ Template.questionnaireWizzard.events
       value: []
       _id: @answer._id if @answer?
     for subquestion in @question.subquestions
-      inputs = $("#questionTableForm input[data-subquestion_code=#{subquestion.code}]:checked")
+      inputs = $(evt.target).find("input[data-subquestion_code=#{subquestion.code}]:checked")
       checkedChoices=[]
       inputs.each -> #checked choices
         input = $(@)
@@ -130,8 +199,10 @@ Template.questionnaireWizzard.events
         answer.value.push 
           code: subquestion.code
           checkedChoices: checkedChoices
-    console.log answer
-    Meteor.call "upsertAnswer", answer, (error) ->
-      throwError error if error?
-      nextQuestion()
+    if answer.value.length > 0
+      Meteor.call "upsertAnswer", answer, (error) ->
+        throwError error if error?
+        formSubmitted()
+    else
+      formSubmitted()
     false

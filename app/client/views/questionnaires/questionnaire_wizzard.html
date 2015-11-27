@@ -8,49 +8,48 @@
             <h4 class="modal-title">{{questionnaire.title}}</h4>
           </div>
 
-          <div class="modal-body">
-            <!-- augment with question and answer -->
-            {{#with patient=patient questionnaire=questionnaire visit=visit question=question answer=answer}}
-            {{#if eq_or question.type "description" "table" "table_polar"}}
-            <form id="questionTableForm" class="questionForm" fields="answer" novalidate="novalidate">
-              <div class="form-group" data-required="true">
+          <div class="modal-body question">
+            {{#each questionsForPage}}
+              <!-- augment with question and answer -->
+              {{#with patient=../patient questionnaire=../questionnaire visit=../visit question=. answer=(answerForQuestion ../visit._id _id)}}
+              {{#if eq_or question.type "description" "table" "table_polar"}}
+              <form id={{question._id}} class="questionForm" fields="answer" novalidate="novalidate">
+                <div class="form-group" data-required="true">
+                  {{#if eq question.type "description"}}
+                  {{#markdown}}{{question.label}}{{/markdown}}
+                  {{/if}}
 
-                {{#if eq question.type "description"}}
-                {{#markdown}}{{question.label}}{{/markdown}}
-                {{/if}}
+                  {{#if eq question.type "table"}}
+                  <label class="control-label">{{question.label}}</label>
+                  {{> questionTable}}
+                  {{/if}}
 
-                {{#if eq question.type "table"}}
-                <label class="control-label">{{title}}</label>
-                {{> questionTable}}
-                {{/if}}
-
-                {{#if eq question.type "table_polar"}}
-                <label class="control-label">{{title}}</label>
-                {{> questionTablePolar}}
-                {{/if}}
-
-                <button type="submit" class="btn btn-primary pull-right">Next</button>
-                <button type="button" id="back" class="btn btn-primary">Previous</button>
-              </div>
-            </form>
+                  {{#if eq question.type "table_polar"}}
+                  <label class="control-label">{{question.label}}</label>
+                  {{> questionTablePolar}}
+                  {{/if}}
+                </div>
+              </form>
+              {{else}}
+                {{#autoForm doc=doc schema=answerFormSchema id=question._id type="normal" class="questionAutoform" fields="value"}}
+                  {{#each afFieldNames}}
+                    {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                  {{/each}}
+                {{/autoForm}}
+              {{/if}}
+              {{/with}}
+              <br>
             {{else}}
-            {{#autoForm doc=doc schema=answerFormSchema id="questionForm" type="normal" class="questionForm" fields="value"}}
-            {{#each afFieldNames}}
-            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+              Question not found, sorry!
             {{/each}}
-            <button type="submit" class="btn btn-primary pull-right">Next</button>
+            <button type="button" id="next" class="btn btn-primary pull-right">Next</button>
             <button type="button" id="back" class="btn btn-primary">Previous</button>
-            {{/autoForm}}
-            {{/if}}
-            {{else}}
-            Question not found, sorry!
-            {{/with}}
           </div>
 
           <div class="modal-footer">
             <span class="pull-left questionOverview">
-              {{#each allQuestions}}
-              <span class="fa-stack fa-lg cursorPointer jumpToQuestion {{css}}">
+              {{#each pages}}
+              <span class="fa-stack fa-lg cursorPointer jumpToPage {{css}}">
                 <i class="fa fa-circle fa-stack-2x activeCircle"></i>
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <strong class="fa-stack-1x">{{index}}</strong>
