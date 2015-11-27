@@ -45,8 +45,8 @@ autoformHooks =
     insertDoc.visitId = currentDoc.visitId 
     insertDoc.questionId = currentDoc.questionId
     insertDoc._id = currentDoc._id if currentDoc._id? 
-    console.log "submit questionAutoform"
-    console.log insertDoc
+    #console.log "submit questionAutoform"
+    #console.log insertDoc
     if insertDoc.value? and (!currentDoc.value? or (currentDoc.value? and currentDoc.value isnt insertDoc.value))
       Meteor.call "upsertAnswer", insertDoc, (error) ->
         throwError error if error?
