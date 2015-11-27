@@ -1,63 +1,39 @@
 <template name="patientVisits">
 <div id="visits">
-  <!--
-  <div id="timeline"></div>
-  <div id="hoverRes">
-    <div class="coloredDiv"></div>
-    <div id="name"></div>
-    <div id="scrolled_date"></div>
-  </div>
-  -->
   <br>
   <table class="table table-striped collapsed">
-    <!--
-    <thead>
-      <tr>
-        <th></th>
-      </tr>
-    </thead>
-    -->
     <tbody>
       {{#each visits}}
-        {{> patientVisitsTr visit=this patient=../patient}}
+        {{#with visit=this patient=../patient}}
+          <tr class="openVisit cursorPointer">
+            <td><b>{{visit.title}}</b></td>
+            <td>
+            {{#each visit.validatedQuestionnaires}}
+              {{#with questionnaire=. visit=../visit patient=../patient}}
+              <div class="text-center answerQuestionnaire {{questionnaireCSS}}">
+                <i class="fa fa-lg fa-file-text-o"></i>
+                <div>
+                  {{questionnaire.title}}<br>
+                  {{percentage questionnaire.numQuestions questionnaire.numAnswered}}
+                </div>
+              </div>
+              {{/with}}
+            {{/each}}
+            </td>
+
+            <td>
+              {{#if visit.recordPhysicalData}}
+                <i class="fa fa-lg fa-heartbeat {{physioRecordsCSS}}"></i>
+              {{/if}}
+            </td>
+
+            <td class="openVisit"><i class="fa fa-2x fa-arrow-circle-right"></i></td>
+          </tr>
+        {{/with}}
       {{else}}
         This patient either isn't mapped to an study design or this design has no visits scheduled.
       {{/each}}
     </tbody>
   </table>
 </div>
-</template>
-
-<template name="patientVisitsTr">
-<tr class="openVisit cursorPointer">
-  {{#with visit}}
-    <td><b>{{title}}</b></td>
-    <td>
-    {{#each validatedQuestionnaires}}
-      <div class="text-center {{questionnaireCSS}}" style="display: inline-block;">
-        <i class="fa fa-lg fa-file-text-o"></i>
-        <p>{{title}}</p>
-      </div>
-    {{/each}}
-    </td>
-
-    <td>
-      {{#if recordPhysicalData}}
-        <i class="fa fa-lg fa-heartbeat {{physioRecordsCSS}}"></i>
-      {{/if}}
-    </td>
-
-    <!--
-    <td class="{{visitCSS}}">
-    {{#if isValid}}
-      <i class="fa fa-lg fa-check"></i>
-    {{else}}
-      <i class="fa fa-lg fa-warning"></i>
-    {{/if}}
-    </td>
-    -->
-
-  {{/with}}
-  <td class="openVisit"><i class="fa fa-2x fa-arrow-circle-right"></i></td>
-</tr>
 </template>

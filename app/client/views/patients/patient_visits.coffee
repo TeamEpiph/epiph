@@ -11,22 +11,24 @@ Template.patientVisits.helpers
         visit.validatedDoc()
       visits
 
-Template.patientVisitsTr.helpers
-  #this visit
-  visitCSS: ->
-    return "valid" if @valid
-    "invalid"
-  #this questionnaire
+  #this questionnaire visit patient
   questionnaireCSS: ->
-    return "valid" if @answered
+    return "valid" if @questionnaire.answered
     "invalid"
-  #this visit
+  
+  #this questionnaire visit patient
   physioRecordsCSS: ->
-    return "valid" if @physioValid
+    return "valid" if @visit.physioValid
     "invalid"
 
 
 Template.patientVisits.events
+  #with questionnaire visit= patient
+  "click .answerQuestionnaire": (evt, tmpl) ->
+    Modal.show('questionnaireWizzard', @)
+    false
+
+  #this visit patient
   "click .openVisit": (evt) ->
     visit = Visits.findOne
       _id: @visit._id
