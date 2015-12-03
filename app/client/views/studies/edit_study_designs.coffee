@@ -1,27 +1,54 @@
-Template.editStudyDesigns.helpers
-  titleEO: ->
-    self = @
-    value: @title
-    emptytext: "no title"
-    success: (response, newVal) ->
-      StudyDesigns.update self._id,
-        $set: {title: newVal}
-      return
-      return
+listQuestionnaireIds = new ReactiveVar([])
+listRecordPhysicalData = new ReactiveVar(false)
 
+remainingQuestionnaires = (design) ->
+  qIds = design.questionnaireIds or []
+  qIds = _.union(qIds, (listQuestionnaireIds.get() or []) )
+  Questionnaires.find
+    _id: {$nin: qIds}
+
+
+Template.editStudyDesigns.helpers
   designs: ->
     StudyDesigns.find studyId: @_id,
       sort: {createdAt: 1}
 
-  #this: design
+  #this design=design
+  titleEO: ->
+    design = @design
+    value: design.title
+    emptytext: "no title"
+    success: (response, newVal) ->
+      StudyDesigns.update design._id,
+        $set: {title: newVal}
+      return
+
+  #this design=design
+  hasRemainingQuestionnaires: ->
+    remainingQuestionnaires(@design).count()
+
+  #this design=design
+  remainingQuestionnaires: ->
+    remainingQuestionnaires(@design)
+
+  #this design=design
+  questionnaires: ->
+    qIds = @design.questionnaireIds or []
+    qIds = _.union(qIds, (listQuestionnaireIds.get() or []) )
+    Questionnaires.find
+      _id: {$in: qIds}
+
+  listRecordPhysicalData: ->
+    @design.recordPhysicalData || listRecordPhysicalData.get()
+
+  #this design=design
   visits: ->
-    @visits.sort (a, b)->
+    @design.visits.sort (a, b)->
       a.day - b.day
     prevDay = 0
     #augment visits
     #http://stackoverflow.com/questions/13789622/accessing-parent-context-in-meteor-templates-and-template-helpers
-    self = @
-    @visits.map (v)->
+    @design.visits.map (v)->
       daysBetween = v.day-prevDay
       _.extend v,
         date: moment().add(v.day, 'days').toDate()
@@ -29,56 +56,24 @@ Template.editStudyDesigns.helpers
       prevDay = v.day
       if daysBetween is 0
         delete v.daysBetween
-      #questionnaireIds
-      v.designQuestionnaireIds = self.questionnaireIds
       v
   
-  #this design
-  hasRemainingQuestionnaires: ->
-    qIds = @questionnaireIds or []
-    qIds = _.union(qIds, (Session.get('editStudyDesignsQuestionnaireIds') or []) )
-    Questionnaires.find(
-      _id: {$nin: qIds}
-    ).count()
-
-  remainingQuestionnaires: ->
-    qIds = @questionnaireIds or []
-    qIds = _.union(qIds, (Session.get('editStudyDesignsQuestionnaireIds') or []) )
-    Questionnaires.find
-      _id: {$nin: qIds}
-
-  #this design 
-  questionnaires: ->
-    qIds = @questionnaireIds or []
-    qIds = _.union(qIds, (Session.get('editStudyDesignsQuestionnaireIds') or []) )
-    Questionnaires.find
-      _id: {$in: qIds}
-
-  #this visit
-  designQuestionnaires: ->
-    qIds = @designQuestionnaireIds or []
-    qIds = _.union(qIds, (Session.get('editStudyDesignsQuestionnaireIds') or []) )
-    Questionnaires.find
-      _id: {$in: qIds}
-      
-#this: { studyDesign:StudyDesign visit:StudyDesign.visit questionnaire:Questionnaire }
-Template.editVisitQuestionnaireTd.helpers
-  iconClass: ->
-    self = @
+  #this design:StudyDesign visit:StudyDesign.visit questionnaire:Questionnaire
+  questionnaireIconClass: ->
+    questionnaire = @questionnaire
     found = false
     if @visit.questionnaireIds
       _.some @visit.questionnaireIds, (qId)->
-        found = qId is self.questionnaire._id
+        found = qId is questionnaire._id
         found
     if found
       return "fa-check-square-o brand-primary"
     else
       return "fa-square-o hoverOpaqueExtreme"
 
-#this: { studyDesign:StudyDesign visit:StudyDesign.visit }
-Template.editVisitPhysTd.helpers
-  iconClass: ->
-    if @visit.recordPhysicalData?
+  #this design:StudyDesign visit:StudyDesign.visit
+  physicalIconClass: ->
+    if @visit.recordPhysicalData? and @visit.recordPhysicalData
       return "fa-check-square-o brand-primary"
     else
       return "fa-square-o hoverOpaqueExtreme"
@@ -99,30 +94,30 @@ Template.editStudyDesigns.events
     Meteor.call "addStudyDesignVisit", @_id, offset, (error) ->
       throwError error if error?
 
-  "click .addQuestionnaire": (evt) ->
+  "click .listQuestionnaire": (evt) ->
     evt.preventDefault()
     questionnaireId = $(evt.target).data("id")
-    qIds = Session.get("editStudyDesignsQuestionnaireIds") or []
+    qIds = listQuestionnaireIds.get() or []
     qIds.push questionnaireId
-    Session.set "editStudyDesignsQuestionnaireIds", qIds
+    listQuestionnaireIds.set qIds
+
+  "click .listRecordPhysicalData": (evt) ->
+    evt.preventDefault()
+    listRecordPhysicalData.set !listRecordPhysicalData.get()
     
   "click .toggleQuestionnaireAtVisit": (evt) ->
     evt.preventDefault()
-    self = @
+    questionnaire = @questionnaire
     found = false
     if @visit.questionnaireIds
       _.some @visit.questionnaireIds, (qId)->
-        found = qId is self.questionnaire._id
+        found = qId is questionnaire._id
         found
     doSchedule = !found
-    doAllOfGroup = false
-    #if @visit.groupId
-    #  #TODO description
-    #  doAllOfGroup = confirm('Do you want to apply this to all visits of the same group?')
-    Meteor.call "scheduleQuestionnaireAtVisit", @studyDesign._id, @visit._id, @questionnaire._id, doSchedule, doAllOfGroup, (error) ->
+    Meteor.call "scheduleQuestionnaireAtVisit", @design._id, @visit._id, @questionnaire._id, doSchedule, (error) ->
       throwError error if error?
 
   "click .toggleRecordPhysicalDataAtVisit": (evt) ->
     evt.preventDefault()
-    Meteor.call "scheduleRecordPhysicalDataAtVisit", @studyDesign._id, @visit._id, !@visit.recordPhysicalData, (error) ->
+    Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, !@visit.recordPhysicalData, (error) ->
       throwError error if error?

@@ -7,6 +7,7 @@
       Create new Design <i class="fa fa-plus"></i>
     </button>
     {{#each designs}}
+    {{#with design=.}}
       <div class="row">
         <div class="col-xs-12">
           <h3>{{> xEditable titleEO}}</h3>
@@ -19,18 +20,23 @@
                     {{#each questionnaires}}
                       <th>{{title}}</th>
                     {{/each}}
-                    <th>record phys.</th>
+                    {{#if listRecordPhysicalData}}
+                      <th>record physical data</th>
+                    {{/if}}
                     <th scope="row">
                       {{#if hasRemainingQuestionnaires}}
                       <div class="dropdown">
-                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="addQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="listQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                           add Questionnaire
                           <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="addQuestionnaireDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="listQuestionnaireDropdown">
                           {{#each remainingQuestionnaires}}
-                            <li><a href="" class="addQuestionnaire" data-id={{_id}}>{{title}}</a></li>
+                            <li><a href="" class="listQuestionnaire" data-id={{_id}}>{{title}}</a></li>
                           {{/each}}
+                          {{#unless listRecordPhysicalData}}
+                            <li><a href="" class="listRecordPhysicalData">Record physical data</a></li>
+                          {{/unless}}
                         </ul>
                       </div> 
                       {{/if}}
@@ -39,21 +45,37 @@
                 </thead>
                 <tbody>
                   {{#each visits}}
-                  {{#if daysBetween}}
-                  <tr>
-                    <td>{{daysBetween}} d</td>
-                  </tr>
-                  {{/if}}
-                  <tr>
-                    <th>
-                      {{title}}<br>
-                      <span class="text-muted">{{fullDate date}}</span>
-                    </th>
-                    {{#each designQuestionnaires}}
-                    {{> editVisitQuestionnaireTd visit=.. questionnaire=this studyDesign=../..}}
-                    {{/each}}
-                    {{> editVisitPhysTd visit=this studyDesign=..}}
-                  </tr>
+                  {{#with visit=. design=../design}}
+                    {{#if visit.daysBetween}}
+                    <tr>
+                      <td>{{visit.daysBetween}} d</td>
+                    </tr>
+                    {{/if}}
+                    <tr>
+                      <th>
+                        {{visit.title}}<br>
+                        <span class="text-muted">{{fullDate visit.date}}</span>
+                      </th>
+
+                      {{#each questionnaires}}
+                        {{#with questionnaire=. visit=../visit design=../design}}
+                          <td class="visitTd">
+                            <div class="toggleQuestionnaireAtVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
+                              <i class="fa fa-lg {{questionnaireIconClass}}"></i>
+                            </div>
+                          </td>
+                        {{/with}}
+                      {{/each}}
+
+                      {{#if listRecordPhysicalData}}
+                        <td class="visitTd" >
+                          <div class="toggleRecordPhysicalDataAtVisit" data-visit-id={{_id}}>
+                            <i class="fa fa-lg {{physicalIconClass}}"></i>
+                          </div>
+                        </td>
+                      {{/if}}
+                    </tr>
+                  {{/with}}
                   {{/each}}
                   <tr>
                     <td>
@@ -63,14 +85,6 @@
                       </form>
                     </td>
                   </tr>
-                  <!--
-                  <tr>
-                    <th scope="row">Record physiological data</th>
-                  </tr>
-                  <tr>
-                    <th scope="row">Record movie</th>
-                  </tr>
-                  -->
                 </tbody>
               </table>
             </div>
@@ -78,6 +92,7 @@
         </div>
       </div>
       <hr>
+    {{/with}}
     {{/each}}
     </div>
   </div>
@@ -85,17 +100,7 @@
 </template>
 
 <template name="editVisitQuestionnaireTd">
-  <td class="visitTd">
-    <div class="toggleQuestionnaireAtVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
-      <i class="fa fa-lg {{iconClass}}"></i>
-    </div>
-  </td>
 </template>
 
 <template name="editVisitPhysTd">
-  <td class="visitTd" >
-    <div class="toggleRecordPhysicalDataAtVisit" data-visit-id={{_id}}>
-      <i class="fa fa-lg {{iconClass}}"></i>
-    </div>
-  </td>
 </template>

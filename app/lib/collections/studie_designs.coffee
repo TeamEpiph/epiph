@@ -88,18 +88,11 @@ Meteor.methods
         visits: visit
 
 
-  "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule, doAllOfGroup) ->
+  "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule) ->
+    check studyDesignId, String
     check visitId, String
     check questionnaireId, String
-    if doSchedule
-      n = 0
-      n = StudyDesigns.update
-        _id: studyDesignId
-      ,
-        $push:
-          questionnaireIds: questionnaireId
-      throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign found") unless n > 0
-    n = 0
+
     find =
       _id: studyDesignId
       'visits._id': visitId
@@ -112,7 +105,20 @@ Meteor.methods
       n = StudyDesigns.update find,
         $pull:
           'visits.$.questionnaireIds': questionnaireId
-    throw new Meteor.Error(500, "mapQuestionnaireToVisit: no StudyDesign with that visit found") unless n > 0
+    throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
+
+    #update used questionnaire ids in design
+    design = StudyDesigns.findOne studyDesignId
+    throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: studyDesign not found") unless n > 0
+    questionnaireIds = []
+    design.visits.forEach (visit) ->
+      questionnaireIds = _.union questionnaireIds, visit.questionnaireIds
+    StudyDesigns.update
+      _id: studyDesignId
+    ,
+      $set:
+        questionnaireIds: questionnaireIds
+
 
   "scheduleRecordPhysicalDataAtVisit": (studyDesignId, visitId, doSchedule) ->
     check visitId, String
@@ -123,4 +129,17 @@ Meteor.methods
     ,
       $set:
         'visits.$.recordPhysicalData': doSchedule
-    throw new Meteor.Error(500, "recordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
+    throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
+
+    #update recordPhysicalData in design
+    design = StudyDesigns.findOne studyDesignId
+    throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: studyDesign not found") unless n > 0
+    recordPhysicalData = false
+    _.some design.visits, (visit) ->
+      recordPhysicalData = visit.recordPhysicalData
+      recordPhysicalData
+    StudyDesigns.update
+      _id: studyDesignId
+    ,
+      $set:
+        recordPhysicalData: recordPhysicalData
