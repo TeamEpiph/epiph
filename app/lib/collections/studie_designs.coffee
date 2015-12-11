@@ -50,7 +50,7 @@ Meteor.methods
         _id: new Meteor.Collection.ObjectID()._str
         day: 0
         index: 0
-        title: "baseline"
+        title: "visit 1"
       ]
     _id
 
@@ -67,9 +67,7 @@ Meteor.methods
     throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
 
     index = design.visits.length
-    title = "visit #{index}"
-    if index is 0
-      title = "baseline"
+    title = "visit #{index+1}"
     visit =
       _id: new Meteor.Collection.ObjectID()._str
       title: title
