@@ -140,6 +140,14 @@ Template.editStudyDesigns.events
     Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, !@visit.recordPhysicalData, (error) ->
       throwError error if error?
 
+  "click .moveUp": (evt) ->
+    Meteor.call "moveStudyDesignVisit", @design._id, @visit._id, true, (error) ->
+      throwError error if error?
+
+  "click .moveDown": (evt) ->
+    Meteor.call "moveStudyDesignVisit", @design._id, @visit._id, false, (error) ->
+      throwError error if error?
+
   "click .remove": (evt) ->
     evt.preventDefault()
     if confirm "Are you sure?"

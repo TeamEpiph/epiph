@@ -144,6 +144,36 @@ Meteor.methods
     return
 
 
+  "moveStudyDesignVisit": (studyDesignId, visitId, up) ->
+    check visitId, String
+    check studyDesignId, String
+
+    design = StudyDesigns.findOne
+      _id: studyDesignId
+    throw new Meteor.Error(500, "removeStudyDesignVisit: studyDesign not found") unless design?
+
+    visit = _.find design.visits, (v) ->
+      v._id is visitId
+    throw new Meteor.Error(500, "removeStudyDesignVisit: visit not found") unless visit?
+
+    move = -1
+    move = 1 if !up
+    return if visit.index is 0 and move is -1
+    return if visit.index+1 >= design.visits.length and move is 1
+    StudyDesigns.update
+      _id: studyDesignId
+      'visits.index': visit.index+move
+    ,
+      $inc:
+        'visits.$.index': -move
+    StudyDesigns.update
+      _id: studyDesignId
+      'visits._id': visitId
+    ,
+      $inc:
+        'visits.$.index': move
+
+
   "removeStudyDesignVisit": (studyDesignId, visitId) ->
     check visitId, String
     check studyDesignId, String
