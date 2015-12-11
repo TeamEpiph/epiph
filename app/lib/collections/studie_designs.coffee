@@ -59,27 +59,21 @@ Meteor.methods
     StudyDesigns.remove
       _id: _id
 
-  "addStudyDesignVisit": (studyDesignId, days) ->
+  "addStudyDesignVisit": (studyDesignId) ->
     check studyDesignId, String
-    days = parseInt(days)
-    check days, Number
 
     design = StudyDesigns.findOne
       _id: studyDesignId
     throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
 
-    preVisit = design.visits[design.visits.length-1]
-    day = preVisit.day+days
-    if preVisit.day is day
-      throw new Meteor.Error(500, "A visit on this day already exists")
-
-    title = "visit #{design.visits.length}"
-    if design.visits.length is 0
+    index = design.visits.length
+    title = "visit #{index}"
+    if index is 0
       title = "baseline"
     visit =
       _id: new Meteor.Collection.ObjectID()._str
-      day: day
       title: title
+      index: index
 
     StudyDesigns.update
       _id: studyDesignId
@@ -87,6 +81,32 @@ Meteor.methods
       $push:
         visits: visit
 
+  "changeStudyDesignVisitTitle": (studyDesignId, visitId, title) ->
+    check studyDesignId, String
+    check visitId, String
+    check title, String
+
+    n = StudyDesigns.update
+      _id: studyDesignId
+      'visits._id': visitId
+    ,
+      $set:
+        'visits.$.title': title
+    throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
+
+  "changeStudyDesignVisitDay": (studyDesignId, visitId, day) ->
+    check studyDesignId, String
+    check visitId, String
+    day = parseInt(day)
+    check day, Number
+
+    n = StudyDesigns.update
+      _id: studyDesignId
+      'visits._id': visitId
+    ,
+      $set:
+        'visits.$.day': day
+    throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
 
   "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule) ->
     check studyDesignId, String

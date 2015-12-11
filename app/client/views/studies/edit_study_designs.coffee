@@ -44,20 +44,43 @@ Template.editStudyDesigns.helpers
   #this design=design
   visits: ->
     @design.visits.sort (a, b)->
-      a.day - b.day
+      a.index - b.index
     prevDay = 0
     #augment visits
     #http://stackoverflow.com/questions/13789622/accessing-parent-context-in-meteor-templates-and-template-helpers
     @design.visits.map (v)->
-      daysBetween = v.day-prevDay
-      _.extend v,
-        date: moment().add(v.day, 'days').toDate()
-        daysBetween: daysBetween
-      prevDay = v.day
-      if daysBetween is 0
-        delete v.daysBetween
+      if v.day?
+        daysBetween = v.day-prevDay
+        _.extend v,
+          daysBetween: daysBetween
+        prevDay = v.day
+        if daysBetween is 0
+          delete v.daysBetween
       v
-  
+
+  #this visit design
+  visitTitleEO: ->
+    visit = @visit
+    design = @design
+    value: visit.title
+    emptytext: "no title"
+    success: (response, newVal) ->
+      Meteor.call "changeStudyDesignVisitTitle", design._id, visit._id, newVal, (error) ->
+        throwError error if error?
+      return
+
+  #this visit design
+  visitDayEO: ->
+    visit = @visit
+    design = @design
+    value: visit.day
+    emptytext: "no day set"
+    success: (response, newVal) ->
+      Meteor.call "changeStudyDesignVisitDay", design._id, visit._id, newVal, (error) ->
+        throwError error if error?
+      return
+
+
   #this design:StudyDesign visit:StudyDesign.visit questionnaire:Questionnaire
   questionnaireIconClass: ->
     questionnaire = @questionnaire
@@ -77,21 +100,16 @@ Template.editStudyDesigns.helpers
       return "fa-check-square-o brand-primary"
     else
       return "fa-square-o hoverOpaqueExtreme"
-      
+
 
 Template.editStudyDesigns.events
   "click #createStudyDesign": (evt) ->
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?
-    
-  "submit #addVisit": (evt) ->
+
+  "click #addVisit": (evt) ->
     evt.preventDefault()
-    offset = evt.target.offset.value
-    if offset? and offset.length > 0
-      console.log "offset #{offset}"
-    evt.target.offset.value = ""
-    evt.target.offset.blur()
-    Meteor.call "addStudyDesignVisit", @_id, offset, (error) ->
+    Meteor.call "addStudyDesignVisit", @design._id, (error) ->
       throwError error if error?
 
   "click .listQuestionnaire": (evt) ->
@@ -104,7 +122,7 @@ Template.editStudyDesigns.events
   "click .listRecordPhysicalData": (evt) ->
     evt.preventDefault()
     listRecordPhysicalData.set !listRecordPhysicalData.get()
-    
+
   "click .toggleQuestionnaireAtVisit": (evt) ->
     evt.preventDefault()
     questionnaire = @questionnaire

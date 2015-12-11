@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-xs-12">
     <br>
-    <button id="createStudyDesign" class="btn btn-default">
+    <button id="createStudyDesign" class="btn btn-default print-hidden">
       Create new Design <i class="fa fa-plus"></i>
     </button>
     {{#each designs}}
@@ -16,14 +16,15 @@
               <table class="table studyDesignTable">
                 <thead>
                   <tr>
-                    <th></th>
+                    <th>title</th>
+                    <th>day offset</th>
                     {{#each questionnaires}}
                       <th>{{title}}</th>
                     {{/each}}
                     {{#if listRecordPhysicalData}}
                       <th>record physical data</th>
                     {{/if}}
-                    <th scope="row">
+                    <th scope="row" class="print-hidden">
                       {{#if hasRemainingQuestionnaires}}
                       <div class="dropdown">
                         <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="listQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -46,16 +47,14 @@
                 <tbody>
                   {{#each visits}}
                   {{#with visit=. design=../design}}
-                    {{#if visit.daysBetween}}
                     <tr>
-                      <td>{{visit.daysBetween}} d</td>
-                    </tr>
-                    {{/if}}
-                    <tr>
-                      <th>
-                        {{visit.title}}<br>
-                        <span class="text-muted">{{fullDate visit.date}}</span>
+                      <th class="visitTd">
+                        {{> xEditable visitTitleEO}}
                       </th>
+
+                      <td class="visitTd">
+                        {{> xEditable visitDayEO}}
+                      </td>
 
                       {{#each questionnaires}}
                         {{#with questionnaire=. visit=../visit design=../design}}
@@ -77,21 +76,14 @@
                     </tr>
                   {{/with}}
                   {{/each}}
-                  <tr>
-                    <td>
-                      <form id="addVisit">
-                        <!-- TODO: add instructions (i) -->
-                        <input type="text" class="form-control" name="offset" placeholder="enter offset">
-                      </form>
-                    </td>
-                  </tr>
                 </tbody>
               </table>
+							<button id="addVisit" class="btn btn-default print-hidden">add visit <i class="fa fa-plus"></i></button>
+              <br>
             </div>
           </div>
         </div>
       </div>
-      <hr>
     {{/with}}
     {{/each}}
     </div>
