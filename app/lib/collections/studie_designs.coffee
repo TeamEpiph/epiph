@@ -125,17 +125,8 @@ Meteor.methods
           'visits.$.questionnaireIds': questionnaireId
     throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
 
-    #update used questionnaire ids in design
-    design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: studyDesign not found") unless n > 0
-    questionnaireIds = []
-    design.visits.forEach (visit) ->
-      questionnaireIds = _.union questionnaireIds, visit.questionnaireIds
-    StudyDesigns.update
-      _id: studyDesignId
-    ,
-      $set:
-        questionnaireIds: questionnaireIds
+    updateQuestionnaireIds(studyDesignId)
+    return
 
 
   "scheduleRecordPhysicalDataAtVisit": (studyDesignId, visitId, doSchedule) ->
@@ -149,18 +140,8 @@ Meteor.methods
         'visits.$.recordPhysicalData': doSchedule
     throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
 
-    #update recordPhysicalData in design
-    design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: studyDesign not found") unless n > 0
-    recordPhysicalData = false
-    _.some design.visits, (visit) ->
-      recordPhysicalData = visit.recordPhysicalData
-      recordPhysicalData
-    StudyDesigns.update
-      _id: studyDesignId
-    ,
-      $set:
-        recordPhysicalData: recordPhysicalData
+    updateRecordPhysicalData(studyDesignId)
+    return
 
 
   "removeStudyDesignVisit": (studyDesignId, visitId) ->
@@ -189,8 +170,37 @@ Meteor.methods
         'visits.index': index
       ,
         $inc: {'visits.$.index': -1}
-      ,
-        multi: true
       index += 1
       break if n is 0
+
+    updateQuestionnaireIds(studyDesignId)
+    updateRecordPhysicalData(studyDesignId)
     return
+
+  
+updateQuestionnaireIds = (studyDesignId) ->
+  design = StudyDesigns.findOne studyDesignId
+  throw new Meteor.Error(500, "updateQuestionnaireIds: studyDesign not found") unless design?
+  questionnaireIds = []
+  design.visits.forEach (visit) ->
+    if visit.questionnaireIds? and visit.questionnaireIds.length > 0
+      questionnaireIds = _.union questionnaireIds, visit.questionnaireIds
+  StudyDesigns.update
+    _id: studyDesignId
+  ,
+    $set:
+      questionnaireIds: questionnaireIds
+
+updateRecordPhysicalData = (studyDesignId) ->
+  design = StudyDesigns.findOne studyDesignId
+  throw new Meteor.Error(500, "updateRecordPhysicalData: studyDesign not found") unless design?
+  recordPhysicalData = false
+  _.some design.visits, (visit) ->
+    if visit.recordPhysicalData?
+      recordPhysicalData = visit.recordPhysicalData
+    recordPhysicalData
+  StudyDesigns.update
+    _id: studyDesignId
+  ,
+    $set:
+      recordPhysicalData: recordPhysicalData
