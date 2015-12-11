@@ -163,3 +163,36 @@ Meteor.methods
     ,
       $set:
         recordPhysicalData: recordPhysicalData
+
+
+  "removeStudyDesignVisit": (studyDesignId, visitId) ->
+    check visitId, String
+    check studyDesignId, String
+
+    design = StudyDesigns.findOne
+      _id: studyDesignId
+    throw new Meteor.Error(500, "removeStudyDesignVisit: studyDesign not found") unless design?
+
+    visit = _.find design.visits, (v) ->
+      v._id is visitId
+    throw new Meteor.Error(500, "removeStudyDesignVisit: visit not found") unless visit?
+
+    StudyDesigns.update
+      _id: studyDesignId
+    ,
+      $pull: {visits: {_id: visitId}}
+
+    #TODO normalize visits into it's own collection
+    #to avoid stuff like this
+    index = visit.index+1
+    loop
+      n = StudyDesigns.update
+        _id: studyDesignId
+        'visits.index': index
+      ,
+        $inc: {'visits.$.index': -1}
+      ,
+        multi: true
+      index += 1
+      break if n is 0
+    return

@@ -139,3 +139,9 @@ Template.editStudyDesigns.events
     evt.preventDefault()
     Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, !@visit.recordPhysicalData, (error) ->
       throwError error if error?
+
+  "click .remove": (evt) ->
+    evt.preventDefault()
+    if confirm "Are you sure?"
+      Meteor.call "removeStudyDesignVisit", @design._id, @visit._id, (error) ->
+        throwError error if error?
