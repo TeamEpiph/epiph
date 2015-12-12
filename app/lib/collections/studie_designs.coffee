@@ -106,23 +106,17 @@ Meteor.methods
         'visits.$.day': day
     throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
 
-  "scheduleQuestionnaireAtVisit": (studyDesignId, visitId, questionnaireId, doSchedule) ->
+  "scheduleQuestionnairesAtVisit": (studyDesignId, visitId, questionnaireIds) ->
     check studyDesignId, String
     check visitId, String
-    check questionnaireId, String
+    check questionnaireIds, [String]
 
-    find =
+    n = StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
-
-    if doSchedule
-      n = StudyDesigns.update find,
-        $push:
-          'visits.$.questionnaireIds': questionnaireId
-    else
-      n = StudyDesigns.update find,
-        $pull:
-          'visits.$.questionnaireIds': questionnaireId
+    ,
+      $set:
+        'visits.$.questionnaireIds': questionnaireIds
     throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
 
     updateQuestionnaireIds(studyDesignId)

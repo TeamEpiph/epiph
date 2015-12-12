@@ -7,6 +7,51 @@ remainingQuestionnaires = (design) ->
   Questionnaires.find
     _id: {$nin: qIds}
 
+_bloodhound = null
+Template.editStudyDesignsTags.created = ->
+  questionnaires = Questionnaires.find().fetch()
+  questionnaires.push
+    _id: "recordPhysicalData"
+    title: "record physical data"
+  _bloodhound = new Bloodhound(
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title')
+    queryTokenizer: Bloodhound.tokenizers.whitespace
+    local: questionnaires
+  )
+  _bloodhound.initialize()
+
+Template.editStudyDesignsTags.rendered = ->
+  elt = @$('.tags')
+  elt.tagsinput
+    itemValue: '_id'
+    itemText: 'title'
+    typeaheadjs:
+      name: 'cities'
+      displayKey: 'title'
+      source: _bloodhound.ttAdapter()
+      allowDuplicates: true
+
+  visit = @data.visit
+  elt.tagsinput('removeAll')
+  if visit.questionnaireIds? and visit.questionnaireIds.length > 0
+    Questionnaires.find
+      _id: {$in: visit.questionnaireIds}
+    .forEach (q) ->
+      elt.tagsinput('add', q)
+
+Template.editStudyDesignsTags.events =
+  "itemAdded input, itemRemoved input": (evt) ->
+    questionnaireIds = _.pluck $(evt.target).tagsinput('items'), '_id'
+    recordPhysicalData = false
+    questionnaireIds = _.filter questionnaireIds, (id) ->
+      recordPhysicalData = true if id.valueOf() is "recordPhysicalData"
+      id.valueOf() isnt "recordPhysicalData"
+    Meteor.call "scheduleQuestionnairesAtVisit", @design._id, @visit._id, questionnaireIds, (error) ->
+      throwError error if error?
+    if @visit.recordPhysicalData isnt recordPhysicalData
+      Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, recordPhysicalData, (error) ->
+        throwError error if error?
+    return
 
 Template.editStudyDesigns.helpers
   designs: ->
@@ -57,6 +102,12 @@ Template.editStudyDesigns.helpers
         if daysBetween is 0
           delete v.daysBetween
       v
+
+  #this visit design
+  visitQuestionnaires: ->
+    #Questionnaires.find
+    #  _id: {$in: @visit.questionnaireIds}
+    @visit.questionnaireIds
 
   #this visit design
   visitTitleEO: ->
@@ -125,14 +176,17 @@ Template.editStudyDesigns.events
 
   "click .toggleQuestionnaireAtVisit": (evt) ->
     evt.preventDefault()
+    doSchedule = not $(evt.target).hasClass('fa-check-square-o') #isChecked 
+    questionnaireIds = @visit.questionnaireIds || []
     questionnaire = @questionnaire
-    found = false
-    if @visit.questionnaireIds
-      _.some @visit.questionnaireIds, (qId)->
-        found = qId is questionnaire._id
-        found
-    doSchedule = !found
-    Meteor.call "scheduleQuestionnaireAtVisit", @design._id, @visit._id, @questionnaire._id, doSchedule, (error) ->
+    if doSchedule
+      questionnaireIds.push questionnaire._id
+      $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('add', questionnaire) 
+    else
+      questionnaireIds = _.filter questionnaireIds, (qId)->
+        qId isnt questionnaire._id
+      $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('remove', questionnaire) 
+    Meteor.call "scheduleQuestionnairesAtVisit", @design._id, @visit._id, questionnaireIds, (error) ->
       throwError error if error?
 
   "click .toggleRecordPhysicalDataAtVisit": (evt) ->
