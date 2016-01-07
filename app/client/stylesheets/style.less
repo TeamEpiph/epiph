@@ -186,6 +186,18 @@ table.collapsed {
 ////////////////////////////////
 // editStudy
 .editStudyDesigns {
+  @media print {
+    font-size: 0.8em;
+    .collapse {
+      display: block !important;
+      height: auto !important;
+      visibility: visible !important;
+    }
+    .panel {
+      page-break-after: always;
+      page-break-inside: avoid;
+    }
+  }
   .panel-group {
     margin-top: 1em;
     .panel-heading {

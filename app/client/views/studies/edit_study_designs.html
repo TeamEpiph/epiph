@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-xs-12">
     <br>
-    <button id="createStudyDesign" class="btn btn-default print-hidden">
+    <button id="createStudyDesign" class="btn btn-default hidden-print">
       Create new Design <i class="fa fa-plus"></i>
     </button>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -31,7 +31,7 @@
                     {{#if listRecordPhysicalData}}
                       <th>record physical data</th>
                     {{/if}}
-                    <th scope="row" class="print-hidden">
+                    <th scope="row" class="hidden-print">
                       {{#if hasRemainingQuestionnaires}}
                       <div class="dropdown">
                         <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="listQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -89,7 +89,7 @@
                       -->
 
                       <td class="visitTd text-right">
-                        <div class="btn-group">
+                        <div class="btn-group hidden-print">
                           <button class="btn btn-primary moveUp" title="move up">
                             <i class="fa fa-arrow-up"></i>
                           </button>
@@ -106,8 +106,8 @@
                   {{/each}}
                 </tbody>
               </table>
-              <br>
-              <button id="addVisit" class="btn btn-default print-hidden">add visit <i class="fa fa-plus"></i></button>
+              <br class="hidden-print">
+              <button id="addVisit" class="btn btn-default hidden-print">add visit <i class="fa fa-plus"></i></button>
             </div>
           </div>
         </div>
