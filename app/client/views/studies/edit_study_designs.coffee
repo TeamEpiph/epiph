@@ -26,7 +26,7 @@ Template.editStudyDesignsTags.rendered = ->
     itemValue: '_id'
     itemText: 'title'
     typeaheadjs:
-      name: 'cities'
+      name: 'tags'
       displayKey: 'title'
       source: _bloodhound.ttAdapter()
       allowDuplicates: true
@@ -52,6 +52,9 @@ Template.editStudyDesignsTags.events =
       Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, recordPhysicalData, (error) ->
         throwError error if error?
     return
+
+Template.editStudyDesigns.rendered = ->
+  $(".panel-heading:first-child").click()
 
 Template.editStudyDesigns.helpers
   designs: ->
@@ -154,6 +157,10 @@ Template.editStudyDesigns.helpers
 
 
 Template.editStudyDesigns.events
+  "click .editable-click": (evt) ->
+    evt.preventDefault()
+    evt.stopPropagation()
+
   "click #createStudyDesign": (evt) ->
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?

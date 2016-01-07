@@ -6,13 +6,17 @@
     <button id="createStudyDesign" class="btn btn-default print-hidden">
       Create new Design <i class="fa fa-plus"></i>
     </button>
-    {{#each designs}}
-    {{#with design=.}}
-      <div class="row">
-        <div class="col-xs-12">
-          <h3>{{> xEditable titleEO}}</h3>
-          <div class="row">
-            <div class="col-xs-12">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      {{#each designs}}
+      {{#with design=.}}
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="heading_{{design._id}}" data-toggle="collapse" data-parent="#accordion" href="#collapse_{{design._id}}" aria-expanded="true" aria-controls="collapse_{{design._id}}">
+            <h4 class="panel-title">
+              {{> xEditable titleEO}}
+            </h4>
+          </div>
+          <div id="collapse_{{design._id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_{{design._id}}">
+            <div class="panel-body">
               <table class="table studyDesignTable">
                 <thead>
                   <tr>
@@ -97,14 +101,15 @@
                   {{/each}}
                 </tbody>
               </table>
-							<button id="addVisit" class="btn btn-default print-hidden">add visit <i class="fa fa-plus"></i></button>
               <br>
+              <button id="addVisit" class="btn btn-default print-hidden">add visit <i class="fa fa-plus"></i></button>
             </div>
           </div>
         </div>
+        <br>
+      {{/with}}
+      {{/each}}
       </div>
-    {{/with}}
-    {{/each}}
     </div>
   </div>
 </div>
