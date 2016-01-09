@@ -4,15 +4,6 @@
       path: '~/physio_records'
     ) 
   ]
-  #FIXME
-  beforeWrite: (fileObj) ->
-    console.log fileObj
-    name = "#{fileObj.metadata.visitId}_#{fileObj.metadata.sensor}.csv"
-    {
-      name: name
-      extension: 'csv'
-      type: 'text/csv'
-    }
 )
 
 allowPhysioRecordAccess = (userId, doc) ->
@@ -38,7 +29,7 @@ PhysioRecords.allow
     allowPhysioRecordAccess(userId, doc)
 
 Meteor.methods
-  "updatePhysioRecord": (_id, metadata) ->
+  "updatePhysioRecordMetadata": (_id, metadata) ->
     check(_id, String)
     check(metadata, Object)
     #TODO check if allowed
