@@ -97,6 +97,7 @@ Meteor.methods
     check visitId, String
     day = parseInt(day)
     check day, Number
+    day = null if isNaN(day)
 
     n = StudyDesigns.update
       _id: studyDesignId
