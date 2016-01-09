@@ -119,7 +119,7 @@ Meteor.methods
         'visits.$.questionnaireIds': questionnaireIds
     throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
 
-    updateQuestionnaireIds(studyDesignId)
+    updateQuestionnaireIdsOfStudyDesign(studyDesignId)
     return
 
 
@@ -134,7 +134,7 @@ Meteor.methods
         'visits.$.recordPhysicalData': doSchedule
     throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
 
-    updateRecordPhysicalData(studyDesignId)
+    updateRecordPhysicalDataOfStudyDesign(studyDesignId)
     return
 
 
@@ -197,14 +197,14 @@ Meteor.methods
       index += 1
       break if n is 0
 
-    updateQuestionnaireIds(studyDesignId)
-    updateRecordPhysicalData(studyDesignId)
+    updateQuestionnaireIdsOfStudyDesign(studyDesignId)
+    updateRecordPhysicalDataOfStudyDesign(studyDesignId)
     return
 
-  
-updateQuestionnaireIds = (studyDesignId) ->
+
+updateQuestionnaireIdsOfStudyDesign = (studyDesignId) ->
   design = StudyDesigns.findOne studyDesignId
-  throw new Meteor.Error(500, "updateQuestionnaireIds: studyDesign not found") unless design?
+  throw new Meteor.Error(500, "updateQuestionnaireIdsOfStudyDesign: studyDesign not found") unless design?
   questionnaireIds = []
   design.visits.forEach (visit) ->
     if visit.questionnaireIds? and visit.questionnaireIds.length > 0
@@ -215,9 +215,9 @@ updateQuestionnaireIds = (studyDesignId) ->
     $set:
       questionnaireIds: questionnaireIds
 
-updateRecordPhysicalData = (studyDesignId) ->
+updateRecordPhysicalDataOfStudyDesign = (studyDesignId) ->
   design = StudyDesigns.findOne studyDesignId
-  throw new Meteor.Error(500, "updateRecordPhysicalData: studyDesign not found") unless design?
+  throw new Meteor.Error(500, "updateRecordPhysicalDataOfStudyDesign: studyDesign not found") unless design?
   recordPhysicalData = false
   _.some design.visits, (visit) ->
     if visit.recordPhysicalData?
