@@ -177,6 +177,21 @@ Meteor.methods
     throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
 
     updateRecordPhysicalDataOfStudyDesign(studyDesignId)
+
+    #update existing visits
+    Visits.find
+      designVisitId: visitId
+    .forEach (visit) ->
+      if doSchedule
+        Visits.update visit._id,
+          $set:
+            recordPhysicalData: true
+      else
+        c = PhysioRecords.find({'metadata.visitId': visit._id}).count()
+        if c is 0
+          Visits.update visit._id,
+            $set:
+              recordPhysicalData: false
     return
 
 
