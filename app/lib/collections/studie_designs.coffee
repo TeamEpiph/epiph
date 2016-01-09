@@ -224,6 +224,25 @@ Meteor.methods
       $inc:
         'visits.$.index': move
 
+    #update existing visits
+    designVisitIds = design.visits.map (designVisit) ->
+      designVisit._id
+    Visits.update
+      designVisitId: { $in: designVisitIds }
+      index: visit.index+move
+    ,
+      $inc:
+        index: -move
+    ,
+      multi: true
+    Visits.update
+      designVisitId: visitId
+    ,
+      $inc:
+        index: move
+    ,
+      multi: true
+    return
 
   "removeStudyDesignVisit": (studyDesignId, visitId) ->
     check visitId, String
