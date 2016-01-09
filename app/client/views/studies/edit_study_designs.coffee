@@ -39,8 +39,10 @@ Template.editStudyDesignsTags.rendered = ->
     .forEach (q) ->
       elt.tagsinput('add', q)
 
+_ignoreAddEvents = true
 Template.editStudyDesignsTags.events =
   "itemAdded input, itemRemoved input": (evt) ->
+    return if _ignoreAddEvents
     questionnaireIds = _.pluck $(evt.target).tagsinput('items'), '_id'
     recordPhysicalData = false
     questionnaireIds = _.filter questionnaireIds, (id) ->
@@ -55,6 +57,7 @@ Template.editStudyDesignsTags.events =
 
 Template.editStudyDesigns.rendered = ->
   $(".panel-heading:first-child").click()
+  _ignoreAddEvents = false
 
 Template.editStudyDesigns.helpers
   designs: ->
