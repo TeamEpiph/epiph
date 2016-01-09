@@ -37,7 +37,11 @@ Template.editStudyDesignsTags.rendered = ->
     Questionnaires.find
       _id: {$in: visit.questionnaireIds}
     .forEach (q) ->
-      elt.tagsinput('add', q)
+      elt.tagsinput 'add', q
+  if visit.recordPhysicalData? and visit.recordPhysicalData
+    elt.tagsinput 'add',
+      _id: "recordPhysicalData"
+      title: "record physical data"
 
 _ignoreAddEvents = true
 Template.editStudyDesignsTags.events =
