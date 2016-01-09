@@ -181,25 +181,25 @@ Template.editStudyDesigns.events
     evt.preventDefault()
     listRecordPhysicalData.set !listRecordPhysicalData.get()
 
-  "click .toggleQuestionnaireAtVisit": (evt) ->
-    evt.preventDefault()
-    doSchedule = not $(evt.target).hasClass('fa-check-square-o') #isChecked 
-    questionnaireIds = @visit.questionnaireIds || []
-    questionnaire = @questionnaire
-    if doSchedule
-      questionnaireIds.push questionnaire._id
-      $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('add', questionnaire) 
-    else
-      questionnaireIds = _.filter questionnaireIds, (qId)->
-        qId isnt questionnaire._id
-      $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('remove', questionnaire) 
-    Meteor.call "scheduleQuestionnairesAtVisit", @design._id, @visit._id, questionnaireIds, (error) ->
-      throwError error if error?
+  #"click .toggleQuestionnaireAtVisit": (evt) ->
+  #  evt.preventDefault()
+  #  doSchedule = not $(evt.target).hasClass('fa-check-square-o') #isChecked 
+  #  questionnaireIds = @visit.questionnaireIds || []
+  #  questionnaire = @questionnaire
+  #  if doSchedule
+  #    questionnaireIds.push questionnaire._id
+  #    $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('add', questionnaire) 
+  #  else
+  #    questionnaireIds = _.filter questionnaireIds, (qId)->
+  #      qId isnt questionnaire._id
+  #    $("input.tags[data-visit-id=#{@visit._id}]").tagsinput('remove', questionnaire) 
+  #  Meteor.call "scheduleQuestionnairesAtVisit", @design._id, @visit._id, questionnaireIds, (error) ->
+  #    throwError error if error?
 
-  "click .toggleRecordPhysicalDataAtVisit": (evt) ->
-    evt.preventDefault()
-    Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, !@visit.recordPhysicalData, (error) ->
-      throwError error if error?
+  #"click .toggleRecordPhysicalDataAtVisit": (evt) ->
+  #  evt.preventDefault()
+  #  Meteor.call "scheduleRecordPhysicalDataAtVisit", @design._id, @visit._id, !@visit.recordPhysicalData, (error) ->
+  #    throwError error if error?
 
   "click .moveUp": (evt) ->
     Meteor.call "moveStudyDesignVisit", @design._id, @visit._id, true, (error) ->
