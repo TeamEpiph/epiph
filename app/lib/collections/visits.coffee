@@ -102,6 +102,7 @@ Meteor.methods
       questionnaireIds: visitTemplate.questionnaireIds
       recordPhysicalData: visitTemplate.recordPhysicalData
       index: visitTemplate.index
+      day: visitTemplate.day if visitTemplate.day?
 
     _id = Visits.insert visit
     _id
