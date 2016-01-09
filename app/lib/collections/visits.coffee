@@ -101,6 +101,7 @@ Meteor.methods
       title: visitTemplate.title
       questionnaireIds: visitTemplate.questionnaireIds
       recordPhysicalData: visitTemplate.recordPhysicalData
+      index: visitTemplate.index
 
     _id = Visits.insert visit
     _id

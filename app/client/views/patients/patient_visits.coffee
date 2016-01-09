@@ -7,9 +7,11 @@ Template.patientVisits.helpers
         visit = Visits.findOne
           designVisitId: designVisit._id
           patientId: patient._id
+        #dummy visit for validation to work
         visit = new Visit(designVisit) if !visit?
         visit.validatedDoc()
-      visits
+      visits.sort (a,b) ->
+        a.index - b.index
 
   #this questionnaire visit patient
   questionnaireCSS: ->
