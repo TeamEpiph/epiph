@@ -256,6 +256,27 @@ Meteor.methods
       v._id is visitId
     throw new Meteor.Error(500, "removeStudyDesignVisit: visit not found") unless visit?
 
+    #check existing visits
+    visits = Visits.find
+      designVisitId: visitId
+    .fetch()
+    foundData = _.some visits, (visit) ->
+      questionIds = Questions.find
+        questionnaireId:
+          $in: visit.questionnaireIds
+      .map( (q) -> q._id )
+      c1 = Answers.find
+        visitId: visit._id
+        questionId: {$in: questionIds}
+      .count()
+      c2 = PhysioRecords.find({'metadata.visitId': visit._id}).count()
+      if c1 > 0 or c2 > 0
+        console.log "the following visit of the template has data attached:"
+        console.log visit
+        return true
+      return false
+    throw new Meteor.Error(500, "The visit is used by at least one patient and has data attached to it. Please consult your system operator for further information.") if foundData
+ 
     StudyDesigns.update
       _id: studyDesignId
     ,
