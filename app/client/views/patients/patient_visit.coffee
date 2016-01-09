@@ -63,3 +63,12 @@ Template.patientVisit.events
   "click .showQuestionnaire": (evt, tmpl) ->
     Modal.show('viewQuestionnaire', @)
     false
+
+  "click .download": (evt) ->
+    window.open @url(), '_blank'
+
+  "click .remove": (evt) ->
+    evt.preventDefault()
+    if confirm "Are you sure?"
+      Meteor.call "removePhysioRecord", @_id, (error) ->
+        throwError error if error?

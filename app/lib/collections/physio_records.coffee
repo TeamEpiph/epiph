@@ -41,3 +41,9 @@ Meteor.methods
         'metadata.visitId': update.visitId
         'metadata.sensor': update.sensor
         'metadata.deviceName': update.deviceName
+
+  "removePhysioRecord": (_id) ->
+    check(_id, String)
+    #TODO check if allowed
+
+    PhysioRecords.remove _id

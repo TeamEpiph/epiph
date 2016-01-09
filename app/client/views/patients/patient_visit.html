@@ -33,12 +33,21 @@
             {{> empaticaRecorder sessionId=empaticaSessionId}}
           {{/if}}
           <h5>Records</h5>
-          <table class="table condensed">
+          <table class="table">
           {{#each physioRecords}}
             <tr>
               <td>{{metadata.sensor}}</td>
               <td>{{fileSizeSani size}}</td>
-              <td><a href="{{this.url}}" target="_blank"><i class="fa fa-download"></i></a></td>
+              <td>
+                <div class="btn-group">
+                  <button class="btn btn-primary download" title="download">
+                    <i class="fa fa-download"></i>
+                  </button>
+                  <button class="btn btn-danger remove" title="remove">
+                    <i class="fa fa-lg fa-trash"></i>
+                  </button>
+                </div>
+              </td>
             </tr>
           {{else}}
             no records found.
