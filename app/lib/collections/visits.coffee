@@ -93,6 +93,15 @@ Meteor.methods
       false
     throw new Meteor.Error(403, "studyDesign visit can't be found.") unless visitTemplate?
 
+    #check if visit does not exist already
+    c = Visits.find
+      patientId: patient._id
+      designVisitId: visitTemplate._id
+    .count()
+    #happens on reload, shouldn't be a problem to ignore
+    return if c > 0
+    #throw new Meteor.Error(403, "a visit from this template exists aready for the patient") if c > 0
+
     #we copy the data here from the visit template to
     #an actuall existing visit here
     visit = 

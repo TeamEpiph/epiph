@@ -32,15 +32,6 @@
       </div>
     </div>
     <div class="col-xs-12 col-md-9 col-lg-10"><!-- col-md-pull-3"> -->
-      <ul class="nav nav-tabs">
-        {{#each tabs}}
-        <li role="presentation" class={{tabClasses}}>
-          <a href="" class="switchTab" data-id={{../_id}}>
-            {{title}}
-          </a>
-        </li>
-        {{/each}}
-      </ul>
       <div id="studyPage">
         {{> Template.dynamic template=template data=templateData}}
       </div>

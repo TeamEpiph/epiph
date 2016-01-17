@@ -66,9 +66,15 @@ Meteor.publish "study", (_id) ->
   return unless onlyIfAdmin.call(@) 
   Studies.find(_id: _id)
 
-Meteor.publish "studyDesignsForStudy", (studyId) ->
+Meteor.publish "studyDesigns", ->
   return unless onlyIfAdmin.call(@) 
-  StudyDesigns.find(studyId: studyId)
+  StudyDesigns.find()
+Meteor.publish "studyDesignsForStudy", (studyIds) ->
+  return unless onlyIfAdmin.call(@) 
+  if typeof studyIds is 'string'
+    studyIds = [studyIds]
+  StudyDesigns.find
+    studyId: {$in: studyIds}
 
 Meteor.publish "patients", ->
   if Roles.userIsInRole(@userId, ['admin'])

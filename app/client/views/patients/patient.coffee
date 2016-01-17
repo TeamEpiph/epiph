@@ -10,23 +10,6 @@ Template.patient.created = ->
       Meteor.subscribe("studyCompositesForPatient", patient._id)
       Meteor.subscribe("visitsCompositeForPatient", patient._id)
 
-      if patient.runningVisitId?
-        Session.set "patientTab", 
-          title: "running visit"
-          visitId: patient.runningVisitId
-          template: "patientVisit"
-      else
-        openPatientVisit = Session.get("openPatientVisit")
-        if openPatientVisit? and openPatientVisit[patient._id]?
-          v = openPatientVisit[patient._id]
-          Session.set "patientTab", 
-            visitId: v._id
-            template: "patientVisit"
-        else
-          Session.set "patientTab", 
-            title: "Visits"
-            template: "patientVisits"
-
 Template.patient.helpers
   numVisits: ->
     #Visits.find(
@@ -37,44 +20,13 @@ Template.patient.helpers
       studyDesign.visits.length
     else
       0
-    
-  tabs: ->
-    tabs = [
-      title: "Visits"
-      template: "patientVisits"
-    ]
-    if @runningVisitId?
-      tabs.push
-        title: "running visit"
-        visitId: @runningVisitId
-        template: "patientVisit"
-    openPatientVisit = Session.get("openPatientVisit")
-    if openPatientVisit? and openPatientVisit[@_id] and openPatientVisit[@_id]._id isnt @runningVisitId
-      v = openPatientVisit[@_id]
-      tabs.push
-        title: v.title
-        visitId: v._id
-        template: "patientVisit"
-    tabs
-
-  #this tab
-  tabClasses: ->
-    tab = Session.get("patientTab")
-    if @template is tab.template and (!tab.visitId? or (tab.visitId? and tab.visitId is @visitId))
-      return "active"
-    ""
 
   template: ->
-    Session.get("patientTab").template
+    selectedDesignVisitId = Session.get 'selectedDesignVisitId'
+    if selectedDesignVisitId?
+      "patientVisit"
+    else
+      "patientVisits"
 
   templateData: ->
-    data = 
-      patient: @
-    if Session.get("patientTab").visitId?
-      data.visitId = Session.get("patientTab").visitId
-    data
-
-Template.patient.events
-  "click .switchTab": (evt) ->
-    Session.set("patientTab", @)
-    false
+    patient: @

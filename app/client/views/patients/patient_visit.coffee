@@ -11,13 +11,30 @@ AutoForm.hooks
         throwError error if error?
       false
 
+waitingForPatientId = null
+waitingForDesignVisitId = null
+Template.patientVisit.rendered = ->
+  @autorun ->
+    data = Template.currentData()
+    patientId = data.patient._id
+    designVisitId = Session.get 'selectedDesignVisitId'
+    return if not designVisitId?
+    v = Visits.findOne
+      designVisitId: designVisitId
+    if not v? and (waitingForPatientId isnt patientId or waitingForDesignVisitId isnt designVisitId)
+      #console.log 'initVisit'
+      waitingForPatientId = patientId
+      waitingForDesignVisitId = designVisitId
+      Meteor.call "initVisit", designVisitId, patientId, (error, _id) ->
+        throwError error if error?
+
 Template.patientVisit.helpers
   #this templateData
   visit: ->
-    v = Visits.findOne(@visitId)
-    if v?
-      v.validatedDoc()
-    else v
+    designVisitId = Session.get 'selectedDesignVisitId'
+    v = Visits.findOne
+      designVisitId: designVisitId
+    v.validatedDoc()
 
   #with questionnaire=this visit=.. patient=../../patient
   questionnaireCSS: ->

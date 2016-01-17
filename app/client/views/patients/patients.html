@@ -1,4 +1,106 @@
+<template name="studyOption">
+  <option value={{_id}}>{{title}}</option>
+</template>
+<template name="designOption">
+  <option value={{_id}}>{{title}} ({{study.title}})</option>
+</template>
+<template name="patientOption">
+  <option value={{_id}}>{{id}} {{hrid}} ({{study.title}} - {{studyDesign.title}})</option>
+</template>
+<template name="visitOption">
+  <option value={{_id}}>{{title}} ({{study.title}} - {{design.title}})</option>
+</template>
+<template name="questionnaireOption">
+  <option value={{_id}}>{{title}}</option>
+</template>
+
+<template name="visitSelect">
+  <select id="visitSelect" class="selectpicker show-tick" title="select visit">
+    <option class="italic" value="deselect"><b>clear selection</b></option>
+    {{#each visits}}
+      {{> visitOption}}
+    {{/each}}
+  </select>
+</template>
+
+<template name="questionnaireSelect">
+  <select id="questionnaireSelect" class="selectpicker show-tick" title="select questionnaire">
+    <option class="italic" value="deselect"><b>clear selection</b></option>
+    {{#each questionnaires}}
+      {{> questionnaireOption}}
+    {{/each}}
+  </select>
+</template>
+
 <template name="patients">
+<div class="patients">
+  <div class="row">
+    <div class="col-xs-12">
+			<select id="studiesSelect" class="selectpicker" title="select studies" multiple>
+        <option class="italic" value="deselect"><b>clear selection</b></option>
+				{{#each studies}}
+					{{> studyOption}}
+				{{/each}}
+			</select>
+
+      <i class="fa fa-lg fa-chevron-right"></i>
+			<select id="designsSelect" class="selectpicker" title="select designs" multiple>
+        <option class="italic" value="deselect"><b>clear selection</b></option>
+				{{#each designs}}
+					{{> designOption}}
+				{{/each}}
+			</select>
+
+      <i class="fa fa-lg fa-chevron-right"></i>
+      <select id="patientSelect" class="selectpicker show-tick" title="select patient">
+        <option class="italic" value="deselect"><b>clear selection</b></option>
+				{{#each patients}}
+					{{> patientOption}}
+				{{/each}}
+			</select>
+
+      {{#if singlePatient}}
+        <i class="fa fa-lg fa-chevron-right"></i>
+        {{> visitSelect visits=visits}}
+      {{/if}}
+
+      {{#if singleVisit}}
+        <i class="fa fa-lg fa-chevron-right"></i>
+        {{> questionnaireSelect questionnaires=questionnaires}}
+      {{/if}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      {{#unless singlePatient}}
+        <br>
+        <div id="patientsTable">
+          {{> reactiveTable collection=patientsTableCursor settings=patientsRTS}}
+          <!--
+          <table>
+            <th>
+              <td></td>
+            {{#each patients}}
+            <tr>
+              <td>{{id}}</td>
+              <td>{{hrid}}</td>
+            </tr>
+            {{/each}}
+          </table>
+          -->
+        </div>
+      {{else}}
+        {{#with selectedPatient}}
+          {{> patient}}
+        {{/with}}
+      {{/unless}}
+    </div>
+  </div>
+</div>
+</template>
+
+
+<template name="patients_old">
 <div class="patients">
   <!--
   <div class="page-header-small">

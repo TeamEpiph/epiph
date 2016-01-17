@@ -76,6 +76,7 @@ iron:middleware-stack@1.0.11
 iron:router@1.0.12
 iron:url@1.0.11
 jabbslad:basic-auth@0.2.2
+jesperwe:bootstrap-select@1.7.4_4
 joshowens:accounts-entry-1.2@1.0.3
 joshowens:simple-form@0.2.1
 jquery@1.11.4
