@@ -16,7 +16,7 @@ Template.editQuestionnaire.rendered = ->
   resizeQuestionEditor()
   @autorun ->
     sqId = Session.get 'selectedQuestionId'
-    sq = $(".selectedQuestion")
+    sq = $(".question[data-id=#{sqId}]")
     if sq?
       #FIXME breakpoint
       if $(document).width() > 992

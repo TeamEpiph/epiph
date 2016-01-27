@@ -1,5 +1,5 @@
 <template name="editQuestionnaireQuestion">
-<div class="question {{questionCSS}} row" data-index={{index}}>
+  <div class="question {{questionCSS}} row" data-index={{index}} data-id={{_id}}>
   {{#if eq type "description"}}
     <div class="col-xs-12">
       {{#markdown}}{{label}}{{/markdown}}
