@@ -33,7 +33,6 @@ meteorhacks:npm
 d3js:d3
 workman:x-editable-reactive-template
 cfs:standard-packages
-cfs:filesystem
 frozeman:template-var
 peppelg:bootstrap-3-modal
 yogiben:autoform-file
@@ -68,3 +67,4 @@ sergeyt:typeahead
 jesperwe:bootstrap-select
 percolate:migrations
 sujith3g:jstree
+cfs:gridfs

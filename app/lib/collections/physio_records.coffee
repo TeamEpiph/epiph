@@ -1,8 +1,6 @@
 @PhysioRecords = new (FS.Collection)('physioRecords',
   stores: [ 
-    new (FS.Store.FileSystem)('physioRecords', 
-      path: '~/physio_records'
-    ) 
+    new FS.Store.GridFS('physioRecords')
   ]
 )
 
