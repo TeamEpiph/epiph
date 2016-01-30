@@ -64,7 +64,7 @@ Router.map ->
       [
         Meteor.subscribe("study", @params._id )
         Meteor.subscribe("patientsForStudy", @params._id )
-        Meteor.subscribe("therapists")	
+        Meteor.subscribe("therapists")
         Meteor.subscribe("studyDesignsForStudy", @params._id )
         Meteor.subscribe("questionnaires")
       ]
