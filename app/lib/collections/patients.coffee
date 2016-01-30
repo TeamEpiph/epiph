@@ -6,6 +6,11 @@ class @Patient
     return null unless @therapistId?
     Meteor.users.findOne _id: @therapistId
 
+  therapistName: ->
+    t = @therapist()
+    return if !t?
+    t.profile.name
+
   study: ->
     return null unless @studyId?
     Studies.findOne _id: @studyId

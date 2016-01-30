@@ -1,0 +1,25 @@
+<template name="export">
+  <div id="export">
+    <div class="row">
+      <div class="col-md-3">
+        <div id="tree"></div> 
+      </div>
+      <div class="col-md-9">
+        <table id="table" class="table">
+          <tr>
+            {{#each columnHeaders}}
+              <th>{{title}}</th>
+            {{/each}}
+          </tr>
+          {{#each rows}}
+            <tr>
+              {{#each columns}}
+                <td>{{title}}</td>
+              {{/each}}
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
+</template>

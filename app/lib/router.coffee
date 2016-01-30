@@ -78,6 +78,19 @@ Router.map ->
         Meteor.subscribe("users")
       ]
 
+  @route "export",
+    path: "export"
+    waitOn: ->
+      [
+        Meteor.subscribe("questionnaires")
+        Meteor.subscribe("questions")
+        Meteor.subscribe("studies")
+        Meteor.subscribe("studyDesigns")
+        Meteor.subscribe("patients")
+        Meteor.subscribe("visits")
+        Meteor.subscribe("therapists")
+      ]
+
 
 if Meteor.isClient	
   Router.onBeforeAction ->
