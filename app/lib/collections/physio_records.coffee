@@ -5,7 +5,7 @@
 )
 
 allowPhysioRecordAccess = (userId, doc) ->
-  console.log doc
+  #console.log doc
   if doc.metadata? and doc.metadata.visitId?
     visit = Visits.findOne doc.metadata.visitId
     if visit?
