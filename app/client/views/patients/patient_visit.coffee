@@ -34,7 +34,7 @@ Template.patientVisit.helpers
     designVisitId = Session.get 'selectedDesignVisitId'
     v = Visits.findOne
       designVisitId: designVisitId
-    v.validatedDoc()
+    v.validatedDoc() if v?
 
   #with questionnaire=this visit=.. patient=../../patient
   questionnaireCSS: ->
