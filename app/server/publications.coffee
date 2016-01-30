@@ -143,6 +143,10 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
   ]
         
     
+Meteor.publish "visits", ->
+  return unless onlyIfAdmin.call(@) 
+  Visits.find()
+
 Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
   find: ->
     patient = Patients.findOne patientId
