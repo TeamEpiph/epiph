@@ -77,7 +77,7 @@ Template.export.rendered = ->
     icon: _visitIcon
     state: { opened: true }
   nodes.push
-    id: '__visit.title'
+    id: '__visitTemplate.title'
     parent: '_visit'
     text: 'title'
     icon: _visitIcon
@@ -299,128 +299,33 @@ Template.export.rendered = ->
     return
 
 _selection = new ReactiveVar []
+_waitingForDownload = new ReactiveVar false
 
 Template.export.helpers
   columnHeaders: ->
-    cols = []
     selection = _selection.get()
-    if selection.system?
-      Object.keys(selection.system).forEach (entity) ->
-        variables = selection.system[entity]
-        variables.forEach (variable) ->
-          cols.push
-            title: "#{entity}.#{variable}"
-      
-    if selection.questionnaires?
-      selection.questionnaires.forEach (questionnaire) ->
-        questionnaire = Questionnaires.findOne questionnaire._id
-        Questions.find(
-          questionnaireId: questionnaire._id
-        ,
-          sort: {index: 1}
-        ).forEach (question) ->
-          #console.log question
-          if !question.code?
-            question.code = "question code missing (index: #{question.index} in questionnaire: #{questionnaire.title})"
-          if question.type is 'table' or question.type is 'table_polar'
-            if question.subquestions?
-              question.subquestions.forEach (subquestion) ->
-                question.choices.forEach (choice) ->
-                  cols.push
-                    #question: question
-                    #subquestion: subquestion
-                    #choice: choice
-                    title: "#{question.code}-#{subquestion.code}-#{choice.variable}"
-            else
-              cols.push
-                title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
-          else if question.type is 'multipleChoice'
-            if question.choices?
-              question.choices.forEach (choice) ->
-                cols.push
-                  #question: question
-                  #choice: choice
-                  title: "#{question.code}-#{choice.variable}"
-            else
-              cols.push
-                title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
-          else
-            cols.push
-              #question: question
-              title: "#{question.code}"
-    cols
+    Export.columnHeaders(selection)
 
   rows: ->
-    rows = []
     selection = _selection.get()
     return if not selection.designs?
-    selection.designs.forEach (design) ->
-      studyDesign = StudyDesigns.findOne
-        _id: design._id
-      visitTemplates = studyDesign.visits.filter (visit) ->
-        design.visitIds.indexOf(visit._id) > -1
-      patients = Patients.find(
-        _id: {$in: design.patientIds}
-      ).forEach (patient) ->
-        studyDesign = StudyDesigns.findOne patient.studyDesignId
-        study = Studies.findOne studyDesign.studyId
-        visitTemplates.forEach (visitTemplate) ->
-          visit = Visits.findOne
-            patientId: patient._id
-            designVisitId: visitTemplate._id
-          rows.push
-            study: study
-            studyDesign: studyDesign
-            patient: patient
-            visitTemplate: visitTemplate
-            visit: visit
-    rows
+    Export.rows(selection)
 
   columns: ->
-    cols = []
+    row = @
+    Tracker.nonreactive ->
+      selection = _selection.get()
+      Export.columns(selection, row)
+
+  waitingForDownload: ->
+    _waitingForDownload.get()
+
+Template.export.events
+  'click #downloadCSV': (evt) ->
+    _waitingForDownload.set true
     selection = _selection.get()
-    if selection.system?
-      self = @
-      Object.keys(selection.system).forEach (entity) ->
-        variables = selection.system[entity]
-        variables.forEach (variable) ->
-          if self[entity]?
-            if typeof self[entity][variable] is 'function'
-              val = self[entity][variable]()
-            else
-              val = self[entity][variable]
-          else
-            val = "#{entity}_#{variable}"
-          cols.push
-            title: "#{val}"
-
-    if selection.questionnaires?
-      selection.questionnaires.forEach (questionnaire) ->
-        questionnaire = Questionnaires.findOne questionnaire._id
-        Questions.find(
-          questionnaireId: questionnaire._id
-        ,
-          sort: {index: 1}
-        ).forEach (question) ->
-          if question.type is 'table' or question.type is 'table_polar'
-            if question.subquestions?
-              question.subquestions.forEach (subquestion) ->
-                question.choices.forEach (choice) ->
-                  cols.push
-                    title: "#{question.code}-#{subquestion.code}-#{choice.variable}"
-            else
-              cols.push
-                title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
-          else if question.type is 'multipleChoice'
-            if question.choices?
-              question.choices.forEach (choice) ->
-                cols.push
-                  title: "#{question.code}-#{choice.variable}"
-            else
-              cols.push
-                title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
-          else
-            cols.push
-              title: "#{question.code}"
-
-    cols
+    loginToken = Accounts._storedLoginToken()
+    Meteor.call 'createCSV', selection, loginToken, (error, url) ->
+      _waitingForDownload.set false
+      throwError error if error?
+      window.open url#, '_blank'

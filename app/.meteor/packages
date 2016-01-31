@@ -68,3 +68,4 @@ jesperwe:bootstrap-select
 percolate:migrations
 sujith3g:jstree
 cfs:gridfs
+percolate:synced-cron

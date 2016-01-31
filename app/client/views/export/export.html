@@ -1,10 +1,18 @@
 <template name="export">
   <div id="export">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-3 treeCol">
         <div id="tree"></div> 
       </div>
       <div class="col-md-9">
+        <button id="downloadCSV" class="btn btn-default" disabled={{waitingForDownload}}>
+          Download CSV 
+          {{#if waitingForDownload}}
+            <i class="fa fa-spinner fa-spin"></i>
+          {{else}}
+            <i class="fa fa-download"></i>
+          {{/if}}
+        </button>
         <table id="table" class="table">
           <tr>
             {{#each columnHeaders}}
@@ -14,7 +22,7 @@
           {{#each rows}}
             <tr>
               {{#each columns}}
-                <td>{{title}}</td>
+                <td>{{this}}</td>
               {{/each}}
             </tr>
           {{/each}}
