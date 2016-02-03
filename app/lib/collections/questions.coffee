@@ -46,12 +46,14 @@ class @Question
   getMetaSchemaDict: ->
     schema = {}
 
+    noWhitespaceRegex = /^\S*$/ #don't match if contains whitespace
     if @type isnt "description"
       _.extend schema, 
         code:
           label: "Code"
           type: String
-          optional: true
+          optional: false
+          regEx: noWhitespaceRegex
         label:
           label: if (@type is "table") then "Title" else "Question"
           type: String
@@ -133,6 +135,7 @@ class @Question
             type: "textarea"
         'subquestions.$.code':
           type: String
+          regEx: noWhitespaceRegex
 
     if @type is "table_polar"
       _.extend schema, 
@@ -148,6 +151,7 @@ class @Question
           type: String
         'subquestions.$.code':
           type: String
+          regEx: noWhitespaceRegex
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema, 
@@ -162,6 +166,7 @@ class @Question
           type: Number
         'choices.$.variable':
           type: String
+          regEx: noWhitespaceRegex
 
     schema
     
