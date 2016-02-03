@@ -155,8 +155,9 @@ Template.export.rendered = ->
           state:
             opened: true
 
+      questionnaireIds = design.questionnaireIds || []
       Questionnaires.find(
-        _id: {$in: design.questionnaireIds}
+        _id: {$in: questionnaireIds}
       ).forEach (questionnaire) ->
         nodes.push
           id: 'questionnaire_'+questionnaire._id+'_'+design._id
