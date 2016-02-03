@@ -12,25 +12,73 @@ Migrations.add
   version: 2
   up: ->
     console.log "sanitize: choices variables & null values; multiplechoice modes"
+    Questions.find().forEach (question) ->
+      if question.choices?
+        question.choices = question.choices.filter (choice) ->
+          choice?
+        question.choices.forEach (choice) ->
+          choice.variable = choice.value
+        #console.log question.choices
+        Questions.update question._id,
+          $set:
+            choices: question.choices
+      if question.type is 'multipleChoice'
+        if !question.mode?
+          question.mode = 'radio'
+        #console.log question
+        Questions.update question._id,
+          $set:
+            mode: question.mode
+
+Migrations.add
+  version: 3
+  up: ->
+    console.log "sanitize whitespaces in question.code, question.choices.variable and question.subquestions.code"
     Questionnaires.find().forEach (questionnaire) ->
-      Questions.find().forEach (question) ->
+      console.log questionnaire.title
+      Questions.find(
+        questionnaireId: questionnaire._id
+      ).forEach (question) ->
+
+        code = question.code
+        if !code
+          code = questionnaire.title+'_'+question.index+1
+        code = code.toString()
+        code = code.replace(/\s/g, '_')
+        if code isnt question.code
+          console.log "updating code #{question.code} -> #{code}"
+          Questions.update question._id,
+            $set:
+              code: code
+
         if question.choices?
-          question.choices = question.choices.filter (choice) ->
-            choice?
+          updateChoices = false
           question.choices.forEach (choice) ->
-            choice.variable = choice.value
-          #console.log question.choices
-          Questions.update question._id,
-            $set:
-              choices: question.choices
-        if question.type is 'multipleChoice'
-          if !question.mode?
-            question.mode = 'radio'
-          #console.log question
-          Questions.update question._id,
-            $set:
-              mode: question.mode
+            variable = choice.variable.toString()
+            variable = variable.replace(/\s/g, '_')
+            if variable.valueOf() isnt choice.variable.valueOf()
+              console.log "updating variable #{choice.variable} -> #{variable}"
+              choice.variable = variable
+              updateChoices = true
+          if updateChoices
+            Questions.update question._id,
+              $set:
+                choices: question.choices
+
+        if question.subquestions?
+          updateSubquestions = false
+          question.subquestions.forEach (subq) ->
+            code = subq.code
+            code = code.replace(/\s/g, '_')
+            if code.valueOf() isnt subq.code.valueOf()
+              console.log "updating code #{subq.code} -> #{code}"
+              subq.code = code
+              updateSubquestions = true
+          if updateSubquestions
+            Questions.update question._id,
+              $set:
+                subquestions: question.subquestions
 
 Meteor.startup ->
-  #Migrations.migrateTo('1,rerun')
+  #Migrations.migrateTo('3,rerun')
   Migrations.migrateTo('latest')
