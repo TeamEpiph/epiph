@@ -92,6 +92,16 @@ Meteor.methods
         'visits.$.title': title
     throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
 
+    #update existing visits
+    Visits.update
+      designVisitId: visitId
+    ,
+      $set:
+        title: title
+    ,
+      multi: true
+    return
+
   "changeStudyDesignVisitDay": (studyDesignId, visitId, day) ->
     check studyDesignId, String
     check visitId, String

@@ -79,6 +79,20 @@ Migrations.add
               $set:
                 subquestions: question.subquestions
 
+Migrations.add
+  version: 4
+  up: ->
+    console.log "fix visit titles"
+    StudyDesigns.find({}).forEach (design) ->
+      design.visits.forEach (v) ->
+        Visits.find(
+          designVisitId: v._id
+        ).forEach (visit) ->
+          if visit.title isnt v.title
+            Visits.update visit._id,
+              $set: title: v.title
+    return
+
 Meteor.startup ->
-  #Migrations.migrateTo('3,rerun')
+  #Migrations.migrateTo('4,rerun')
   Migrations.migrateTo('latest')
