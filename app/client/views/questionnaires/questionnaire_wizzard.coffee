@@ -194,7 +194,7 @@ Template.questionnaireWizzard.events
         input = $(@)
         checkedChoices.push 
           value: input.data('choice_value')
-          variable: input.data('choice_variable')
+          variable: input.data('choice_variable').toString()
       if checkedChoices.length > 0
         answer.value.push 
           code: subquestion.code
