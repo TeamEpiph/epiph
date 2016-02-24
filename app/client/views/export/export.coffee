@@ -307,16 +307,16 @@ Template.export.helpers
     selection = _selection.get()
     Export.columnHeaders(selection)
 
-  rows: ->
-    selection = _selection.get()
-    return if not selection.designs?
-    Export.rows(selection)
+  #rows: ->
+  #  selection = _selection.get()
+  #  return if not selection.designs?
+  #  Export.rows(selection)
 
-  columns: ->
-    row = @
-    Tracker.nonreactive ->
-      selection = _selection.get()
-      Export.columns(selection, row)
+  #columns: ->
+  #  row = @
+  #  Tracker.nonreactive ->
+  #    selection = _selection.get()
+  #    Export.columns(selection, row)
 
   waitingForDownload: ->
     _waitingForDownload.get()

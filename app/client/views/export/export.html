@@ -13,6 +13,16 @@
             <i class="fa fa-download"></i>
           {{/if}}
         </button>
+        <br>
+        <h3>Table columns</h3>
+        <table id="table" class="table">
+          {{#each columnHeaders}}
+            <tr>
+              <th>{{title}}</th>
+            </tr>
+          {{/each}}
+        </table>
+        <!--
         <table id="table" class="table">
           <tr>
             {{#each columnHeaders}}
@@ -27,6 +37,7 @@
             </tr>
           {{/each}}
         </table>
+        -->
       </div>
     </div>
   </div>
