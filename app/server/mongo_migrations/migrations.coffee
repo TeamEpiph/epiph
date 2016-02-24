@@ -93,6 +93,19 @@ Migrations.add
               $set: title: v.title
     return
 
+Migrations.add
+  version: 5
+  up: ->
+    console.log "fix empty choices"
+    Questions.find({}).forEach (question) ->
+      if question.choices?
+        choices = question.choices.filter (choice) ->
+          choice?
+        if choices.length isnt question.choices.length
+          Questions.update question._id,
+            $set: choices: choices
+    return
+
 Meteor.startup ->
-  #Migrations.migrateTo('4,rerun')
+  #Migrations.migrateTo('5,rerun')
   Migrations.migrateTo('latest')
