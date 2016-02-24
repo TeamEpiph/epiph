@@ -96,7 +96,7 @@ Migrations.add
 Migrations.add
   version: 5
   up: ->
-    console.log "fix empty choices"
+    console.log "fix empty choices and subquestions"
     Questions.find({}).forEach (question) ->
       if question.choices?
         choices = question.choices.filter (choice) ->
@@ -104,6 +104,13 @@ Migrations.add
         if choices.length isnt question.choices.length
           Questions.update question._id,
             $set: choices: choices
+      if question.subquestions?
+        subquestions = question.subquestions.filter (subq) ->
+          subq?
+        if subquestions.length isnt question.subquestions.length
+          console.log "fix subquestions"
+          Questions.update question._id,
+            $set: subquestions: subquestions
     return
 
 Meteor.startup ->
