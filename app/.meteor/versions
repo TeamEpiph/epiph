@@ -153,3 +153,4 @@ webapp@1.2.3
 webapp-hashing@1.0.5
 workman:x-editable-reactive-template@1.0.2
 yogiben:autoform-file@0.4.1
+zuuk:stale-session@1.0.8
