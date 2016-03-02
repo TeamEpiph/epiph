@@ -104,10 +104,10 @@ class @Export
                   question.choices.forEach (choice) ->
                     if subanswer?
                       answerChoice = subanswer.checkedChoices.find (c) ->
-                        c.variable = choice.variable
+                        c.variable is choice.variable
                       if answerChoice?
                         cols.push answerChoice.value
-                      else #this choice is not cheked
+                      else #this choice is not checked
                         cols.push false
                     else #no subanswer for this subquestion
                       cols.push empty
