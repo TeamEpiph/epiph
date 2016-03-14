@@ -17,12 +17,12 @@ Template.editQuestionnaire.rendered = ->
   @autorun ->
     sqId = Session.get 'selectedQuestionId'
     sq = $(".question[data-id=#{sqId}]")
-    if sq? and sq.offset()?
-      #FIXME breakpoint
+    #FIXME breakpoint
+    if sq? and sq.offset()? and $(document).width() > 992
       if $(document).width() > 992
         $("#questionEditor").css("margin-top", sq.offset().top-150)
-      else
-        $("#questionEditor").css("margin-top", "")
+    else
+      $("#questionEditor").css("margin-top", "")
     return
 
 Template.editQuestionnaire.destroyed = ->
