@@ -26,12 +26,18 @@ class @Question
       when "multipleChoice"
         s.autoform = 
           options: @choices
-        if @mode is "radio"
-          s.type = Number
-          s.autoform.type = "select-radio-inline"
-        else if @mode is "checkbox"
+        if @mode is "checkbox"
           s.type = [Number]
-          s.autoform.type = "select-checkbox-inline"
+          if @orientation is 'inline'
+            s.autoform.type = "select-checkbox-inline"
+          else #if @orientation is 'vertical'
+            s.autoform.type = "select-checkbox"
+        else #if @mode is "radio"
+          s.type = Number
+          if @orientation is 'inline'
+            s.autoform.type = "select-radio-inline"
+          else #if @orientation is 'vertical'
+            s.autoform.type = "select-radio"
       when "table"
         s.type = Number
       when "description"
@@ -99,6 +105,18 @@ class @Question
             ,
               label: "multiple selection (checkboxes)"
               value: "checkbox"
+            ]
+        orientation:
+          label: "Orientation"
+          type: String
+          autoform:
+            type: "select-radio-inline"
+            options: [
+              label: "inline"
+              value: "inline"
+            ,
+              label: "vertical"
+              value: "vertical"
             ]
 
     if @type is "description"
