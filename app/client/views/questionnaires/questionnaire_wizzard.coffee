@@ -193,7 +193,7 @@ Template.questionnaireWizzard.events
       inputs.each -> #checked choices
         input = $(@)
         checkedChoices.push 
-          value: input.data('choice_value')
+          value: input.data('choice_value').toString()
           variable: input.data('choice_variable').toString()
       if checkedChoices.length > 0
         answer.value.push 

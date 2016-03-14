@@ -1,3 +1,5 @@
+util = Npm.require('util')
+
 Migrations.add
   version: 1
   up: ->
@@ -132,6 +134,34 @@ Migrations.add
         i += 1
     return
 
+Migrations.add
+  version: 7
+  up: ->
+    console.log "migrate question.choices.$.value from Number to String"
+    Questions.find().forEach (question) ->
+      if question.choices?
+        question.choices.forEach (choice) ->
+          choice.variable = choice.variable.toString()
+          choice.value = choice.value.toString()
+        #console.log question.choices
+        Questions.update question._id,
+          $set: choices: question.choices
+
+    Answers.find().forEach (answer) ->
+      if typeof answer.value is 'object'
+        updated = false
+        answer.value.forEach (v) ->
+          if v.checkedChoices?
+            v.checkedChoices.forEach (cc) ->
+              if typeof(cc.value) isnt 'string' or typeof(cc.variable) isnt 'string'
+                updated = true
+                cc.value = cc.value.toString()
+                cc.variable = cc.variable.toString()
+        if updated
+          console.log(util.inspect(answer, {showHidden: false, depth: null}))
+          Answers.update answer._id,
+            $set: value: answer.value
+
 Meteor.startup ->
-  #Migrations.migrateTo('6,rerun')
+  #Migrations.migrateTo('7,rerun')
   Migrations.migrateTo('latest')

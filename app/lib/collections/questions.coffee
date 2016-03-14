@@ -163,7 +163,8 @@ class @Question
           type: String
           optional: true
         'choices.$.value':
-          type: Number
+          type: String
+          regEx: noWhitespaceRegex
         'choices.$.variable':
           type: String
           regEx: noWhitespaceRegex
