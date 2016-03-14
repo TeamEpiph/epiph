@@ -104,7 +104,7 @@ class @Question
     if @type is "description"
       _.extend schema, 
         label:
-          label: "Text"
+          label: "Text (markdown)"
           type: String
           autoform:
             type: "textarea"
