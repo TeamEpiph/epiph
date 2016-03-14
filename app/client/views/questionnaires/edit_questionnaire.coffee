@@ -33,7 +33,8 @@ Template.editQuestionnaire.helpers
     schema = 
       title:
         type: String
-      key:
+      id:
+        label: 'ID'
         type: String
         optional: true
     new SimpleSchema(schema)

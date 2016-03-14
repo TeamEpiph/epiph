@@ -19,7 +19,7 @@ Questionnaires.before.update BeforeUpdateTimestampHook
 Questionnaires.allow
   update: (userId, doc, fieldNames, modifier) ->
     #TODO check if allowed
-    notAllowedFields = _.without fieldNames, 'title', 'key', 'updatedAt'
+    notAllowedFields = _.without fieldNames, 'title', 'id', 'updatedAt'
     return false if notAllowedFields.length > 0
     true
 
