@@ -126,6 +126,10 @@ Template.editStudyDesigns.helpers
     value: visit.title
     emptytext: "no title"
     success: (response, newVal) ->
+      dv = design.visits.find (v) ->
+        v.title is newVal
+      if dv?
+        return "a visit with this title already exists."
       Meteor.call "changeStudyDesignVisitTitle", design._id, visit._id, newVal, (error) ->
         throwError error if error?
       return
@@ -137,6 +141,10 @@ Template.editStudyDesigns.helpers
     value: visit.day
     emptytext: "no day set"
     success: (response, newVal) ->
+      dv = design.visits.find (v) ->
+        parseInt(v.day) is parseInt(newVal)
+      if dv?
+        return "a visit already exists on this day!"
       Meteor.call "changeStudyDesignVisitDay", design._id, visit._id, newVal, (error) ->
         throwError error if error?
       return
