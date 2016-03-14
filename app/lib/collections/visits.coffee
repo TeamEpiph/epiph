@@ -36,25 +36,39 @@ class @Visit
   getValidatedQuestionnaires: ->
     visit = @
     quests = @questionnaires().map (quest) ->
+      numQuestions = 0
       quest.answered = true
       quest.numAnswered = 0
       questions = Questions.find
         questionnaireId: quest._id
         type: {$ne: "description"} #filter out descriptions
       .map (question) ->
-        answers = Answers.find
+        if question.subquestions?
+          numQuestions += question.subquestions.length
+        else
+          numQuestions += 1
+
+        answer = Answers.findOne
           visitId: visit._id
           questionId: question._id
-        .fetch()
-        question.answered = answers.length > 0 or question.type is "description"
-        question.answers = answers 
-        if question.answered 
-          quest.numAnswered += 1
-        else
+
+        answered = answer?
+        if question.type is 'table' or question.type is 'table_polar'
+          answered = answer? and answer.value.length is question.subquestions.length
+        #question.answered = answered
+
+        if !answered 
           quest.answered = false
+
+        if question.subquestions?
+          if answer?
+            quest.numAnswered += answer.value.length
+        else if answered
+          quest.numAnswered += 1
+
         question
-      quest.questions = questions
-      quest.numQuestions = questions.length
+      #quest.questions = questions
+      quest.numQuestions = numQuestions
       quest.answered = false if questions.length is 0
       quest
     quests
