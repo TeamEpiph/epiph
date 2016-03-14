@@ -68,6 +68,16 @@ Template.editQuestionnaire.helpers
       
 
 Template.editQuestionnaire.events
+  "change [data-schema-key=type]": (evt) ->
+    #override autoform update to allow changing
+    #type without validation
+    evt.preventDefault()
+    evt.stopPropagation()
+    Questions.update Session.get('selectedQuestionId'),
+      $set:
+        type: evt.target.value
+    false
+
   "click #editQuestionnaire": (evt) ->
     Session.set 'selectedQuestionId', null
 
