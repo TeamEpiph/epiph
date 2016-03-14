@@ -16,18 +16,12 @@ class @Visit
       _id: {$in: qIds}
     qs
 
-  physioRecords: ->
-    PhysioRecords.find
-      'metadata.visitId': @_id
 
   validatedDoc: ->
     valid = true
 
-    physioValid = true
-    if @recordPhysicalData? and @physioRecords().count() is 0
-      valid = false
-      physioValid = false
-    @physioValid = physioValid
+    #we can't check, so assume true
+    @physioValid = true
 
     validatedQuestionnaires = @getValidatedQuestionnaires()
     if valid

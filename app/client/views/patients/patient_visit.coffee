@@ -1,16 +1,3 @@
-AutoForm.hooks
-  uploadPhysioRecordForm:
-    onSubmit: (insertDoc, updateDoc, currentDoc) ->
-      metadata =
-        visitId: currentDoc._id
-        sensor: insertDoc.sensor
-        deviceName: insertDoc.deviceName
-      self = @
-      Meteor.call "updatePhysioRecordMetadata", insertDoc.physioRecordId, metadata, (error) ->
-        self.done()
-        throwError error if error?
-      false
-
 waitingForPatientId = null
 waitingForDesignVisitId = null
 Template.patientVisit.rendered = ->
@@ -28,6 +15,7 @@ Template.patientVisit.rendered = ->
       Meteor.call "initVisit", designVisitId, patientId, (error, _id) ->
         throwError error if error?
 
+
 Template.patientVisit.helpers
   #this templateData
   visit: ->
@@ -41,34 +29,6 @@ Template.patientVisit.helpers
     return "valid" if @questionnaire.answered
     "invalid"
 
-  #this visit
-  showEmpaticaRecorder: ->
-    @recordPhysicalData and Meteor.isCordova
-
-  #this visit
-  empaticaSessionId: ->
-    @_id
-    
-  #this visit
-  uploadFormSchema: ->
-    schema =
-      sensor:
-        type: String
-        label: "Sensor"
-      deviceName:
-        type: String
-        label: "Device name"
-        optional: true
-      physioRecordId:
-        type: String
-        label: " "
-        autoform:
-          afFieldInput:
-            type: 'fileUpload'
-            collection: 'PhysioRecords'
-            label: 'Choose file'
-    new SimpleSchema(schema)
-  
 
 Template.patientVisit.events
   #with questionnaire=this visit=.. patient=../../patient
@@ -80,12 +40,3 @@ Template.patientVisit.events
   "click .showQuestionnaire": (evt, tmpl) ->
     Modal.show('viewQuestionnaire', @)
     false
-
-  "click .download": (evt) ->
-    window.open @url(), '_blank'
-
-  "click .remove": (evt) ->
-    evt.preventDefault()
-    if confirm "Are you sure?"
-      Meteor.call "removePhysioRecord", @_id, (error) ->
-        throwError error if error?

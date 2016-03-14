@@ -197,11 +197,9 @@ Meteor.methods
           $set:
             recordPhysicalData: true
       else
-        c = PhysioRecords.find({'metadata.visitId': visit._id}).count()
-        if c is 0
-          Visits.update visit._id,
-            $set:
-              recordPhysicalData: false
+        Visits.update visit._id,
+          $set:
+            recordPhysicalData: false
     return
 
 
@@ -279,8 +277,7 @@ Meteor.methods
         visitId: visit._id
         questionId: {$in: questionIds}
       .count()
-      c2 = PhysioRecords.find({'metadata.visitId': visit._id}).count()
-      if c1 > 0 or c2 > 0
+      if c1 > 0
         console.log "the following visit of the template has data attached:"
         console.log visit
         return true

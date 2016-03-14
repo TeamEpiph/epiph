@@ -163,10 +163,6 @@ Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
       find: (visit) ->
         Answers.find
           visitId: visit._id
-    ,
-      find: (visit) ->
-        PhysioRecords.find
-          'metadata.visitId': visit._id
     ]
   ]
 
