@@ -113,6 +113,25 @@ Migrations.add
             $set: subquestions: subquestions
     return
 
+Migrations.add
+  version: 6
+  up: ->
+    console.log "fix question indices"
+    Questionnaires.find().forEach (questionnaire) ->
+      i = 1
+      Questions.find(
+        questionnaireId: questionnaire._id
+      ,
+        sort: index: 1
+      ).forEach (question) ->
+        if i isnt question.index
+          console.log "fix question index"
+          console.log question
+          Questions.update question._id,
+            $set: index: i
+        i += 1
+    return
+
 Meteor.startup ->
-  #Migrations.migrateTo('5,rerun')
+  #Migrations.migrateTo('6,rerun')
   Migrations.migrateTo('latest')
