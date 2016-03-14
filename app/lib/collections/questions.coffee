@@ -55,9 +55,9 @@ class @Question
           optional: false
           regEx: noWhitespaceRegex
         label:
-          label: if (@type is "table") then "Title" else "Question"
+          label: if (@type is "table" or @type is 'table_polar') then "Title" else "Question"
           type: String
-          optional: (@type is "table")
+          optional: (@type is "table" or @type is 'table_polar')
           autoform:
             type: "textarea"
         optional:
@@ -196,8 +196,9 @@ Meteor.methods
     questionnaire = Questionnaires.findOne
       _id:  question.questionnaireId
 
-    check(question.label, String)
     check(question.type, String)
+    if question.type isnt 'table' and question.type isnt 'table_polar'
+      check(question.label, String)
 
     numQuestions = Questions.find
       questionnaireId: questionnaire._id
