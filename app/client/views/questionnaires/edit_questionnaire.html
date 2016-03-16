@@ -88,7 +88,7 @@
             {{#with selectedQuestion}}
             {{#autoForm doc=this collection="Questions" schema=questionFormSchema id="questionForm" type="update" class="questionForm" autosave=true}}
             {{#each afFieldNames}}
-            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema template="tight-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}
             {{/each}}
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" id="removeQuestion" class="btn btn-danger pull-right">Delete</button>

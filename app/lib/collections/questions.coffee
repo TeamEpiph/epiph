@@ -60,15 +60,15 @@ class @Question
           type: String
           optional: false
           regEx: noWhitespaceRegex
+        optional:
+          label: "Optional"
+          type: Boolean
         label:
           label: if (@type is "table" or @type is 'table_polar') then "Title" else "Question"
           type: String
           optional: (@type is "table" or @type is 'table_polar')
           autoform:
             type: "textarea"
-        optional:
-          label: "Optional"
-          type: Boolean
 
     _.extend schema, 
       type:
