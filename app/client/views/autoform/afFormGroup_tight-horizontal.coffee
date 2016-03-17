@@ -21,3 +21,28 @@ Template['afFormGroup_tight-horizontal'].helpers
     type = AutoForm.getInputType(self.afFieldInputAtts)
     self.skipLabel or type == 'boolean-checkbox' and !self.afFieldInputAtts.leftLabel
 
+  reallySkipLabel: ->
+    reallySkipLabel = false
+    if @name.indexOf('choices') > -1 or @name.indexOf('subquestions') > -1 
+      if @name.indexOf('.0.') is -1
+        reallySkipLabel = true
+    reallySkipLabel
+  myFormGroupClass: ->
+    if @name.indexOf('choices') > -1
+      if @name.indexOf('label') > -1
+        "col-md-8"
+      else if @name.indexOf('variable') > -1
+        "col-md-2"
+      else if @name.indexOf('value') > -1
+        "col-md-2"
+    else if @name.indexOf('subquestions') > -1 
+      if @name.indexOf('code') > -1
+        "col-md-2"
+      else if @name.indexOf('label') > -1
+        "col-md-10"
+      else if @name.indexOf('minLabel') > -1
+        "col-md-5"
+      else if @name.indexOf('maxLabel') > -1
+        "col-md-5"
+    else
+      ""

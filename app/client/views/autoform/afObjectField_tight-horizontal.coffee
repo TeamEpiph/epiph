@@ -15,6 +15,6 @@ Template['afObjectField_tight-horizontal'].helpers
     atts = _.pick(this, 'name', 'id-prefix')
     # We want to default to using bootstrap3 template below this point
     # because we don't want horizontal within horizontal
-    atts.template = 'bootstrap3'
+    atts.template = 'tight-horizontal'
     atts
 

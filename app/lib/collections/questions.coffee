@@ -141,6 +141,22 @@ class @Question
         decimal:
           type: Boolean
 
+    if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
+      _.extend schema, 
+        choices:
+          type: [Object]
+          label: "Choices"
+          minCount: 1
+        'choices.$.label':
+          type: String
+          optional: true
+        'choices.$.variable':
+          type: String
+          regEx: noWhitespaceRegex
+        'choices.$.value':
+          type: String
+          regEx: noWhitespaceRegex
+
     if @type is "table"
       _.extend schema, 
         subquestions:
@@ -171,21 +187,6 @@ class @Question
           type: String
           regEx: noWhitespaceRegex
 
-    if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
-      _.extend schema, 
-        choices:
-          type: [Object]
-          label: "Choices"
-          minCount: 1
-        'choices.$.label':
-          type: String
-          optional: true
-        'choices.$.value':
-          type: String
-          regEx: noWhitespaceRegex
-        'choices.$.variable':
-          type: String
-          regEx: noWhitespaceRegex
 
     schema
     
