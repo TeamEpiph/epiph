@@ -156,6 +156,20 @@ class @Question
         'choices.$.variable':
           type: String
           regEx: noWhitespaceRegex
+          custom: ->
+            console.log "> #{@value} #{@key} <"
+            console.log "----"
+            digitRegex = /(\d+)/g
+            matches = digitRegex.exec(@key)
+            if matches.length > 0
+              index = parseInt(matches[0])-1
+              while index >= 0
+                v = @field("choices.#{index}.variable").value
+                console.log v
+                if v.valueOf() is @value.valueOf()
+                  return "notUnique"
+                index -= 1
+            return
         'choices.$.value':
           type: String
           regEx: noWhitespaceRegex
@@ -173,6 +187,17 @@ class @Question
         'subquestions.$.code':
           type: String
           regEx: noWhitespaceRegex
+          custom: ->
+            digitRegex = /(\d+)/g
+            matches = digitRegex.exec(@key)
+            if matches.length > 0
+              index = parseInt(matches[0])-1
+              while index >= 0
+                v = @field("subquestions.#{index}.code").value
+                if v.valueOf() is @value.valueOf()
+                  return "notUnique"
+                index -= 1
+            return
 
     if @type is "table_polar"
       _.extend schema, 
@@ -189,6 +214,17 @@ class @Question
         'subquestions.$.code':
           type: String
           regEx: noWhitespaceRegex
+          custom: ->
+            digitRegex = /(\d+)/g
+            matches = digitRegex.exec(@key)
+            if matches.length > 0
+              index = parseInt(matches[0])-1
+              while index >= 0
+                v = @field("subquestions.#{index}.code").value
+                if v.valueOf() is @value.valueOf()
+                  return "notUnique"
+                index -= 1
+            return
 
 
     schema
