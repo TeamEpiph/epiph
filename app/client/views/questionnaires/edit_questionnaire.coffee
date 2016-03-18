@@ -112,11 +112,18 @@ Template.editQuestionnaire.events
 
   "click #removeQuestion": (evt) ->
     sid = Session.get 'selectedQuestionId'
-    if confirm("Delete Question?")
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this question?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
       Meteor.call "removeQuestion", sid, (error, _id) ->
         throwError error if error?
         Session.set 'selectedQuestionId', null
-
+      return
+    return false
 
 
 Template.editQuestionnaireQuestion.helpers

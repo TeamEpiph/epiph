@@ -22,15 +22,21 @@ Template.questionnaires.events
       Router.go('editQuestionnaire', {_id: id})
       return
 
-   "click button.edit": (evt) ->
-     evt.stopPropagation()
-     Router.go('editQuestionnaire', {_id: @_id})
-     return false
+  "click button.edit": (evt) ->
+    evt.stopPropagation()
+    Router.go('editQuestionnaire', {_id: @_id})
+    return false
 
-   "click button.remove": (evt) ->
-     if confirm("Delete Questionnaire?")
-       Meteor.call "removeQuestionnaire", @_id, (error) ->
-         throwError error.reason if error
-     return false
-
-
+  "click button.remove": (evt) ->
+    id = @_id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this questionnaire?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
+      Meteor.call "removeQuestionnaire", id, (error) ->
+        throwError error.reason if error
+      return
+    return false

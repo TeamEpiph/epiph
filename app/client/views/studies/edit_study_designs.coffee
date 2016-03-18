@@ -226,6 +226,16 @@ Template.editStudyDesigns.events
 
   "click .remove": (evt) ->
     evt.preventDefault()
-    if confirm "Are you sure?"
-      Meteor.call "removeStudyDesignVisit", @design._id, @visit._id, (error) ->
+    designId = @design._id
+    visitId = @visit._id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this visit?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
+      Meteor.call "removeStudyDesignVisit", designId, visitId, (error) ->
         throwError error if error?
+      return
+    return false

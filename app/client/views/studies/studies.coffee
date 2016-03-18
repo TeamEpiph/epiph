@@ -22,15 +22,21 @@ Template.studies.events
       Router.go('editStudy', {_id: id})
       return
 
-   "click button.edit": (evt) ->
-     evt.stopPropagation()
-     Router.go('editStudy', {_id: @_id})
-     return false
+  "click button.edit": (evt) ->
+    evt.stopPropagation()
+    Router.go('editStudy', {_id: @_id})
+    return false
 
-   "click button.remove": (evt) ->
-     if confirm("Delete Study?")
-       Meteor.call "removeStudy", @_id, (error) ->
-         throwError error.reason if error
-     return false
-
-
+  "click button.remove": (evt) ->
+    id = @_id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this study?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
+      Meteor.call "removeStudy", id, (error) ->
+        throwError error.reason if error
+      return
+    return false

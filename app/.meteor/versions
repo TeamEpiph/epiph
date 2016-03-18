@@ -83,6 +83,7 @@ jesperwe:bootstrap-select@1.7.4_4
 joshowens:accounts-entry-1.2@1.0.3
 joshowens:simple-form@0.2.1
 jquery@1.11.4
+kevohagan:sweetalert@1.0.0
 launch-screen@1.0.4
 less@2.5.1
 livedata@1.0.15

@@ -40,7 +40,13 @@ Template.usersTableButtons.events
     evt.stopImmediatePropagation()
     id = $(evt.target).closest("button").data().id
     role = $(evt.target).closest("button").data().role
-    if confirm("Really?")
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you want to remove the user from the role?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
       Meteor.call "removeUserFromRoles", id, role, (error) ->
         throwError error.reason if error
 
