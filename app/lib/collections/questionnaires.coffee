@@ -8,6 +8,20 @@ class @Questionnaire
   editingNotAllowed: ->
     false
 
+  numQuestions: ->
+    numQuestions = 0
+    Questions.find(
+      questionnaireId: @_id
+      type: {$ne: "description"}
+    ).forEach (question) ->
+      if question.subquestions?
+        numQuestions += question.subquestions.length
+      else
+        numQuestions += 1
+    numQuestions
+
+      
+
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->
     new Questionnaire(doc)

@@ -8,7 +8,7 @@ Template.questionnaires.helpers
     showFilter: true,
     fields: [
       { key: 'title', label: "Title", sortByValue: true, fn: (v,o)->if o.id then "#{o.title} (#{o.id})" else o.title },
-      { key: 'numQuestions', label: "num. questions", fn:(v,o)-> Questions.find( questionnaireId: o._id ).count() },
+      { key: 'numQuestions', label: "num. questions" },
       { key: 'creator', label: "Creator", fn: (v,o) -> c = o.creator(); return c.profile.name if c? },
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
       { key: 'buttons', label: '', tmpl: Template.editRemoveTableButtons }
