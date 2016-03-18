@@ -106,6 +106,9 @@ class @Question
               label: "multiple selection (checkboxes)"
               value: "checkbox"
             ]
+
+    if @type is "multipleChoice"
+      _.extend schema, 
         orientation:
           label: "Orientation"
           type: String
