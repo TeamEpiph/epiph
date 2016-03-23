@@ -83,12 +83,22 @@
           {{/with}}
           <div class="panel-body">
             {{#with selectedQuestion}}
-            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id="questionForm" type="update" class="questionForm" autosave=true}}
+            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id="questionForm" type="update" class="questionForm"}}
+            <div class="buttons-container">
+              <div class="buttons pull-right">
+                <button type="button" id="removeQuestion" class="btn btn-danger">Delete</button>
+                <button type="reset" class="btn btn-warning">Reset</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </div>
             {{#each afFieldNames}}
             {{> afQuickField name=this.name options=afOptionsFromSchema template="tight-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}
             {{/each}}
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" id="removeQuestion" class="btn btn-danger pull-right">Delete</button>
+            <div class="buttons pull-right">
+              <button type="button" id="removeQuestion" class="btn btn-danger">Delete</button>
+              <button type="reset" class="btn btn-warning">Reset</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
             {{/autoForm}}
             {{else}}
             {{#autoForm doc=this collection="Questionnaires" schema=questionnaireSchema id="questionnaireEditForm" type="update" class="questionEditForm" autosave=false}}
@@ -96,6 +106,7 @@
             {{> afQuickField name=this.name options=afOptionsFromSchema}}
             {{/each}}
             <button type="submit" class="btn btn-primary">Save</button>
+            <button type="reset" class="btn btn-warning">Reset</button>
             {{/autoForm}}
             {{/with}}
           </div>
