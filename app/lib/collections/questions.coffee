@@ -157,16 +157,16 @@ class @Question
           type: String
           regEx: noWhitespaceRegex
           custom: ->
-            console.log "> #{@value} #{@key} <"
-            console.log "----"
+            #console.log "> #{@value} #{@key} <"
+            #console.log "----"
             digitRegex = /(\d+)/g
             matches = digitRegex.exec(@key)
             if matches.length > 0
               index = parseInt(matches[0])-1
               while index >= 0
                 v = @field("choices.#{index}.variable").value
-                console.log v
-                if v.valueOf() is @value.valueOf()
+                #console.log v
+                if v? and v.valueOf() is @value.valueOf()
                   return "notUnique"
                 index -= 1
             return
@@ -194,7 +194,7 @@ class @Question
               index = parseInt(matches[0])-1
               while index >= 0
                 v = @field("subquestions.#{index}.code").value
-                if v.valueOf() is @value.valueOf()
+                if v? and v.valueOf() is @value.valueOf()
                   return "notUnique"
                 index -= 1
             return
@@ -221,7 +221,7 @@ class @Question
               index = parseInt(matches[0])-1
               while index >= 0
                 v = @field("subquestions.#{index}.code").value
-                if v.valueOf() is @value.valueOf()
+                if v? and v.valueOf() is @value.valueOf()
                   return "notUnique"
                 index -= 1
             return
