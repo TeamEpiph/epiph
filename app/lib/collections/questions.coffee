@@ -208,9 +208,11 @@ class @Question
         'subquestions.$.minLabel':
           label: "min label"
           type: String
+          optional: true
         'subquestions.$.maxLabel':
           label: "max label"
           type: String
+          optional: true
         'subquestions.$.code':
           type: String
           regEx: noWhitespaceRegex
