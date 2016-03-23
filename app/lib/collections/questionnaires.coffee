@@ -28,7 +28,7 @@ class @Questionnaire
       if question.break? and question.break
         numPages += 1
     numPages
- 
+
 
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->

@@ -146,15 +146,24 @@ Template.questionnaireWizzard.helpers
     for i in [0.._numPages.get()-1]
       css = ""
       allQuestionsAnsweredInPage = true
+      someQuestionsAnsweredInPage = false
       Questions.find
         questionnaireId: @questionnaire._id
         _id: {$in: questionIdsForPage[i]}
       .forEach (question) ->
         return if question.type is "description"
-        if !answers[question._id]?
+        answer = answers[question._id]
+        if question.type is "table" or question.type is "table_polar" or question.type is "multipleChoice"
+          if !answer? or answer.value.length < question.subquestions.length
+            allQuestionsAnsweredInPage = false
+          if answer? and answer.value.length > 0
+            someQuestionsAnsweredInPage = true
+        else if !answer?
           allQuestionsAnsweredInPage = false
       if allQuestionsAnsweredInPage
         css = "answered"
+      else if someQuestionsAnsweredInPage
+        css = "answeredPartly"
       if i is activeIndex
         css += " active"
       pages[i] = 
