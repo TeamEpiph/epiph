@@ -66,12 +66,18 @@
         </div>
       </div>
       {{/unless}}
+      <br>
       <button id="addQuestion" class="btn btn-primary">
         Add Question <i class="fa fa-plus"></i>
       </button>
       <button id="addText" class="btn btn-primary">
         Add Text <i class="fa fa-plus"></i>
       </button>
+      {{#if selectedQuestion}}
+      <button id="copyQuestion" class="btn btn-primary">
+        Copy selected Question <i class="fa fa-copy"></i>
+      </button>
+      {{/if}}
     </div>
     <div class="col-xs-12 col-md-6">
       <div id="questionEditor">
