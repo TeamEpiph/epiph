@@ -9,6 +9,7 @@ Template.questionnaires.helpers
     fields: [
       { key: 'title', label: "Title", sortByValue: true, fn: (v,o)->if o.id then "#{o.title} (#{o.id})" else o.title },
       { key: 'numQuestions', label: "num. questions" },
+      { key: 'numPages', label: "num. pages" },
       { key: 'creator', label: "Creator", fn: (v,o) -> c = o.creator(); return c.profile.name if c? },
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
       { key: 'buttons', label: '', tmpl: Template.editRemoveTableButtons }

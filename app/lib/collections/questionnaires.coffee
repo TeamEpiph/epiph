@@ -20,7 +20,15 @@ class @Questionnaire
         numQuestions += 1
     numQuestions
 
-      
+  numPages: ->
+    numPages = 1
+    Questions.find(
+      questionnaireId: @_id
+    ).forEach (question) ->
+      if question.break? and question.break
+        numPages += 1
+    numPages
+ 
 
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->
