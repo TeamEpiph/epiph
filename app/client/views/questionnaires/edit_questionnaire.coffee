@@ -20,7 +20,7 @@ Template.editQuestionnaire.rendered = ->
     #FIXME breakpoint
     if sq? and sq.offset()? and $(document).width() > 992
       if $(document).width() > 992
-        $("#questionEditor").css("margin-top", sq.offset().top-150)
+        $("#questionEditor").css("margin-top", sq.offset().top-172)
     else
       $("#questionEditor").css("margin-top", "")
     return
