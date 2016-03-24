@@ -218,13 +218,51 @@ table.collapsed {
       page-break-after: always;
       page-break-inside: avoid;
     }
+    .btn-group {
+      display: none;
+    }
   }
+
   .panel-group {
     margin-top: 1em;
-    .panel-heading {
-      cursor: pointer;
-      .panel-title {
-        font-size: 28px;
+    .panel:nth-child(odd) {
+      .panel-heading {
+        background-color: @table-bg-accent !important;
+      }
+    }
+    .panel:first-child {
+      border-top: none;
+    }
+    .panel {
+      margin-top: 0px;
+      border-radius: 0 !important;
+      border: none;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      .panel-heading {
+        height: 61px;
+        padding: 14px 15px;
+        background-color: transparent;
+        .panel-title-inline {
+          display: inline;
+          font-size: 28px;
+        }
+        .btn-group {
+          margin-top: -5px;
+          .accordion-toggle {
+            &:after {
+              font-family: 'FontAwesome';
+              content: "\f078";
+              font-size: 1.2em;
+            }
+            &.collapsed:after {
+              content: "\f054";
+            }
+          }
+        }
+      }
+      .panel-body {
+        border: none;
       }
     }
   }

@@ -54,10 +54,38 @@ Meteor.methods
       ]
     _id
 
-  "removeStudyDesign": (_id) ->
-    #TODO: check if allowed
+  "removeStudyDesign": (studyDesignId) ->
+    check studyDesignId, String
+
+    design = StudyDesigns.findOne
+      _id: studyDesignId
+    throw new Meteor.Error(500, "removeStudyDesign: studyDesign (#{studyDesignId}) not found") unless design?
+
+    #check patients
+    patientIds = Patients.find
+      studyDesignId: design._id
+    .map (patient) ->
+      patient.id
+
+    if patientIds.length > 0
+      throw new Meteor.Error(500, "Can't remove study design because these patients are mapped to it: #{patientIds.join(", ")}")
+
+    error = null
+    _.some design.visits, (visit) ->
+      next = true
+      try
+        Meteor.call "removeStudyDesignVisit", design._id, visit._id
+      catch e
+        error = e
+        next = false
+      next
+
+    if error?
+      throw e
+
     StudyDesigns.remove
-      _id: _id
+      _id: design._id
+    return
 
   "addStudyDesignVisit": (studyDesignId) ->
     check studyDesignId, String

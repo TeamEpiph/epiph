@@ -10,10 +10,16 @@
       {{#each designs}}
       {{#with design=.}}
         <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="heading_{{design._id}}" data-toggle="collapse" data-parent="#accordion" href="#collapse_{{design._id}}" aria-expanded="true" aria-controls="collapse_{{design._id}}">
-            <h4 class="panel-title">
+          <div class="panel-heading" role="tab" id="heading_{{design._id}}">
+            <h4 class="panel-title panel-title-inline">
               {{> xEditable titleEO}}
             </h4>
+            <div class="btn-group pull-right">
+              <button class="btn btn-danger removeDesign" data-id={{_id}} title="remove">
+                <i class="fa fa-lg fa-trash"></i>
+              </button>
+              <button class="btn btn-primary accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapse_{{design._id}}" aria-expanded="false" aria-controls="collapse_{{design._id}}"></button>
+            </div>
           </div>
           <div id="collapse_{{design._id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_{{design._id}}">
             <div class="panel-body">
@@ -96,7 +102,7 @@
                           <button class="btn btn-primary moveDown" title="move down">
                             <i class="fa fa-arrow-down"></i>
                           </button>
-                          <button class="btn btn-danger remove" title="remove">
+                          <button class="btn btn-danger removeVisit" title="remove">
                             <i class="fa fa-lg fa-trash"></i>
                           </button>
                         </div>
@@ -111,7 +117,6 @@
             </div>
           </div>
         </div>
-        <br>
       {{/with}}
       {{/each}}
       </div>

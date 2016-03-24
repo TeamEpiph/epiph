@@ -60,8 +60,10 @@ Template.editStudyDesignsTags.events =
     return
 
 Template.editStudyDesigns.rendered = ->
-  $(".panel-heading:first-child").click()
   _ignoreAddEvents = false
+  Meteor.setTimeout ->
+    $("button.accordion-toggle").first().click()
+  , 400
 
 Template.editStudyDesigns.helpers
   designs: ->
@@ -180,6 +182,21 @@ Template.editStudyDesigns.events
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?
 
+  "click .removeDesign": (evt) ->
+    evt.preventDefault()
+    designId = @design._id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this design?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
+      Meteor.call "removeStudyDesign", designId, (error) ->
+        throwError error if error?
+      return
+    return false
+
   "click #addVisit": (evt) ->
     evt.preventDefault()
     Meteor.call "addStudyDesignVisit", @design._id, (error) ->
@@ -224,7 +241,7 @@ Template.editStudyDesigns.events
     Meteor.call "moveStudyDesignVisit", @design._id, @visit._id, false, (error) ->
       throwError error if error?
 
-  "click .remove": (evt) ->
+  "click .removeVisit": (evt) ->
     evt.preventDefault()
     designId = @design._id
     visitId = @visit._id
