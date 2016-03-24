@@ -25,12 +25,12 @@
         {{/if}}
         {{/if}}
         {{#if isInRole 'admin'}}
-        <li class="{{activeRouteClass 'questionnaires'}}">
+        <li class="{{activeRouteClass 'questionnaires' 'editQuestionnaire'}}">
           <a href="{{pathFor 'questionnaires'}}">
             Questionnaires
           </a>
         </li>
-        <li class="{{activeRouteClass 'studies'}}">
+        <li class="{{activeRouteClass 'studies' 'editStudy'}}">
           <a href="{{pathFor 'studies'}}">
             Studies
           </a>
