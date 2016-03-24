@@ -1,6 +1,7 @@
 <template name="editStudyPatients">
 <div class="row">
   <div class="col-xs-12 col-md-3 col-md-push-9 text-right">
+    <br>
     <div class="panel panel-info">
       <div class="panel-heading">{{editingPanelTitle}}</div>
       <div class="panel-body">
@@ -17,11 +18,15 @@
       </div>
     </div>
 
-    <button id="createPatient" class="btn btn-default">
-      Create new Patient <i class="fa fa-user-plus"></i>
+    <button id="createPatient" class="btn btn-primary">
+      Add Patient <i class="fa fa-user-plus"></i>
     </button>
   </div>
   <div class="col-xs-12 col-md-9 col-md-pull-3">
+    <br>
+    <button id="createPatient" class="btn btn-primary pull-left">
+      Add Patient <i class="fa fa-user-plus"></i>
+    </button>
     {{> reactiveTable collection=patients settings=patientsRTS}}
   </div>
 </div>
