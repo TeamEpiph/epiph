@@ -32,6 +32,7 @@ Meteor.methods
     throw new Meteor.Error(403, "questionnaire can't be found.") unless questionnaire?
     #TODO check if questionnaire is scheduled at visit
 
+    answerId = null
     if answer._id?
       a = Answers.findOne _.pick answer, 'visitId', 'questionId', '_id'
       throw new Meteor.Error(403, "answer to update can't be found.") unless answer?
@@ -39,8 +40,13 @@ Meteor.methods
       Answers.update answer._id,
         $set:
           value: answer.value
-      answer._id
+      answerId = answer._id
     else
       answer = _.pick answer, 'visitId', 'questionId', 'value'
-      _id = Answers.insert answer
-      _id
+      answerId = Answers.insert answer
+
+    if !patient.hasData
+      Patients.update patient._id,
+        $set: hasData: true
+
+    return answerId

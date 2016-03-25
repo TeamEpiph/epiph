@@ -10,6 +10,9 @@ Template.patient.created = ->
       Meteor.subscribe("studyCompositesForPatient", patient._id)
       Meteor.subscribe("visitsCompositeForPatient", patient._id)
 
+Template.patient.rendered = ->
+  @$('[data-toggle=tooltip]').tooltip()
+
 Template.patient.helpers
   numVisits: ->
     #Visits.find(

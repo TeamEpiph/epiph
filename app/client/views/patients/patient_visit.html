@@ -18,7 +18,9 @@
               <!--
               <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
               -->
+              {{#unless patient.isExcluded}}
               <td class="cursorPointer answerQuestionnaire"><i class="fa fa-lg fa-pencil-square-o"></i></td>
+              {{/unless}}
             </tr>
           {{/with}}
         {{else}}

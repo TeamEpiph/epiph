@@ -26,9 +26,9 @@ Template.editStudyPatients.helpers
       { key: 'id', label: "", fn: (v, o) -> new Spacebars.SafeString("<input type='checkbox' />") },
       { key: 'id', label: "ID" },
       { key: 'hrid', label: "HRID" },
-      { key: 'key', label: "Key", sort: 'descending'},
       { key: 'therapistId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
       { key: 'therapistId', label: "Therapist", fn: (v,o) -> therapist = o.therapist(); return therapist.profile.name if therapist? },
+      { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow() },
       { key: 'buttons', label: '', tmpl: Template.studyPatientsTableButtons }
     ]
@@ -114,3 +114,40 @@ Template.editStudyPatients.events
     Session.set "openPatientIds", openPatientIds
     Session.set "selectedPatientId", patientId
     Router.go "patients"
+
+  "click button.remove": (evt) ->
+    patientId = @_id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this patient?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, ->
+      Meteor.call "removePatient", patientId, (error) ->
+        throwError error if error?
+      return
+    return false
+
+  "click button.exclude": (evt) ->
+    patientId = @_id
+    swal {
+      title: 'Exclude patient'
+      text: 'If you really want to exclude this patient, type a reason and choose Yes.'
+      type: 'input'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+      inputPlaceholder: "Reason for exclusion."
+      closeOnConfirm: false
+    }, (reason) ->
+      if !reason? or reason.length is 0
+        swal.showInputError("You need to give a reason!")
+        return false
+      Meteor.call "excludePatient", patientId, reason, (error) ->
+        throwError error if error?
+        swal("the patient has been excluded.")
+      return true
+    return false
+
+Template.studyPatientsTableExcluded.rendered = ->
+  @$('[data-toggle=tooltip]').tooltip()

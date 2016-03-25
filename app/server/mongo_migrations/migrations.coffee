@@ -162,6 +162,27 @@ Migrations.add
           Answers.update answer._id,
             $set: value: answer.value
 
+Migrations.add
+  version: 8
+  up: ->
+    console.log "init hasData for patients"
+    Patients.find().forEach (patient) ->
+      hasData = false
+      Visits.find(
+        patientId: patient._id
+      ).forEach (v) ->
+        c = Answers.find(
+          visitId: v._id
+        ).count()
+        if c > 0
+          hasData = true
+      if hasData
+        console.log patient._id+" has data!"
+        Patients.update patient._id,
+          $set: hasData: true
+    return
+
+
 Meteor.startup ->
-  #Migrations.migrateTo('7,rerun')
+  #Migrations.migrateTo('8,rerun')
   Migrations.migrateTo('latest')
