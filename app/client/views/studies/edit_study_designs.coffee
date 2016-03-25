@@ -66,6 +66,9 @@ Template.editStudyDesigns.rendered = ->
   , 400
 
 Template.editStudyDesigns.helpers
+  allQuestionnaires: ->
+    Questionnaires.find({}, sort: title: 1)
+
   designs: ->
     StudyDesigns.find studyId: @_id,
       sort: {createdAt: 1}
