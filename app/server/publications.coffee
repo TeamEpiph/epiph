@@ -130,10 +130,8 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
       StudyDesigns.find _id: patient.studyDesignId
     children: [
       find: (studyDesign) ->
-        #FIXME
-        qIds = _.unique studyDesign.questionnaireIds
         Questionnaires.find
-          _id: {$in: qIds }
+          _id: {$in: studyDesign.questionnaireIds }
       children: [
         find: (questionnaire) ->
           Questions.find

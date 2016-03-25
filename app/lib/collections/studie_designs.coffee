@@ -168,8 +168,6 @@ Meteor.methods
         'visits.$.questionnaireIds': questionnaireIds
     throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
 
-    updateQuestionnaireIdsOfStudyDesign(studyDesignId)
-
     #update existing visits
     Visits.find
       designVisitId: visitId
@@ -184,13 +182,13 @@ Meteor.methods
 
       removedQuestionnaireIds = _.difference visit.questionnaireIds, questionnaireIds
       removeQuestionnaireIds = removedQuestionnaireIds.filter (rQuestId) ->
-        rQuestionIds = Questions.find
+        rQuestionIds = Questions.find(
           questionnaireId: rQuestId
-        .map( (q) -> q._id )
-        c = Answers.find
+        ).map( (q) -> q._id )
+        c = Answers.find(
           visitId: visit._id
           questionId: {$in: rQuestionIds}
-        .count()
+        ).count()
         if c > 0
           return false
         return true
@@ -200,6 +198,8 @@ Meteor.methods
         Visits.update visit._id,
           $pullAll:
             questionnaireIds: removeQuestionnaireIds
+
+    updateQuestionnaireIdsOfStudyDesign(studyDesignId)
     return
 
 
@@ -341,6 +341,13 @@ updateQuestionnaireIdsOfStudyDesign = (studyDesignId) ->
   design.visits.forEach (visit) ->
     if visit.questionnaireIds? and visit.questionnaireIds.length > 0
       questionnaireIds = _.union questionnaireIds, visit.questionnaireIds
+    #questionnaireIds from design.visits and real visits may differt in case a questionnaire, for which
+    #data was collected already, got removed from the design.visit
+    #here we search for other questionnaireIds
+    Visits.find(
+      designVisitId: visit._id
+    ).forEach (v) ->
+      questionnaireIds = _.union questionnaireIds, v.questionnaireIds
   StudyDesigns.update
     _id: studyDesignId
   ,
