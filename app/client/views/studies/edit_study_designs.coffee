@@ -13,8 +13,9 @@ Template.editStudyDesignsTags.created = ->
   questionnaires.push
     _id: "recordPhysicalData"
     title: "record physical data"
+    id: "record physical data"
   _bloodhound = new Bloodhound(
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title')
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title', 'id')
     queryTokenizer: Bloodhound.tokenizers.whitespace
     local: questionnaires
   )
