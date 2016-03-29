@@ -1,0 +1,7 @@
+FROM patte/meteord:onbuild
+ENV K8S_MONGO_SERVICE_ENV_NAME BGE_MONGO
+ENV PORT 3000
+ENV ROOT_URL https://bedingungslos.ch
+ENV DISABLE_WEBSOCKETS=1
+ENV MAIL_URL smtp://USERNAME:PASSWORD@HOST:PORT
+ENV METEOR_SETTINGS '{ "kadira": { "appId": "XfvMJrSZpdv8j4RFK", "appSecret": "38ed9d1d-8c64-470f-86cc-d47b33ba78ef" }, "mailchimp": { "list": "7d0a0d413d", "apiKey": "94db359f9206f352a8885967b418aa33-us10" } }'
