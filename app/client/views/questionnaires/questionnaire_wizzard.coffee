@@ -187,6 +187,14 @@ Template.questionnaireWizzard.helpers
         css: css
     pages
         
+  isOnFirstPage: ->
+    _pageIndex.get() is 0
+
+  isOnLastPageOfLastQuestionnaire: ->
+    validatedQuestionnaires = @visit.validatedQuestionnaires
+    _pageIndex.get() is _numPages.get()-1 and
+      @questionnaire._id is validatedQuestionnaires[validatedQuestionnaires.length-1]._id
+
 
 Template.questionnaireWizzard.events
   "click #next": (evt, tmpl) ->
