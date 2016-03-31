@@ -19,7 +19,15 @@
               <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
               -->
               {{#unless patient.isExcluded}}
-              <td class="cursorPointer answerQuestionnaire"><i class="fa fa-lg fa-pencil-square-o"></i></td>
+              <td class="cursorPointer">
+                <button class="btn btn-primary btn-sm answerQuestionnaire">
+                  Fill in <i class="fa fa-lg fa-pencil-square-o"></i>
+                </button>
+                <button class="btn btn-primary btn-sm showQuestionnaire">
+                  Show <i class="fa fa-lg fa-file-text-o"></i>
+                </button>
+
+              </td>
               {{/unless}}
             </tr>
           {{/with}}

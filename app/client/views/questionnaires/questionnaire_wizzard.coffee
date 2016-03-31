@@ -3,6 +3,7 @@ _numPages = new ReactiveVar(0)
 _questionIdsForPage = new ReactiveVar({})
 _pageIndex = new ReactiveVar(0)
 _numFormsToSubmit = 0
+_readonly = ReactiveVar(false)
 
 nextPage = ->
   if _pageIndex.get() is _numPages.get()-1
@@ -18,6 +19,8 @@ previousPage = ->
 
 _gotoNextPage = null
 submitAllForms = (gotoNextPage) ->
+  if _readonly.get()
+    throw new Error("Can't submitAllForms because _readonly == true")
   _gotoNextPage = gotoNextPage
   numFormsToSubmit = 0
   $("form").each () ->
@@ -57,6 +60,10 @@ autoformHooks =
 
 Template.questionnaireWizzard.created = ->
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
+  if @data.readonly
+    _readonly.set true
+  else
+    _readonly.set false
   self = @
   @autorun ->
     count = 0
@@ -109,6 +116,15 @@ Template.questionnaireWizzard.helpers
     Answers.findOne
       visitId: visitId
       questionId: questionId
+
+  readonly: ->
+    _readonly.get()
+
+  formType: ->
+    if _readonly.get()
+      "disabled"
+    else
+      "normal"
 
   answerFormSchema: ->
     schema = 
@@ -174,11 +190,17 @@ Template.questionnaireWizzard.helpers
 
 Template.questionnaireWizzard.events
   "click #next": (evt, tmpl) ->
-    submitAllForms(true)
+    if _readonly.get()
+      nextPage()
+    else
+      submitAllForms(true)
     false
 
   "click #back": (evt, tmpl) ->
-    submitAllForms(false)
+    if _readonly.get()
+      previousPage()
+    else
+      submitAllForms(false)
     false
 
   "click .jumpToPage": (evt) ->
@@ -186,6 +208,8 @@ Template.questionnaireWizzard.events
     false
     
   "submit .questionForm": (evt) ->
+    if _readonly.get()
+      return
     evt.preventDefault()
     evt.stopPropagation()
     if @question.type is "description"

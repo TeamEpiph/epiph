@@ -26,3 +26,9 @@ Template.questionTablePolar.helpers
 
   type: ->
     @question.mode
+
+  disabled: ->
+    if @readonly
+      "disabled"
+    else
+      ""

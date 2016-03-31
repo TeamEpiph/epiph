@@ -11,7 +11,7 @@
           <div class="modal-body question">
             {{#each questionsForPage}}
               <!-- augment with question and answer -->
-              {{#with patient=../patient questionnaire=../questionnaire visit=../visit question=. answer=(answerForQuestion ../visit._id _id)}}
+              {{#with patient=../patient questionnaire=../questionnaire visit=../visit question=. answer=(answerForQuestion ../visit._id _id) readonly=readonly}}
               {{#if eq_or question.type "description" "table" "table_polar"}}
               <form id={{question._id}} class="questionForm" fields="answer" novalidate="novalidate">
                 <div class="form-group" data-required="true">
@@ -31,7 +31,7 @@
                 </div>
               </form>
               {{else}}
-                {{#autoForm doc=doc schema=answerFormSchema id=question._id type="normal" class="questionAutoform" fields="value"}}
+                {{#autoForm doc=doc schema=answerFormSchema id=question._id type=formType class="questionAutoform" fields="value"}}
                   {{#each afFieldNames}}
                     {{> afQuickField name=this.name options=afOptionsFromSchema}}
                   {{/each}}

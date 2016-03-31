@@ -24,3 +24,9 @@ Template.questionTable.helpers
 
   type: ->
     @question.mode
+
+  disabled: ->
+    if @readonly
+      "disabled"
+    else
+      ""
