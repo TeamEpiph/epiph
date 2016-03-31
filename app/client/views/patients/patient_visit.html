@@ -1,14 +1,10 @@
 <template name="patientVisit">
 <div id="visit">
   {{#with visit}}
-    <div class="header">
-      <h3 class="pull-left">
-        {{title}} <small>{{_id}}</small>
-      </h3>
-    </div>
+    <h2>{{title}} <small>{{_id}}</small></h2>
     <div class="row">
       <div class="questionnaires col-xs-12 col-md-6">
-        <h4>Questionnaires <i class="fa fa-file-text-o"></i></h4>
+        <h3>Questionnaires <i class="fa fa-file-text-o"></i></h3>
         <table class="table">
         {{#each validatedQuestionnaires}}
           {{#with questionnaire=this visit=.. patient=../../patient}}
