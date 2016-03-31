@@ -18,7 +18,7 @@
       {{#each ../question.choices}}
       <td>
         {{#with answer=../../answer question=../../question subquestion=.. choice=. readonly=../../readonly}}
-        <input data-subquestion_code={{subquestion.code}} data-choice_variable={{choice.variable}} data-choice_value={{choice.value}} name={{subquestion.code}} type={{type}} checked={{checked}} {{disabled}} />
+        {{> questionTableInput}}
         <p>{{choice.label}}</p>
         {{/with}}
       </td>
