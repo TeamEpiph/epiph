@@ -1,5 +1,6 @@
 <template name="patientVisit">
 <div id="visit">
+  {{#if Template.parent.subscriptionsReady}}
   {{#with visit}}
     <h2>{{title}} <small>{{_id}}</small></h2>
     <div class="row">
@@ -34,5 +35,8 @@
       </div>
     </div>
   {{/with}}
+  {{else}}
+    {{> spin}}
+  {{/if}}
 </div>
 </template>
