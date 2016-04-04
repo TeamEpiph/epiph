@@ -1,11 +1,11 @@
 Template.patient.created = ->
+  self = @
   @autorun ->
+    Session.set 'patientSubscriptionsReady', false
     patient = Patients.findOne Session.get("selectedPatientId")
     if patient?
-      #these subscriptions will cleanup automatically
-      #Meteor docs: If you call Meteor.subscribe within a reactive computation, for example using Tracker.autorun, the subscription will automatically be cancelled when the computation is invalidated or stopped
-      Meteor.subscribe("studyCompositesForPatient", patient._id)
-      Meteor.subscribe("visitsCompositeForPatient", patient._id)
+      self.subscribe("studyCompositesForPatient", patient._id)
+      self.subscribe("visitsCompositeForPatient", patient._id, onReady: -> Session.set 'patientSubscriptionsReady', true)
 
 Template.patient.rendered = ->
   @$('[data-toggle=tooltip]').tooltip()

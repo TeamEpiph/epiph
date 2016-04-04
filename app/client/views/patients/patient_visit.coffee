@@ -2,6 +2,8 @@ waitingForPatientId = null
 waitingForDesignVisitId = null
 Template.patientVisit.rendered = ->
   @autorun ->
+    if !Session.get 'patientSubscriptionsReady'
+      return 
     data = Template.currentData()
     patientId = data.patient._id
     designVisitId = Session.get 'selectedDesignVisitId'

@@ -7,9 +7,9 @@ Template.patients.onCreated ->
   @autorun ->
     selectedStudyIds = Session.get 'selectedStudyIds'
     if selectedStudyIds? and selectedStudyIds.length > 0
-      tmpl.subscribe "studyDesignsForStudy", selectedStudyIds
+      tmpl.subscribe "studyDesignsForStudy", selectedStudyIds, onReady: -> refreshSelectValues()
     else
-      tmpl.subscribe "studyDesigns"
+      tmpl.subscribe "studyDesigns", onReady: -> refreshSelectValues()
 
 
 Template.patients.rendered = ->
