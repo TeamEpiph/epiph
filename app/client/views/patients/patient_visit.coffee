@@ -33,7 +33,12 @@ Template.patientVisit.helpers
 Template.patientVisit.events
   #with questionnaire=this visit=.. patient=../../patient
   "click .answerQuestionnaire": (evt, tmpl) ->
-    Modal.show('questionnaireWizzard', @, keyboard: false)
+    data =
+      questionnaire: @questionnaire
+      visit: @visit
+      patient: @patient
+      readonly: false
+    Modal.show('questionnaireWizzard', data, keyboard: false)
     false
 
   #this: {questionnaire, visit, patient}
