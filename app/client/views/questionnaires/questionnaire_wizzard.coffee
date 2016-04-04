@@ -3,8 +3,9 @@ _numPages = new ReactiveVar(0)
 _questionIdsForPage = new ReactiveVar({})
 _pageIndex = new ReactiveVar(0)
 _numFormsToSubmit = 0
-_readonly = ReactiveVar(false)
-
+_readonly = new ReactiveVar(false)
+_questionnaire = new ReactiveVar(null)
+_nextQuestionnaire = null
 
 isAFormDirty = ->
   if _readonly.get()
@@ -68,7 +69,11 @@ close = ->
 
 nextPage = ->
   if _pageIndex.get() is _numPages.get()-1
-    Modal.hide('questionnaireWizzard')
+    if _nextQuestionnaire?
+      _pageIndex.set 0
+      _questionnaire.set _nextQuestionnaire
+    else
+      Modal.hide('questionnaireWizzard')
   else
     _pageIndex.set _pageIndex.get()+1
 
@@ -94,13 +99,15 @@ autoformHooks =
 
 
 Template.questionnaireWizzard.created = ->
-  @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
+  if !_questionnaire.get()?
+    _questionnaire.set @data.questionnaire
+    delete @data.questionnaire
 
   if @data.readonly
     _readonly.set true
   else
     _readonly.set false
-
+ 
   #close on escape key press
   $(document).on('keyup.wizzard', (e)->
     e.stopPropagation()
@@ -108,9 +115,28 @@ Template.questionnaireWizzard.created = ->
       close()
     return
   )
+
+  self = @
+  @autorun ->
+    self.subscribe("questionsForQuestionnaire", _questionnaire.get()._id)
+
+  #get manage nextQuestionnaire
+  @autorun ->
+    data = Template.currentData()
+    validatedQuestionnaires = data.visit.validatedQuestionnaires
+    i = 0
+    index = null
+    while i < validatedQuestionnaires.length-1 && index is null
+      q = validatedQuestionnaires[i]
+      if q._id is _questionnaire.get()._id
+        index = i
+      i += 1
+    if index? and index < validatedQuestionnaires.length-1
+      _nextQuestionnaire = validatedQuestionnaires[index+1]
+    else
+      _nextQuestionnaire = null
   
   #collect autoformIds, count pages
-  self = @
   @autorun ->
     count = 0
     page = 0
@@ -118,7 +144,7 @@ Template.questionnaireWizzard.created = ->
     didBreakPage = false
     autoformIds = []
     Questions.find
-      questionnaireId: self.data.questionnaire._id
+      questionnaireId: _questionnaire.get()._id
     ,
       sort: {index: 1}
     .forEach (q) ->
@@ -153,13 +179,19 @@ Template.questionnaireWizzard.helpers
     'swiperight div': (evt, templateInstance) ->
       previousQuestion()
 
+  title: ->
+    _questionnaire.get().title
+
   questionsForPage: ->
     questionIdsForPage = _questionIdsForPage.get()[_pageIndex.get()]
     Questions.find
-      questionnaireId: @questionnaire._id
+      questionnaireId: _questionnaire.get()._id
       _id: {$in: questionIdsForPage}
     ,
       sort: {index: 1}
+
+  questionnaire: ->
+    _questionnaire.get()
 
   answerForQuestion: (visitId, questionId) ->
     Answers.findOne
@@ -197,7 +229,7 @@ Template.questionnaireWizzard.helpers
   pages: ->
     answers = {}
     questionIds = Questions.find
-      questionnaireId: @questionnaire._id
+      questionnaireId: _questionnaire.get()._id
     .map (question) ->
       question._id
     Answers.find
@@ -213,7 +245,7 @@ Template.questionnaireWizzard.helpers
       allQuestionsAnsweredInPage = true
       someQuestionsAnsweredInPage = false
       Questions.find
-        questionnaireId: @questionnaire._id
+        questionnaireId: _questionnaire.get()._id
         _id: {$in: questionIdsForPage[i]}
       .forEach (question) ->
         return if question.type is "description"
@@ -242,7 +274,7 @@ Template.questionnaireWizzard.helpers
   isOnLastPageOfLastQuestionnaire: ->
     validatedQuestionnaires = @visit.validatedQuestionnaires
     _pageIndex.get() is _numPages.get()-1 and
-      @questionnaire._id is validatedQuestionnaires[validatedQuestionnaires.length-1]._id
+      _questionnaire.get()._id is validatedQuestionnaires[validatedQuestionnaires.length-1]._id
 
 
 Template.questionnaireWizzard.events
