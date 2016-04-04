@@ -19,7 +19,7 @@
 </template>
 
 <template name="visitSelect">
-  <select id="visitSelect" class="selectpicker show-tick" title="select visit">
+  <select id="visitSelect" class="selectpicker show-tick" title="select visit" data-live-search="true">
     <option class="italic" value="deselect"><b>clear selection</b></option>
     {{#each visits}}
       {{> visitOption}}
@@ -28,7 +28,7 @@
 </template>
 
 <template name="questionnaireSelect">
-  <select id="questionnaireSelect" class="selectpicker show-tick" title="select questionnaire">
+  <select id="questionnaireSelect" class="selectpicker show-tick" title="select questionnaire" data-live-search="true">
     <option class="italic" value="deselect"><b>clear selection</b></option>
     {{#each questionnaires}}
       {{> questionnaireOption}}
@@ -40,7 +40,7 @@
 <div class="patients">
   <div class="row">
     <div class="col-xs-12">
-			<select id="studiesSelect" class="selectpicker" title="select studies" multiple>
+			<select id="studiesSelect" class="selectpicker" title="select studies" multiple data-live-search="true">
         <option class="italic" value="deselect"><b>clear selection</b></option>
 				{{#each studies}}
 					{{> studyOption}}
@@ -48,7 +48,7 @@
 			</select>
 
       <i class="fa fa-lg fa-chevron-right"></i>
-			<select id="designsSelect" class="selectpicker" title="select designs" multiple>
+			<select id="designsSelect" class="selectpicker" title="select designs" multiple data-live-search="true">
         <option class="italic" value="deselect"><b>clear selection</b></option>
 				{{#each designs}}
 					{{> designOption}}
@@ -56,7 +56,7 @@
 			</select>
 
       <i class="fa fa-lg fa-chevron-right"></i>
-      <select id="patientSelect" class="selectpicker show-tick" title="select patient">
+      <select id="patientSelect" class="selectpicker show-tick" title="select patient" data-live-search="true">
         <option class="italic" value="deselect"><b>clear selection</b></option>
 				{{#each patients}}
 					{{> patientOption}}
