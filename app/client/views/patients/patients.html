@@ -5,7 +5,11 @@
   <option value={{_id}}>{{title}} ({{study.title}})</option>
 </template>
 <template name="patientOption">
-  <option value={{_id}}>{{id}} {{hrid}} ({{study.title}} - {{studyDesign.title}})</option>
+  {{#if hrid}}
+    <option value={{_id}}>{{hrid}} - {{id}} ({{study.title}} - {{studyDesign.title}})</option>
+  {{else}}
+    <option value={{_id}}>{{id}} ({{study.title}} - {{studyDesign.title}})</option>
+  {{/if}}
 </template>
 <template name="visitOption">
   <option value={{_id}}>{{title}} ({{study.title}} - {{design.title}})</option>
