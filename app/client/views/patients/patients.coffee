@@ -1,7 +1,7 @@
 Template.patients.onCreated ->
-  @subscribe("studies")
-  @subscribe("patients")
-  @subscribe("therapists")
+  @subscribe("studies", onReady: -> refreshSelectValues())
+  @subscribe("patients", onReady: -> refreshSelectValues())
+  @subscribe("therapists", onReady: -> refreshSelectValues())
 
   tmpl = @ 
   @autorun ->
