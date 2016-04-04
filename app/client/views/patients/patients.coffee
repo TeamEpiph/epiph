@@ -66,11 +66,14 @@ Template.patients.helpers
     selectedPatientId = Session.get 'selectedPatientId'
     selectedDesignVisitId = Session.get 'selectedDesignVisitId'
     p = Patients.findOne selectedPatientId
-    d = StudyDesigns.findOne p.studyDesignId
-    v = _.find d.visits, (visit) ->
-      visit._id is selectedDesignVisitId
-    Questionnaires.find
-      _id: {$in: v.questionnaireIds}
+    if p?
+      d = StudyDesigns.findOne p.studyDesignId
+      if d?
+        v = _.find d.visits, (visit) ->
+          visit._id is selectedDesignVisitId
+        return Questionnaires.find
+          _id: {$in: v.questionnaireIds}
+    return
 
   singlePatient: ->
     Session.get('selectedPatientId')?

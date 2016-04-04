@@ -64,10 +64,13 @@
         {{> visitSelect visits=visits}}
       {{/if}}
 
+      <!-- hide questionnaires, because we display them fullscreen only for now and
+        this list doesn't make much sense like this.
       {{#if singleVisit}}
         <i class="fa fa-lg fa-chevron-right"></i>
         {{> questionnaireSelect questionnaires=questionnaires}}
       {{/if}}
+      -->
     </div>
   </div>
   <div class="row">
