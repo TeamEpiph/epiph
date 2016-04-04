@@ -5,23 +5,24 @@ _pageIndex = new ReactiveVar(0)
 _numFormsToSubmit = 0
 _readonly = ReactiveVar(false)
 
-nextPage = ->
-  if _pageIndex.get() is _numPages.get()-1
-    Modal.hide('viewQuestionnaire') 
-  else
-    _pageIndex.set _pageIndex.get()+1
 
-previousPage = ->
-  index = _pageIndex.get()
-  index -= 1 if index > 0
-  _pageIndex.set index
+isAFormDirty = ->
+  if _readonly.get()
+    return false
+  isDirty = false
+  $("form").each () ->
+    return if isDirty
+    e = $(@)[0]
+    dirty = formIsDirty(e)
+    isDirty = dirty if dirty
+  isDirty
 
 
-_gotoNextPage = null
-submitAllForms = (gotoNextPage) ->
+_goto = null
+submitAllForms = (goto) ->
   if _readonly.get()
     throw new Error("Can't submitAllForms because _readonly == true")
-  _gotoNextPage = gotoNextPage
+  _goto = goto
   numFormsToSubmit = 0
   $("form").each () ->
     e = $(@)
@@ -37,10 +38,44 @@ submitAllForms = (gotoNextPage) ->
 
 formSubmitted = ->
   if (_numFormsToSubmit -= 1) <= 0
-    if _gotoNextPage
+    if _goto is 'nextPage'
       nextPage()
-    else
+    else if _goto is 'previousPage'
       previousPage()
+    else if _goto is 'close'
+      Modal.hide('questionnaireWizzard')
+    else if _goto.pageIndex?
+      _pageIndex.set _goto.pageIndex
+
+
+close = ->
+  if isAFormDirty()
+    swal {
+      title: 'Unsaved Changes'
+      text: "Do you want to save the changes on this page?"
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Save and exit'
+      cancelButtonText: "Exit without saving"
+    }, (save) ->
+      if save
+        submitAllForms('close')
+      else
+        Modal.hide('questionnaireWizzard')
+  else
+    Modal.hide('questionnaireWizzard')
+
+
+nextPage = ->
+  if _pageIndex.get() is _numPages.get()-1
+    Modal.hide('questionnaireWizzard')
+  else
+    _pageIndex.set _pageIndex.get()+1
+
+previousPage = ->
+  index = _pageIndex.get()
+  index -= 1 if index > 0
+  _pageIndex.set index
 
 
 autoformHooks = 
@@ -60,10 +95,21 @@ autoformHooks =
 
 Template.questionnaireWizzard.created = ->
   @subscribe("questionsForQuestionnaire", @data.questionnaire._id)
+
   if @data.readonly
     _readonly.set true
   else
     _readonly.set false
+
+  #close on escape key press
+  $(document).on('keyup.wizzard', (e)->
+    e.stopPropagation()
+    if e.keyCode is 27
+      close()
+    return
+  )
+  
+  #collect autoformIds, count pages
   self = @
   @autorun ->
     count = 0
@@ -94,6 +140,9 @@ Template.questionnaireWizzard.created = ->
     _numPages.set page+1
     _pageIndex.set 0
     AutoForm.addHooks(autoformIds, autoformHooks)
+
+Template.questionnaireWizzard.destroyed = ->
+  $(document).unbind('keyup.wizzard')
 
 
 Template.questionnaireWizzard.helpers
@@ -201,20 +250,39 @@ Template.questionnaireWizzard.events
     if _readonly.get()
       nextPage()
     else
-      submitAllForms(true)
+      submitAllForms('nextPage')
     false
 
   "click #back": (evt, tmpl) ->
     if _readonly.get()
       previousPage()
     else
-      submitAllForms(false)
+      submitAllForms('previousPage')
     false
 
   "click .jumpToPage": (evt) ->
-    _pageIndex.set @index-1
+    pageIndex = @index-1
+    if isAFormDirty()
+      swal {
+        title: 'Unsaved Changes'
+        text: "Do you want to save the changes on this page?"
+        type: 'warning'
+        showCancelButton: true
+        confirmButtonText: 'Save'
+        cancelButtonText: "Don't save"
+      }, (save) ->
+        if save
+          submitAllForms(pageIndex: pageIndex)
+        else
+          _pageIndex.set pageIndex
+    else
+      _pageIndex.set pageIndex
     false
-    
+
+  "click #close": (evt) ->
+    close()
+    false
+
   "submit .questionForm": (evt) ->
     if _readonly.get()
       return
