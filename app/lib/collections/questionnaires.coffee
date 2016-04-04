@@ -52,6 +52,25 @@ Meteor.methods
       creatorId: Meteor.userId()
     _id
 
+  "copyQuestionnaire": (questionnaireId) ->
+    console.log "copyQuestionnaire"
+    questionnaire = Questionnaires.findOne questionnaireId
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
+
+    delete questionnaire._id
+    delete questionnaire.createdAt
+    questionnaire.title += " copy"
+    qId = Questionnaires.insert questionnaire
+
+    Questions.find(
+      questionnaireId: questionnaireId
+    ).forEach (q) ->
+      delete q._id
+      delete q.createdAt
+      q.questionnaireId = qId
+      Questions.insert q
+    return
+
   "removeQuestionnaire": (_id) ->
     #TODO: check if studies are affected
     Questionnaires.remove

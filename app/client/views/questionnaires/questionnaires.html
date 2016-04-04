@@ -11,3 +11,17 @@
   </div>
 </div>
 </template>
+
+<template name="questionnairesTableButtons">
+  <div class="btn-group">
+    <button class="btn btn-primary copy" data-id={{_id}} title="copy">
+      <i class="fa fa-lg fa-copy"></i>
+    </button>
+    <button class="btn btn-primary edit" data-id={{_id}} title="edit">
+      <i class="fa fa-lg fa-pencil"></i>
+    </button>
+    <button class="btn btn-danger remove" data-id={{_id}} title="remove">
+      <i class="fa fa-lg fa-trash"></i>
+    </button>
+  </div>
+</template>

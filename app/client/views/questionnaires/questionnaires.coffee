@@ -12,7 +12,7 @@ Template.questionnaires.helpers
       { key: 'numPages', label: "num. pages" },
       { key: 'creator', label: "Creator", fn: (v,o) -> c = o.creator(); return c.profile.name if c? },
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
-      { key: 'buttons', label: '', tmpl: Template.editRemoveTableButtons }
+      { key: 'buttons', label: '', tmpl: Template.questionnairesTableButtons }
     ]
 
 
@@ -26,6 +26,12 @@ Template.questionnaires.events
   "click button.edit": (evt) ->
     evt.stopPropagation()
     Router.go('editQuestionnaire', {_id: @_id})
+    return false
+
+  "click button.copy": (evt) ->
+    evt.stopPropagation()
+    Meteor.call "copyQuestionnaire", @_id, (error) ->
+      throwError error.reason if error
     return false
 
   "click button.remove": (evt) ->
