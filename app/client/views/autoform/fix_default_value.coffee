@@ -24,22 +24,36 @@ Template.afInputText_bootstrap3.rendered = inputRendered
 
 
 checkboxRendered = ->
-  e = @$('input[type=checkbox]')[0]
-  e.defaultChecked = e.checked
+  self = @
+  @autorun ->
+    data = Template.currentData()
+    e = self.$('input[type=checkbox]')[0]
+    e.defaultChecked = e.checked
   return
 Template.afCheckbox.rendered = checkboxRendered
 Template.afCheckbox_bootstrap3.rendered = checkboxRendered
 Template['afCheckbox_bootstrap3-horizontal'].rendered = checkboxRendered
 
 selectRendered = ->
-  @$('option:selected').each ->
-    @defaultSelected = true
+  self = @
+  @autorun ->
+    data = Template.currentData()
+    self.$('option').each ->
+      @defaultSelected = @selected
+      return true
+  return
 Template.afSelect.rendered = selectRendered
 Template.afSelect_bootstrap3.rendered = selectRendered
 
+
 checkedInputRendered = ->
-  @$('input:checked').each ->
-    @defaultChecked = true
+  self = @
+  @autorun ->
+    data = Template.currentData()
+    self.$('input').each ->
+      @defaultChecked = @checked
+      return true
+  return
 Template.afRadioGroupInline.rendered = checkedInputRendered
 Template.afRadioGroupInline_bootstrap3.rendered = checkedInputRendered
 Template.afCheckboxGroupInline.rendered = checkedInputRendered
