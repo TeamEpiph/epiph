@@ -26,7 +26,7 @@ Template.patientVisits.helpers
 
 Template.patientVisits.events
   #with questionnaire visit= patient
-  "click .answerQuestionnaire": (evt, tmpl) ->
+  "click .showQuestionnaire": (evt, tmpl) ->
     data =
       questionnaire: @questionnaire
       visit: @visit

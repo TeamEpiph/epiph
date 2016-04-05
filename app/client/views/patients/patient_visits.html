@@ -5,12 +5,12 @@
     <tbody>
       {{#each visits}}
         {{#with visit=this patient=../patient}}
-          <tr class="openVisit cursorPointer">
-            <td><b>{{visit.title}}</b></td>
+          <tr>
+            <td class="openVisit cursorPointer"><b>{{visit.title}}</b></td>
             <td>
             {{#each visit.validatedQuestionnaires}}
               {{#with questionnaire=. visit=../visit patient=../patient}}
-              <div class="text-center answerQuestionnaire {{questionnaireCSS}}">
+              <div class="text-center showQuestionnaire {{questionnaireCSS}} cursorPointer">
                 <i class="fa fa-lg fa-file-text-o"></i>
                 <div>
                   {{questionnaire.title}}<br>
@@ -27,7 +27,7 @@
               {{/if}}
             </td>
 
-            <td><i class="fa fa-2x fa-arrow-circle-right"></i></td>
+            <td class="openVisit cursorPointer"><i class="fa fa-2x fa-arrow-circle-right"></i></td>
           </tr>
         {{/with}}
       {{else}}
