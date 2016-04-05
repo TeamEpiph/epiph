@@ -99,9 +99,8 @@ autoformHooks =
 
 
 Template.questionnaireWizzard.created = ->
-  if !_questionnaire.get()?
-    _questionnaire.set @data.questionnaire
-    delete @data.questionnaire
+  _questionnaire.set @data.questionnaire
+  delete @data.questionnaire
 
   if @data.readonly
     _readonly.set true
