@@ -146,6 +146,10 @@ Template.patients.helpers
 
 
 Template.patients.events
+  "click #patientsTable table tr": (evt) ->
+    Session.set 'selectedPatientId', @_id
+    return
+
   "change #studiesSelect": (evt) ->
     ids = $('#studiesSelect').val()
     if ids.indexOf('deselect') > -1
