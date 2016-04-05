@@ -23,6 +23,12 @@ repositionQuestionEditor = ->
     $("#questionEditor").css("margin-top", "")
   return
 
+scrollToEditingQuestion = ->
+  sqId = Session.get 'selectedQuestionId'
+  sq = $(".question[data-id=#{sqId}]")
+  $('body').scrollTop sq.offset().top-170
+
+
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
   $(window).resize(resizeQuestionEditor)
@@ -99,11 +105,7 @@ Template.editQuestionnaire.events
       if isFullscreen
           $('body').scrollTop 0
       else
-        Meteor.setTimeout ->
-          sqId = Session.get 'selectedQuestionId'
-          sq = $(".question[data-id=#{sqId}]")
-          $('body').scrollTop sq.offset().top-170
-        , 300
+        Meteor.setTimeout scrollToEditingQuestion, 300
     , 300
     return
 
@@ -138,6 +140,7 @@ Template.editQuestionnaire.events
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
+      Meteor.setTimeout scrollToEditingQuestion, 300
 
   "click #addText": (evt) ->
     question =
@@ -147,6 +150,7 @@ Template.editQuestionnaire.events
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
+      Meteor.setTimeout scrollToEditingQuestion, 300
 
   "click #copyQuestion": (evt) ->
     sid = Session.get 'selectedQuestionId'
@@ -157,6 +161,7 @@ Template.editQuestionnaire.events
     Meteor.call "insertQuestion", selectedQuestion, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
+      Meteor.setTimeout scrollToEditingQuestion, 300
 
   "click #removeQuestion": (evt) ->
     sid = Session.get 'selectedQuestionId'
