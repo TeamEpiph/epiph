@@ -28,6 +28,22 @@ scrollToEditingQuestion = ->
   sq = $(".question[data-id=#{sqId}]")
   $('body').scrollTop sq.offset().top-170
 
+warnIfQuestionFormIsDirty = ->
+  form = $('#questionForm')[0]
+  if form? && formIsDirty(form)
+    document.activeElement.blur()
+    scrollToEditingQuestion()
+    swal {
+      title: 'Unsaved Changes'
+      text: "Please save or reset your changes to the editing question before taking other actions."
+      type: 'warning'
+      showCancelButton: false
+      confirmButtonText: 'OK'
+    }
+    return true
+  else
+    return false
+
 
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
@@ -120,7 +136,8 @@ Template.editQuestionnaire.events
     false
 
   "click #editQuestionnaire": (evt) ->
-    Session.set 'selectedQuestionId', null
+    if !warnIfQuestionFormIsDirty()
+      Session.set 'selectedQuestionId', null
 
   "click #previewQuestionnaire": (evt) ->
     data =
@@ -132,6 +149,7 @@ Template.editQuestionnaire.events
     false
 
   "click #addQuestion": (evt) ->
+    return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
       label: " "
@@ -143,6 +161,7 @@ Template.editQuestionnaire.events
       Meteor.setTimeout scrollToEditingQuestion, 300
 
   "click #addText": (evt) ->
+    return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
       label: " "
@@ -153,6 +172,7 @@ Template.editQuestionnaire.events
       Meteor.setTimeout scrollToEditingQuestion, 300
 
   "click #copyQuestion": (evt) ->
+    return if warnIfQuestionFormIsDirty()
     sid = Session.get 'selectedQuestionId'
     selectedQuestion = Questions.findOne
       _id: sid
@@ -189,7 +209,8 @@ Template.editQuestionnaireQuestion.helpers
 
 Template.editQuestionnaireQuestion.events
   "click .question": (evt) ->
-    Session.set 'selectedQuestionId', @_id
+    if !warnIfQuestionFormIsDirty()
+      Session.set 'selectedQuestionId', @_id
 
 
 sortableTimeout = null
