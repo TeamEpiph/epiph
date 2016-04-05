@@ -201,6 +201,7 @@ Template.questionnaireWizzard.helpers
     _questionnaire.get()
 
   answerForQuestion: (visitId, questionId) ->
+    return if _preview.get()
     Answers.findOne
       visitId: visitId
       questionId: questionId
@@ -229,6 +230,7 @@ Template.questionnaireWizzard.helpers
     new SimpleSchema(schema)
     
   doc: ->
+    return if _preview.get()
     @answer or 
       visitId: @visit._id
       questionId: @question._id
@@ -239,11 +241,12 @@ Template.questionnaireWizzard.helpers
       questionnaireId: _questionnaire.get()._id
     .map (question) ->
       question._id
-    Answers.find
-      visitId: @visit._id
-      questionId: {$in: questionIds}
-    .forEach (answer) ->
-      answers[answer.questionId] = answer
+    if !_preview.get()
+      Answers.find
+        visitId: @visit._id
+        questionId: {$in: questionIds}
+      .forEach (answer) ->
+        answers[answer.questionId] = answer
     activeIndex = _pageIndex.get()
     questionIdsForPage = _questionIdsForPage.get()
     pages = []
@@ -279,9 +282,7 @@ Template.questionnaireWizzard.helpers
     _pageIndex.get() is 0
 
   isOnLastPageOfLastQuestionnaire: ->
-    validatedQuestionnaires = @visit.validatedQuestionnaires
-    _pageIndex.get() is _numPages.get()-1 and
-      _questionnaire.get()._id is validatedQuestionnaires[validatedQuestionnaires.length-1]._id
+    _pageIndex.get() is _numPages.get()-1 and (_preview.get() or _nextQuestionnaire is null)
 
 
 Template.questionnaireWizzard.events
