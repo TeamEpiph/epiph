@@ -57,6 +57,7 @@
     </div>
   </div>
   <div class="row">
+    {{#unless isFullscreen}}
     <div class="col-xs-12 col-md-6">
       {{#unless hasQuestions}}
         This questionnaire contains no questions yet.
@@ -82,11 +83,17 @@
       </button>
       {{/if}}
     </div>
-    <div class="col-xs-12 col-md-6">
+    {{/unless}}
+    <div class={{questionEditorColClass}}>
       <div id="questionEditor">
         <div class="panel panel-info">
           {{#with selectedQuestion}}
-          <div class="panel-heading">Item #{{index}}</div>
+          <div class="panel-heading">
+            <button class="btn btn-default btn-sm" id="toggleFullscreen">
+              <i class="fa {{fullscreenToggleFAClass}}"></i>
+            </button>
+            Item #{{index}}
+          </div>
           {{else}}
           <div class="panel-heading">Questionnaire</div>
           {{/with}}

@@ -1,3 +1,5 @@
+_isFullscreen = new ReactiveVar(false)
+
 AutoForm.hooks
   questionnaireForm:
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
@@ -10,19 +12,23 @@ resizeQuestionEditor = ->
   parent = qe.parent() 
   qe.width( parent.width() )
 
+repositionQuestionEditor = ->
+  sqId = Session.get 'selectedQuestionId'
+  sq = $(".question[data-id=#{sqId}]")
+  #FIXME breakpoint
+  if !_isFullscreen.get() and sq? and sq.offset()? and $(document).width() > 992
+    if $(document).width() > 992
+      $("#questionEditor").css("margin-top", sq.offset().top-200)
+  else
+    $("#questionEditor").css("margin-top", "")
+  return
+
 Template.editQuestionnaire.rendered = ->
   Session.set 'editingQuestionnaireId', @data._id
   $(window).resize(resizeQuestionEditor)
   resizeQuestionEditor()
   @autorun ->
-    sqId = Session.get 'selectedQuestionId'
-    sq = $(".question[data-id=#{sqId}]")
-    #FIXME breakpoint
-    if sq? and sq.offset()? and $(document).width() > 992
-      if $(document).width() > 992
-        $("#questionEditor").css("margin-top", sq.offset().top-172)
-    else
-      $("#questionEditor").css("margin-top", "")
+    repositionQuestionEditor()
     return
 
 Template.editQuestionnaire.destroyed = ->
@@ -30,6 +36,22 @@ Template.editQuestionnaire.destroyed = ->
 
 
 Template.editQuestionnaire.helpers
+  isFullscreen: ->
+    _isFullscreen.get()
+
+  questionEditorColClass: ->
+    if _isFullscreen.get()
+      "col-xs-12 col-md-12"
+    else
+      "col-xs-12 col-md-6"
+
+  fullscreenToggleFAClass: ->
+    if _isFullscreen.get()
+      "fa-angle-right"
+    else
+      "fa-angle-left"
+
+
   questionnaireSchema: ->
     schema = 
       title:
@@ -68,6 +90,23 @@ Template.editQuestionnaire.helpers
       
 
 Template.editQuestionnaire.events
+  "click #toggleFullscreen": (evt) ->
+    isFullscreen = !_isFullscreen.get()
+    _isFullscreen.set(isFullscreen)
+    Meteor.setTimeout ->
+      resizeQuestionEditor()
+      repositionQuestionEditor()
+      if isFullscreen
+          $('body').scrollTop 0
+      else
+        Meteor.setTimeout ->
+          sqId = Session.get 'selectedQuestionId'
+          sq = $(".question[data-id=#{sqId}]")
+          $('body').scrollTop sq.offset().top-170
+        , 300
+    , 300
+    return
+
   "change [data-schema-key=type]": (evt) ->
     #override autoform update to allow changing
     #type without validation
