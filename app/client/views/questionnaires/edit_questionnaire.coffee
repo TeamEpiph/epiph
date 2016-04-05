@@ -81,6 +81,15 @@ Template.editQuestionnaire.events
   "click #editQuestionnaire": (evt) ->
     Session.set 'selectedQuestionId', null
 
+  "click #previewQuestionnaire": (evt) ->
+    data =
+      questionnaire: @
+      visit: null
+      patient: null
+      preview: true
+    Modal.show('questionnaireWizzard', data, keyboard: false)
+    false
+
   "click #addQuestion": (evt) ->
     question =
       questionnaireId: @_id

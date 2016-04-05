@@ -6,9 +6,10 @@ _numFormsToSubmit = 0
 _readonly = new ReactiveVar(false)
 _questionnaire = new ReactiveVar(null)
 _nextQuestionnaire = null
+_preview = new ReactiveVar(false)
 
 isAFormDirty = ->
-  if _readonly.get()
+  if _readonly.get() or _preview.get()
     return false
   isDirty = false
   $("form").each () ->
@@ -21,7 +22,7 @@ isAFormDirty = ->
 
 _goto = null
 submitAllForms = (goto) ->
-  if _readonly.get()
+  if _readonly.get() or _preview.get()
     throw new Error("Can't submitAllForms because _readonly == true")
   _goto = goto
   numFormsToSubmit = 0
@@ -85,6 +86,7 @@ previousPage = ->
 
 autoformHooks = 
   onSubmit: (insertDoc, updateDoc, currentDoc) ->
+    return if _preview.get()
     insertDoc.visitId = currentDoc.visitId 
     insertDoc.questionId = currentDoc.questionId
     insertDoc._id = currentDoc._id if currentDoc._id? 
@@ -106,6 +108,11 @@ Template.questionnaireWizzard.created = ->
     _readonly.set true
   else
     _readonly.set false
+
+  if @data.preview
+    _preview.set true
+  else
+    _preview.set false
  
   #close on escape key press
   $(document).on('keyup.wizzard', (e)->
@@ -121,6 +128,7 @@ Template.questionnaireWizzard.created = ->
 
   #get manage nextQuestionnaire
   @autorun ->
+    return if _preview.get()
     data = Template.currentData()
     validatedQuestionnaires = data.visit.validatedQuestionnaires
     i = 0
@@ -278,14 +286,14 @@ Template.questionnaireWizzard.helpers
 
 Template.questionnaireWizzard.events
   "click #next": (evt, tmpl) ->
-    if _readonly.get()
+    if _readonly.get() or _preview.get()
       nextPage()
     else
       submitAllForms('nextPage')
     false
 
   "click #back": (evt, tmpl) ->
-    if _readonly.get()
+    if _readonly.get() or _preview.get()
       previousPage()
     else
       submitAllForms('previousPage')
@@ -315,7 +323,7 @@ Template.questionnaireWizzard.events
     false
 
   "submit .questionForm": (evt) ->
-    if _readonly.get()
+    if _readonly.get() or _preview.get()
       return
     evt.preventDefault()
     evt.stopPropagation()
