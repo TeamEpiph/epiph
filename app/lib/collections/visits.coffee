@@ -123,3 +123,25 @@ Meteor.methods
 
     _id = Visits.insert visit
     _id
+
+
+  "changeVisitDate": (visitId, date) ->
+    check visitId, String
+    if date? #we allow null values
+      check date, Number
+      check isNaN(date), false
+
+    visit = Visits.findOne visitId
+    throw new Meteor.Error(403, "visit can't be found.") unless visit?
+
+    patient = Patients.findOne
+      _id:  visit.patientId
+    throw new Meteor.Error(403, "patient can't be found.") unless patient?
+    throw new Meteor.Error(433, "you are not allowed change this visit") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+
+    if date?
+      Visits.update visitId,
+        $set: date: date
+    else
+      Visits.update visitId,
+        $unset: date: ''

@@ -8,6 +8,15 @@
           <tr>
             <td class="openVisit cursorPointer"><b>{{visit.title}}</b></td>
             <td>
+              {{#if visit.showDate}}
+              <p>{{> xEditable visitDateEO}}</p>
+              {{else}}
+                {{#if visit.scheduledAt.date}}
+                <p class={{visit.scheduledAt.css}}>{{fullDate visit.scheduledAt.date}}</p>
+                {{/if}}
+              {{/if}}
+            </td>
+            <td>
             {{#each visit.validatedQuestionnaires}}
               {{#with questionnaire=. visit=../visit patient=../patient}}
               <div class="text-center showQuestionnaire {{questionnaireCSS}} cursorPointer">

@@ -49,4 +49,8 @@ Meteor.methods
       Patients.update patient._id,
         $set: hasData: true
 
+    if !visit.date?
+      Visits.update visit._id,
+        $set: date: Date.now()
+
     return answerId
