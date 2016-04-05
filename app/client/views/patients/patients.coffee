@@ -18,6 +18,12 @@ Template.patients.rendered = ->
       #actionsBox: true #only works with multiple now, nobody knows why
       #liveSearch: true
   refreshSelectValues()
+  @autorun ->
+    Session.get('selectedStudyIds')
+    Session.get('selectedStudyDesignIds')
+    Session.get('selectedPatientId')
+    Session.get('selectedDesignVisitId')
+    refreshSelectValues()
 
 Template.patients.helpers
   studies: ->
@@ -191,7 +197,7 @@ refreshSelectValues = ->
     $('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds'))
     $('#patientSelect').selectpicker('val', Session.get('selectedPatientId'))
     $('#visitSelect').selectpicker('val', Session.get('selectedDesignVisitId'))
-    $('#questionnaireSelect').selectpicker('val', Session.get('selectedDesignVisitId'))
+    $('#questionnaireSelect').selectpicker('val', Session.get('selectedQuestionnaireId'))
   , 100
 ################################################
 #selects rendering
