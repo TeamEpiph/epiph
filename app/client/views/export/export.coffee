@@ -4,6 +4,8 @@ _visitIcon = 'fa fa-calendar-check-o'
 _patientIcon = 'fa fa-user'
 _questionnaireIcon = 'fa fa-file-text-o' 
 _questionIcon = 'fa fa-cube'
+_therapistIcon = 'fa fa-user-md'
+_answerIcon = 'fa fa-edit'
 Template.export.rendered = ->
   # nodes are leafes in the export tree
   # node id nomenclatura:
@@ -46,6 +48,40 @@ Template.export.rendered = ->
     text: 'case manager'
     icon: _patientIcon
 
+  #presentation
+  ###
+  nodes.push
+    id: '_questionnaire'
+    parent: '_systemVariables'
+    text: 'Questionnaire'
+    icon: _questionnaireIcon
+    state: { opened: false }
+  nodes.push
+    id: '_question'
+    parent: '_systemVariables'
+    text: 'Question'
+    icon: _questionIcon
+    state: { opened: false }
+  nodes.push
+    id: '_visitTemplate'
+    parent: '_systemVariables'
+    text: 'VisitTemplate'
+    icon: _visitIcon
+    state: { opened: true }
+  nodes.push
+    id: '_therapist'
+    parent: '_systemVariables'
+    text: 'Therapist'
+    icon: _therapistIcon
+    state: { opened: true }
+  nodes.push
+    id: '_answer'
+    parent: '_systemVariables'
+    text: 'Answer'
+    icon: _answerIcon
+    state: { opened: true }
+    ###
+  # ##
   nodes.push
     id: '_study'
     parent: '_systemVariables'
