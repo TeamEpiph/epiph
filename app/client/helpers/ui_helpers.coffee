@@ -13,35 +13,6 @@ Template.registerHelper "headDescription", (desc) ->
   document.description = desc
   ""
 
-Template.registerHelper "fullDateTime", (date) ->
-  fullDateTime(date)
-
-@fullDateTime = (date)->
-  return null unless date?
-  date = moment(date)
-  if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
-    return "today #{date.format('HH:mm')}"
-  else
-    return date.format("DD.MM.YYYY HH:mm")
-
-Template.registerHelper "fullDate", (date) ->
-  return null unless date?
-  date = moment(date)
-  if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
-    return "today"
-  else
-    return date.format("DD.MM.YYYY")
-
-Template.registerHelper "agoOrDateTime", (date) ->
-  return null unless date?
-  date = moment(date)
-  if date.diff(TimeSync.serverTime(), 'days') < 11
-    return date.fromNow()
-  if date.dayOfYear() is moment().dayOfYear()
-    return "today #{date.format('HH:mm')}"
-  else
-    return date.format("DD.MM.YYYY HH:mm")
-
 Template.registerHelper "fileSizeSani", (size) ->
   if size > 1000
     "#{(size/1000).toFixed(1)} kB"

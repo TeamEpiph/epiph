@@ -19,7 +19,6 @@ sacha:spin
 matb33:collection-hooks
 fortawesome:fontawesome
 mistereo:identicon
-momentjs:moment
 aslagle:reactive-table
 mizzao:user-status
 aldeed:autoform-bs-datetimepicker
@@ -71,3 +70,8 @@ cfs:gridfs
 percolate:synced-cron
 zuuk:stale-session
 kevohagan:sweetalert
+rzymek:moment
+rzymek:moment-locale-es
+rzymek:moment-locale-it
+rzymek:moment-locale-fr
+rzymek:moment-locale-de
