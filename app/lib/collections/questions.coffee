@@ -27,19 +27,17 @@ class @Question
         s.autoform = 
           options: @choices
         if @mode is "checkbox"
-          s.type = [Number]
+          s.type = [String]
           if @orientation is 'inline'
             s.autoform.type = "select-checkbox-inline"
           else #if @orientation is 'vertical'
             s.autoform.type = "select-checkbox"
         else #if @mode is "radio"
-          s.type = Number
+          s.type = String
           if @orientation is 'inline'
             s.autoform.type = "select-radio-inline"
           else #if @orientation is 'vertical'
             s.autoform.type = "select-radio"
-      when "table"
-        s.type = Number
       when "description"
         s.type = String
         s.label = ' ' 
