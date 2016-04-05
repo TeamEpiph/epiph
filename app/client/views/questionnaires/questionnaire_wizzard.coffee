@@ -260,7 +260,7 @@ Template.questionnaireWizzard.helpers
       .forEach (question) ->
         return if question.type is "description"
         answer = answers[question._id]
-        if question.type is "table" or question.type is "table_polar" or question.type is "multipleChoice"
+        if question.type is "table" or question.type is "table_polar"
           if !answer? or answer.value.length < question.subquestions.length
             allQuestionsAnsweredInPage = false
           if answer? and answer.value.length > 0
