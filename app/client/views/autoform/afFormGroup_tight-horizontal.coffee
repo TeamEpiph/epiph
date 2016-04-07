@@ -30,11 +30,11 @@ Template['afFormGroup_tight-horizontal'].helpers
   myFormGroupClass: ->
     if @name.indexOf('choices') > -1
       if @name.indexOf('label') > -1
-        "col-md-8"
+        "col-md-9"
       else if @name.indexOf('variable') > -1
-        "col-md-2"
+        "col-md-3"
       else if @name.indexOf('value') > -1
-        "col-md-2"
+        "col-md-3"
     else if @name.indexOf('subquestions') > -1 
       if @name.indexOf('code') > -1
         "col-md-2"

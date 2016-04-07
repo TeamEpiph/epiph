@@ -189,6 +189,28 @@ Migrations.add
     Answers.remove({})
     return
 
+Migrations.add
+  version: 10
+  up: ->
+    console.log "remove choices.$.variable from single-selection and choices.$.value multi-selection questions"
+    c = 0
+    Questions.find().forEach (q) ->
+      if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
+        #console.log q
+        if q.mode is 'checkbox'
+          q.choices.forEach (q) ->
+            delete q.value
+        else #if q.mode is 'radio'
+          q.choices.forEach (q) ->
+            delete q.variable
+        #console.log q
+        #console.log "\n\n\n"
+        c += Questions.update q._id,
+          $set: choices: q.choices
+    console.log c+" questions updated"
+    return
+
 Meteor.startup ->
-  #Migrations.migrateTo('8,rerun')
+  #Migrations.migrateTo('10,rerun')
   Migrations.migrateTo('latest')
+

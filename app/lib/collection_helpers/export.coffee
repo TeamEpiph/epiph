@@ -112,23 +112,12 @@ class @Export
                   if question.mode is "checkbox"
                     question.choices.forEach (choice) ->
                       if subanswer?
-                        if subanswer.value is choice.value or (typeof subanswer.value is 'object' and subanswer.value.indexOf(choice.value) > -1)
-                          cols.push true
+                        if subanswer.value.indexOf(choice.variable) > -1
+                          cols.push 1
                         else
-                          cols.push false
+                          cols.push 0
                       else #no subanswer for this question
                         cols.push empty
-                      ###
-                      if subanswer?
-                        answerChoice = subanswer.checkedChoices.find (c) ->
-                          c.variable is choice.variable
-                        if answerChoice?
-                          cols.push answerChoice.value
-                        else #this choice is not checked
-                          cols.push false
-                      else #no subanswer for this subquestion
-                        cols.push empty
-                      ###
                   else #if question.mode is "radio"
                     if subanswer? and subanswer.value?
                       cols.push subanswer.value
@@ -150,10 +139,10 @@ class @Export
               if question.mode is "checkbox"
                 question.choices.forEach (choice) ->
                   if answer?
-                    if answer.value is choice.value or (typeof answer.value is 'object' and answer.value.indexOf(choice.value) > -1)
-                      cols.push true
+                    if answer.value.indexOf(choice.variable) > -1
+                      cols.push 1
                     else
-                      cols.push false
+                      cols.push 0
                   else
                     cols.push empty
               else #if question.mode is "radio"

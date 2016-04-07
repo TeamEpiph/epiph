@@ -338,21 +338,23 @@ Template.questionnaireWizzard.events
       _id: @answer._id if @answer?
     for subquestion in @question.subquestions
       inputs = $(evt.target).find("input[data-subquestion_code=#{subquestion.code}]:checked")
-      value = []
-      inputs.each ->
-        input = $(@)
-        value.push input.data('choice_value').toString()
-      if value.length > 0
-        if @question.mode is "checkbox"
+      if @question.mode is "checkbox"
+        variables = []
+        inputs.each ->
+          input = $(@)
+          variables.push input.data('choice_variable').toString()
+        if variables.length > 0
+          answer.value.push 
+            code: subquestion.code
+            value: variables
+      else #if @question.mode is "radio"
+        if inputs.length > 1
+          throw new Meteor.Error('error when processing the values: single selection got multiple values.')
+        else if inputs.length is 1
+          value = inputs.first().data('choice_value').toString()
           answer.value.push 
             code: subquestion.code
             value: value
-        else #if @question.mode is "radio"
-          if value.length > 1 
-            throw new Meteor.Error('error when processing the values: single selection got multiple values.')
-          answer.value.push 
-            code: subquestion.code
-            value: value[0]
     if answer.value.length > 0
       Meteor.call "upsertAnswer", answer, (error) ->
         throwError error if error?
