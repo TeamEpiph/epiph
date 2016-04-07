@@ -210,7 +210,30 @@ Migrations.add
     console.log c+" questions updated"
     return
 
-Meteor.startup ->
-  #Migrations.migrateTo('10,rerun')
-  Migrations.migrateTo('latest')
+Migrations.add
+  version: 11
+  up: ->
+    console.log "rename question.mode to question.selectionMode and it's values from radio to single and checkbox to multi" 
+    c = 0
+    Questions.find().forEach (q) ->
+      if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
+        console.log q
+        if q.mode is 'checkbox'
+          q.mode = 'multi'
+        else #if q.mode is 'radio'
+          q.mode = 'single'
+        q.selectionMode = q.mode
+        delete q.mode
+        console.log q
+        console.log "\n\n\n"
+        c += Questions.update q._id,
+          $set: selectionMode: q.selectionMode
+        Questions.update q._id,
+          $unset: mode: 1
+    console.log c+" questions updated"
+    return
 
+
+Meteor.startup ->
+  #Migrations.migrateTo('11,rerun')
+  Migrations.migrateTo('latest')

@@ -338,7 +338,7 @@ Template.questionnaireWizzard.events
       _id: @answer._id if @answer?
     for subquestion in @question.subquestions
       inputs = $(evt.target).find("input[data-subquestion_code=#{subquestion.code}]:checked")
-      if @question.mode is "checkbox"
+      if @question.selectionMode is "multi"
         variables = []
         inputs.each ->
           input = $(@)
@@ -347,7 +347,7 @@ Template.questionnaireWizzard.events
           answer.value.push 
             code: subquestion.code
             value: variables
-      else #if @question.mode is "radio"
+      else #if @question.selectionMode is "single"
         if inputs.length > 1
           throw new Meteor.Error('error when processing the values: single selection got multiple values.')
         else if inputs.length is 1

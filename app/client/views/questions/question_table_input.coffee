@@ -1,18 +1,18 @@
 Template.questionTableInput.rendered = ->
   #we calculate checked here because we need to set it to defaultChecked of the element and as attribute (a helper would come to late)
-  mode = @data.question.mode
+  selectionMode = @data.question.selectionMode
   code = @data.subquestion.code
-  if mode is 'checkbox'
+  if selectionMode is 'multi'
     choiceVariable = @data.choice.variable
-  else #if mode is 'radio'
+  else #if selectionMode is 'single'
     choiceValue = @data.choice.value
   @data.answer? and
   @data.answer.value? and
   checked = (_.find @data.answer.value, (subanswer) ->
     subanswer.code is code and
-      ((mode is "checkbox" and
+      ((selectionMode is "multi" and
       subanswer.value.indexOf(choiceVariable) > -1 ) or
-      (mode is "radio" and 
+      (selectionMode is "single" and 
       subanswer.value is choiceValue) )
   )?
   if checked
@@ -22,6 +22,12 @@ Template.questionTableInput.rendered = ->
   return
 
 Template.questionTableInput.helpers
+  type: ->
+    if @question.selectionMode is "multi"
+      "checkbox"
+    else #if @question.selectionMode is "single"
+      "radio"
+
   disabled: ->
     if @readonly
       "disabled"

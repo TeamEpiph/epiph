@@ -26,7 +26,7 @@ class @Question
       when "multipleChoice"
         s.autoform = 
           options: @choices
-        if @mode is "checkbox"
+        if @selectionMode is "multi"
           s.type = [String]
           #sanitize for autoform: variable to value
           s.autoform.options.forEach (option) ->
@@ -37,7 +37,7 @@ class @Question
             s.autoform.type = "select-checkbox-inline"
           else #if @orientation is 'vertical'
             s.autoform.type = "select-checkbox"
-        else #if @mode is "radio"
+        else #if @selectionMode is "single"
           s.type = String
           if @orientation is 'inline'
             s.autoform.type = "select-radio-inline"
@@ -97,17 +97,17 @@ class @Question
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema, 
-        mode:
+        selectionMode:
           label: "Mode"
           type: String
           autoform:
             type: "select-radio-inline"
             options: [
               label: "single selection (radios)"
-              value: "radio"
+              value: "single"
             ,
-              label: "multiple selection (checkboxes)"
-              value: "checkbox"
+              label: "multiple selections (checkboxes)"
+              value: "multi"
             ]
 
     if @type is "multipleChoice"
@@ -156,7 +156,7 @@ class @Question
         'choices.$.label':
           type: String
           optional: true
-      if @mode is "checkbox"
+      if @selectionMode is "multi"
         _.extend schema, 
           'choices.$.variable':
             type: String
@@ -175,7 +175,7 @@ class @Question
                     return "notUnique"
                   index -= 1
               return
-      else #if @mode is "radio"
+      else #if @selectionMode is "single"
         _.extend schema, 
           'choices.$.value':
             type: String

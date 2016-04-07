@@ -22,11 +22,11 @@ class @Export
           if question.type is 'table' or question.type is 'table_polar'
             if question.subquestions?
               question.subquestions.forEach (subquestion) ->
-                if question.mode is "checkbox"
+                if question.selectionMode is "multi"
                   question.choices.forEach (choice) ->
                     cols.push
                       title: "#{subquestion.code}-#{choice.variable}"
-                else #if question.mode is "radio"
+                else #if question.selectionMode is "single"
                   cols.push
                     title: "#{subquestion.code}"
             else
@@ -34,11 +34,11 @@ class @Export
                 title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else if question.type is 'multipleChoice'
             if question.choices?
-              if question.mode is "checkbox"
+              if question.selectionMode is "multi"
                 question.choices.forEach (choice) ->
                   cols.push
                     title: "#{question.code}-#{choice.variable}"
-              else# if question.mode is "radio"
+              else# if question.selectionMode is "single"
                 cols.push
                   title: "#{question.code}"
             else
@@ -109,7 +109,7 @@ class @Export
                 if answer? and answer.value.length > 0
                   subanswer = answer.value.find (v) ->
                     v.code is subquestion.code
-                  if question.mode is "checkbox"
+                  if question.selectionMode is "multi"
                     question.choices.forEach (choice) ->
                       if subanswer?
                         if subanswer.value.indexOf(choice.variable) > -1
@@ -118,16 +118,16 @@ class @Export
                           cols.push 0
                       else #no subanswer for this question
                         cols.push empty
-                  else #if question.mode is "radio"
+                  else #if question.selectionMode is "single"
                     if subanswer? and subanswer.value?
                       cols.push subanswer.value
                     else #no subanswer for this subquestion
                       cols.push empty
                 else #no answer for this question
-                  if question.mode is "checkbox"
+                  if question.selectionMode is "multi"
                     question.choices.forEach (choice) ->
                       cols.push empty
-                  else #if question.mode is "radio"
+                  else #if question.selectionMode is "single"
                     cols.push empty
             else #missing subquestions
               if Meteor.isServer
@@ -136,7 +136,7 @@ class @Export
                 cols.push "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else if question.type is 'multipleChoice'
             if question.choices?
-              if question.mode is "checkbox"
+              if question.selectionMode is "multi"
                 question.choices.forEach (choice) ->
                   if answer?
                     if answer.value.indexOf(choice.variable) > -1
@@ -145,7 +145,7 @@ class @Export
                       cols.push 0
                   else
                     cols.push empty
-              else #if question.mode is "radio"
+              else #if question.selectionMode is "single"
                 if answer?
                   cols.push answer.value
                 else
