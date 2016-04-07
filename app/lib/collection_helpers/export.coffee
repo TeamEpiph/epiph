@@ -22,17 +22,25 @@ class @Export
           if question.type is 'table' or question.type is 'table_polar'
             if question.subquestions?
               question.subquestions.forEach (subquestion) ->
-                question.choices.forEach (choice) ->
+                if question.mode is "checkbox"
+                  question.choices.forEach (choice) ->
+                    cols.push
+                      title: "#{subquestion.code}-#{choice.variable}"
+                else #if question.mode is "radio"
                   cols.push
-                    title: "#{question.code}-#{subquestion.code}-#{choice.variable}"
+                    title: "#{subquestion.code}"
             else
               cols.push
                 title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else if question.type is 'multipleChoice'
             if question.choices?
-              question.choices.forEach (choice) ->
+              if question.mode is "checkbox"
+                question.choices.forEach (choice) ->
+                  cols.push
+                    title: "#{question.code}-#{choice.variable}"
+              else# if question.mode is "radio"
                 cols.push
-                  title: "#{question.code}-#{choice.variable}"
+                  title: "#{question.code}"
             else
               cols.push
                 title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
@@ -101,18 +109,36 @@ class @Export
                 if answer? and answer.value.length > 0
                   subanswer = answer.value.find (v) ->
                     v.code is subquestion.code
-                  question.choices.forEach (choice) ->
-                    if subanswer?
-                      answerChoice = subanswer.checkedChoices.find (c) ->
-                        c.variable is choice.variable
-                      if answerChoice?
-                        cols.push answerChoice.value
-                      else #this choice is not checked
-                        cols.push false
+                  if question.mode is "checkbox"
+                    question.choices.forEach (choice) ->
+                      if subanswer?
+                        if subanswer.value is choice.value or (typeof subanswer.value is 'object' and subanswer.value.indexOf(choice.value) > -1)
+                          cols.push true
+                        else
+                          cols.push false
+                      else #no subanswer for this question
+                        cols.push empty
+                      ###
+                      if subanswer?
+                        answerChoice = subanswer.checkedChoices.find (c) ->
+                          c.variable is choice.variable
+                        if answerChoice?
+                          cols.push answerChoice.value
+                        else #this choice is not checked
+                          cols.push false
+                      else #no subanswer for this subquestion
+                        cols.push empty
+                      ###
+                  else #if question.mode is "radio"
+                    if subanswer? and subanswer.value?
+                      cols.push subanswer.value
                     else #no subanswer for this subquestion
                       cols.push empty
                 else #no answer for this question
-                  question.choices.forEach (choice) ->
+                  if question.mode is "checkbox"
+                    question.choices.forEach (choice) ->
+                      cols.push empty
+                  else #if question.mode is "radio"
                     cols.push empty
             else #missing subquestions
               if Meteor.isServer
@@ -121,12 +147,18 @@ class @Export
                 cols.push "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else if question.type is 'multipleChoice'
             if question.choices?
-              question.choices.forEach (choice) ->
-                if answer?
-                  if answer.value is choice.value or (typeof answer.value is 'object' and answer.value.indexOf(choice.value) > -1)
-                    cols.push true
+              if question.mode is "checkbox"
+                question.choices.forEach (choice) ->
+                  if answer?
+                    if answer.value is choice.value or (typeof answer.value is 'object' and answer.value.indexOf(choice.value) > -1)
+                      cols.push true
+                    else
+                      cols.push false
                   else
-                    cols.push false
+                    cols.push empty
+              else #if question.mode is "radio"
+                if answer?
+                  cols.push answer.value
                 else
                   cols.push empty
             else

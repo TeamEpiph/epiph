@@ -182,6 +182,12 @@ Migrations.add
           $set: hasData: true
     return
 
+Migrations.add
+  version: 9
+  up: ->
+    console.log "remove all answers"
+    Answers.remove({})
+    return
 
 Meteor.startup ->
   #Migrations.migrateTo('8,rerun')
