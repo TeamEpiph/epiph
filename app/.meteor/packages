@@ -26,7 +26,6 @@ aldeed:autoform-bs-datepicker
 rajit:bootstrap3-datepicker
 tsega:bootstrap3-datetimepicker@=3.1.3_3
 mrt:jquery-ui-sortable
-meteorhacks:npm
 
 
 d3js:d3
@@ -57,7 +56,6 @@ spacebars
 check
 
 
-npm-container
 joshowens:accounts-entry-1.2
 chriswessels:hammer
 ajduke:bootstrap-tagsinput
