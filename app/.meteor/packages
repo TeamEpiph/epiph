@@ -42,7 +42,6 @@ q42:autoform-markdown
 aldeed:template-extension
 
 
-standard-minifiers
 meteor-base
 mobile-experience
 mongo
@@ -75,3 +74,5 @@ rzymek:moment-locale-es
 rzymek:moment-locale-it
 rzymek:moment-locale-fr
 rzymek:moment-locale-de
+standard-minifier-css
+standard-minifier-js
