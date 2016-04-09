@@ -193,21 +193,21 @@ Migrations.add
   version: 10
   up: ->
     console.log "remove choices.$.variable from single-selection and choices.$.value multi-selection questions"
-    c = 0
+    counter = 0
     Questions.find().forEach (q) ->
       if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
         #console.log q
         if q.mode is 'checkbox'
-          q.choices.forEach (q) ->
-            delete q.value
+          q.choices.forEach (c) ->
+            delete c.value
         else #if q.mode is 'radio'
-          q.choices.forEach (q) ->
-            delete q.variable
+          q.choices.forEach (c) ->
+            delete c.variable
         #console.log q
         #console.log "\n\n\n"
-        c += Questions.update q._id,
+        counter += Questions.update q._id,
           $set: choices: q.choices
-    console.log c+" questions updated"
+    console.log counter+" questions updated"
     return
 
 Migrations.add
