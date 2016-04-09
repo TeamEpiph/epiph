@@ -46,7 +46,7 @@ Meteor.methods
       a = Answers.findOne _.pick answer, 'visitId', 'questionId'
       if a?
         console.log "\n\nError: There already exists an answer for this visitId and questionId."
-        console.log(util.inspect(a, {showHidden: false, depth: null}))
+        console.log a
         throw new Meteor.Error(403, "Error: There already exists an answer for this visitId and questionId.")
 
       answer = _.pick answer, 'visitId', 'questionId', 'value'
