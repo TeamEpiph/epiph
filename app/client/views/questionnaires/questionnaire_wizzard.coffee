@@ -86,7 +86,8 @@ previousPage = ->
 
 autoformHooks = 
   onSubmit: (insertDoc, updateDoc, currentDoc) ->
-    return if _preview.get()
+    if _preview.get() or _readonly.get()
+      return
     insertDoc.visitId = currentDoc.visitId 
     insertDoc.questionId = currentDoc.questionId
     insertDoc._id = currentDoc._id if currentDoc._id? 
@@ -172,7 +173,7 @@ Template.questionnaireWizzard.created = ->
     _numQuestions.set count
     _numPages.set page+1
     _pageIndex.set 0
-    AutoForm.addHooks(autoformIds, autoformHooks)
+    AutoForm.addHooks(autoformIds, autoformHooks, true)
 
 Template.questionnaireWizzard.destroyed = ->
   $(document).unbind('keyup.wizzard')
