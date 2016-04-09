@@ -25,7 +25,7 @@ class @Export
                 if question.selectionMode is "multi"
                   question.choices.forEach (choice) ->
                     cols.push
-                      title: "#{subquestion.code}-#{choice.variable}"
+                      title: "#{subquestion.code}-#{choice.value}"
                 else #if question.selectionMode is "single"
                   cols.push
                     title: "#{subquestion.code}"
@@ -37,7 +37,7 @@ class @Export
               if question.selectionMode is "multi"
                 question.choices.forEach (choice) ->
                   cols.push
-                    title: "#{question.code}-#{choice.variable}"
+                    title: "#{question.code}-#{choice.value}"
               else# if question.selectionMode is "single"
                 cols.push
                   title: "#{question.code}"
@@ -112,7 +112,7 @@ class @Export
                   if question.selectionMode is "multi"
                     question.choices.forEach (choice) ->
                       if subanswer?
-                        if subanswer.value.indexOf(choice.variable) > -1
+                        if subanswer.value.indexOf(choice.value) > -1
                           cols.push 1
                         else
                           cols.push 0
@@ -139,7 +139,7 @@ class @Export
               if question.selectionMode is "multi"
                 question.choices.forEach (choice) ->
                   if answer?
-                    if answer.value.indexOf(choice.variable) > -1
+                    if answer.value.indexOf(choice.value) > -1
                       cols.push 1
                     else
                       cols.push 0

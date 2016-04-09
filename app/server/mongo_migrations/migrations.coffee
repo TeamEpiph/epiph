@@ -233,7 +233,25 @@ Migrations.add
     console.log c+" questions updated"
     return
 
+Migrations.add
+  version: 12
+  up: ->
+    console.log "unify choices.$.variable into choice.$.value"
+    counter = 0
+    Questions.find().forEach (q) ->
+      if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
+        if q.selectionMode is 'multi'
+          console.log q
+          q.choices.forEach (c) ->
+            c.value = c.variable
+            delete c.variable
+          console.log q
+          console.log "\n\n\n"
+          counter += Questions.update q._id,
+            $set: choices: q.choices
+    console.log counter+" questions updated"
+    return
 
 Meteor.startup ->
-  #Migrations.migrateTo('11,rerun')
+  #Migrations.migrateTo('12,rerun')
   Migrations.migrateTo('latest')

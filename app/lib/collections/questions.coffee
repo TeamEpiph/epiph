@@ -28,11 +28,6 @@ class @Question
           options: @choices
         if @selectionMode is "multi"
           s.type = [String]
-          #sanitize for autoform: variable to value
-          s.autoform.options.forEach (option) ->
-            if option.variable?
-              option.value = option.variable
-              delete option.variable
           if @orientation is 'inline'
             s.autoform.type = "select-checkbox-inline"
           else #if @orientation is 'vertical'
@@ -156,30 +151,24 @@ class @Question
         'choices.$.label':
           type: String
           optional: true
+        'choices.$.value':
+          type: String
+          regEx: noWhitespaceRegex
       if @selectionMode is "multi"
-        _.extend schema, 
-          'choices.$.variable':
-            type: String
-            regEx: noWhitespaceRegex
-            custom: ->
-              #console.log "> #{@value} #{@key} <"
-              #console.log "----"
-              digitRegex = /(\d+)/g
-              matches = digitRegex.exec(@key)
-              if matches.length > 0
-                index = parseInt(matches[0])-1
-                while index >= 0
-                  v = @field("choices.#{index}.variable").value
-                  #console.log v
-                  if v? and v.valueOf() is @value.valueOf()
-                    return "notUnique"
-                  index -= 1
-              return
-      else #if @selectionMode is "single"
-        _.extend schema, 
-          'choices.$.value':
-            type: String
-            regEx: noWhitespaceRegex
+        schema['choices.$.value'].custom = ->
+          #console.log "> #{@value} #{@key} <"
+          #console.log "----"
+          digitRegex = /(\d+)/g
+          matches = digitRegex.exec(@key)
+          if matches.length > 0
+            index = parseInt(matches[0])-1
+            while index >= 0
+              v = @field("choices.#{index}.value").value
+              #console.log v
+              if v? and v.valueOf() is @value.valueOf()
+                return "notUnique"
+              index -= 1
+          return
 
     if @type is "table"
       _.extend schema, 
