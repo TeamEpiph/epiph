@@ -74,7 +74,7 @@ Template.patientVisits.events
       visit: @visit
       patient: @patient
       readonly: true
-    Modal.show('questionnaireWizzard', data, keyboard: false)
+    __showQuestionnaireWizzard data
     false
 
   #this visit patient

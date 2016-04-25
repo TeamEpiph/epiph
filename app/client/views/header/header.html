@@ -18,7 +18,7 @@
         {{#if currentUser}}
         {{#if isInRole 'admin, therapist'}}
         <li class="{{activeRouteClass 'patients'}}">
-          <a href="{{pathFor 'patients'}}">
+          <a href="{{pathFor 'patients'}}" id="patientsA">
             Patients
           </a>
         </li>

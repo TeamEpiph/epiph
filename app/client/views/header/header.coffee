@@ -7,3 +7,10 @@ Template.header.helpers
     )
     return "active" if active
     ""
+
+
+Template.header.events
+  #this is needed to trigger hashchange
+  "click #patientsA": (evt) ->
+    window.location.hash = ""
+    true

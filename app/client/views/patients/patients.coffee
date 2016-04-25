@@ -1,4 +1,7 @@
-Template.patients.onCreated ->
+Template.patients.destroyed = ->
+  $(window).off('hashchange')
+
+Template.patients.rendered = ->
   @subscribe("studies", onReady: -> refreshSelectValues())
   @subscribe("patients", onReady: -> refreshSelectValues())
   @subscribe("therapists", onReady: -> refreshSelectValues())
@@ -11,19 +14,23 @@ Template.patients.onCreated ->
     else
       tmpl.subscribe "studyDesigns", onReady: -> refreshSelectValues()
 
-
-Template.patients.rendered = ->
   @$('.selectpicker').each ->
     $(@).selectpicker()
       #actionsBox: true #only works with multiple now, nobody knows why
       #liveSearch: true
-  refreshSelectValues()
+
+  $(window).on('hashchange', hashchange)
+  hashchange()
+
   @autorun ->
     Session.get('selectedStudyIds')
     Session.get('selectedStudyDesignIds')
     Session.get('selectedPatientId')
     Session.get('selectedDesignVisitId')
+    Session.get('selectedQuestionnaireWizzard')
     refreshSelectValues()
+    refreshUrlParams()
+
 
 Template.patients.helpers
   studies: ->
@@ -213,12 +220,57 @@ selectPatientId = (id) ->
 
 refreshSelectValues = ->
   Meteor.setTimeout ->
-    $('#studiesSelect').selectpicker('val', Session.get('selectedStudyIds'))
-    $('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds'))
-    $('#patientSelect').selectpicker('val', Session.get('selectedPatientId'))
-    $('#visitSelect').selectpicker('val', Session.get('selectedDesignVisitId'))
-    $('#questionnaireSelect').selectpicker('val', Session.get('selectedQuestionnaireId'))
+    $('#studiesSelect').selectpicker('val', Session.get('selectedStudyIds') or null)
+    $('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds') or null)
+    $('#patientSelect').selectpicker('val', Session.get('selectedPatientId') or null)
+    $('#visitSelect').selectpicker('val', Session.get('selectedDesignVisitId') or null)
+    $('#questionnaireSelect').selectpicker('val', Session.get('selectedQuestionnaireId') or null)
   , 100
+
+_hashChangedInternally = false
+refreshUrlParams = ->
+  newHash =
+    studyIds: Session.get('selectedStudyIds')
+    designIds: Session.get('selectedStudyDesignIds')
+    patientId: Session.get('selectedPatientId')
+    visitId: Session.get('selectedDesignVisitId')
+    questionnaireWizzard: Session.get('selectedQuestionnaireWizzard')
+  #doesn't work because underscore is too old
+  #hash = _.pick hash, (value, key, object) -> value?
+  hash = {}
+  Object.keys(newHash).forEach (key) ->
+    value = newHash[key]
+    hash[key] = value if value?
+  if Object.keys(hash).length > 0
+    window.location.hash = JSON.stringify hash
+  else
+    window.location.hash = ""
+  return
+
+hashchange = ->
+  hash = window.location.hash
+  if hash? and hash.length > 1
+    hash = JSON.parse hash.slice(1)
+    Session.set 'selectedStudyIds', hash.studyIds
+    Session.set 'selectedStudyDesignIds', hash.designIds
+    Session.set 'selectedPatientId', hash.patientId
+    Session.set 'selectedDesignVisitId', hash.visitId
+    qw = Session.get 'selectedQuestionnaireWizzard'
+    if hash.questionnaireWizzard?
+      if !qw?
+        __showQuestionnaireWizzard hash.questionnaireWizzard
+    else
+      if qw?
+        Modal.hide 'questionnaireWizzard'
+  else
+    Session.set 'selectedStudyIds', null
+    Session.set 'selectedStudyDesignIds', null
+    Session.set 'selectedPatientId', null
+    Session.set 'selectedDesignVisitId', null
+    if Session.get('selectedQuestionnaireWizzard')?
+      Modal.hide 'questionnaireWizzard'
+  return
+
 ################################################
 #selects rendering
 studyOptionTimeout = null

@@ -1,3 +1,8 @@
+@__showQuestionnaireWizzard = (data) ->
+  Session.set 'selectedQuestionnaireWizzard', data
+  Modal.show('questionnaireWizzard', data, keyboard: false)
+
+
 _numQuestions = new ReactiveVar(0)
 _numPages = new ReactiveVar(0)
 _questionIdsForPage = new ReactiveVar({})
@@ -177,6 +182,7 @@ Template.questionnaireWizzard.created = ->
 
 Template.questionnaireWizzard.destroyed = ->
   $(document).unbind('keyup.wizzard')
+  Session.set('selectedQuestionnaireWizzard', null)
 
 
 Template.questionnaireWizzard.helpers
