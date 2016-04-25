@@ -147,7 +147,7 @@ Template.patients.helpers
 
 Template.patients.events
   "click #patientsTable table tr": (evt) ->
-    Session.set 'selectedPatientId', @_id
+    selectPatientId(@_id)
     return
 
   "change #studiesSelect": (evt) ->
@@ -176,7 +176,7 @@ Template.patients.events
     if id is 'deselect'
       $('#patientSelect').selectpicker('deselectAll')
       id = null
-    Session.set 'selectedPatientId', id
+    selectPatientId(id)
     return
 
   "change #visitSelect": (evt) ->
@@ -194,6 +194,22 @@ Template.patients.events
       id = null
     Session.set 'selectedQuestionnaireId', id
     return
+
+selectPatientId = (id) ->
+  if id?
+    patient = Patients.findOne id
+    studyDesign = StudyDesigns.findOne patient.studyDesignId
+
+    selectedStudyIds = Session.get('selectedStudyIds') or []
+    selectedStudyIds.push studyDesign.studyId
+    selectedStudyIds = _.unique selectedStudyIds
+    Session.set 'selectedStudyIds', selectedStudyIds
+
+    selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
+    selectedStudyDesignIds.push studyDesign._id
+    selectedStudyDesignIds = _.unique selectedStudyDesignIds
+    Session.set 'selectedStudyDesignIds', selectedStudyDesignIds
+  Session.set 'selectedPatientId', id
 
 refreshSelectValues = ->
   Meteor.setTimeout ->
