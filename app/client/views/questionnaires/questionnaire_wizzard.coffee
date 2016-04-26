@@ -2,6 +2,23 @@
   Session.set 'selectedQuestionnaireWizzard', data
   Modal.show('questionnaireWizzard', data, keyboard: false)
 
+@__closeQuestionnaireWizzard = ->
+  if isAFormDirty()
+    swal {
+      title: 'Unsaved Changes'
+      text: "Do you want to save the changes on this page?"
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Save and exit'
+      cancelButtonText: "Exit without saving"
+    }, (save) ->
+      if save
+        submitAllForms('close')
+      else
+        Modal.hide('questionnaireWizzard')
+  else
+    Modal.hide('questionnaireWizzard')
+
 
 _numQuestions = new ReactiveVar(0)
 _numPages = new ReactiveVar(0)
@@ -55,24 +72,6 @@ formSubmitted = ->
       _pageIndex.set _goto.pageIndex
 
 
-close = ->
-  if isAFormDirty()
-    swal {
-      title: 'Unsaved Changes'
-      text: "Do you want to save the changes on this page?"
-      type: 'warning'
-      showCancelButton: true
-      confirmButtonText: 'Save and exit'
-      cancelButtonText: "Exit without saving"
-    }, (save) ->
-      if save
-        submitAllForms('close')
-      else
-        Modal.hide('questionnaireWizzard')
-  else
-    Modal.hide('questionnaireWizzard')
-
-
 nextPage = ->
   if _pageIndex.get() is _numPages.get()-1
     if _nextQuestionnaire?
@@ -124,7 +123,7 @@ Template.questionnaireWizzard.created = ->
   $(document).on('keyup.wizzard', (e)->
     e.stopPropagation()
     if e.keyCode is 27
-      close()
+      __closeQuestionnaireWizzard()
     return
   )
 
@@ -327,7 +326,7 @@ Template.questionnaireWizzard.events
     false
 
   "click #close": (evt) ->
-    close()
+    __closeQuestionnaireWizzard()
     false
 
   "submit .questionForm": (evt) -> #table and table_polar

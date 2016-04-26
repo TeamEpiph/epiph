@@ -261,14 +261,14 @@ hashchange = ->
         __showQuestionnaireWizzard hash.questionnaireWizzard
     else
       if qw?
-        Modal.hide 'questionnaireWizzard'
+        __closeQuestionnaireWizzard()
   else
     Session.set 'selectedStudyIds', null
     Session.set 'selectedStudyDesignIds', null
     Session.set 'selectedPatientId', null
     Session.set 'selectedDesignVisitId', null
     if Session.get('selectedQuestionnaireWizzard')?
-      Modal.hide 'questionnaireWizzard'
+      __closeQuestionnaireWizzard()
   return
 
 ################################################
