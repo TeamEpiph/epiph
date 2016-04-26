@@ -68,15 +68,9 @@ Template.afCheckboxGroup_bootstrap3.rendered = checkedInputRendered
 afBootstrapDatepickerRendered = Template.afBootstrapDatepicker.rendered
 Template.afBootstrapDatepicker.rendered = ->
   afBootstrapDatepickerRendered.call @
-  self = @
-  @autorun ->
-    data = Template.currentData()
-    inputRendered.call self
+  inputRendered.call @
 
 afBootstrapDateTimePickerRendered = Template.afBootstrapDateTimePicker.rendered
 Template.afBootstrapDateTimePicker.rendered = ->
   afBootstrapDateTimePickerRendered.call @
-  self = @
-  @autorun ->
-    data = Template.currentData()
-    inputRendered.call self
+  inputRendered.call @
