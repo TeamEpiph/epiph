@@ -58,7 +58,7 @@ class @Question
           optional: true
           autoform:
             type: "textarea"
-    else if @type isnt @description
+    else if @type isnt "description"
       _.extend schema, 
         code:
           label: "Code"
@@ -233,8 +233,6 @@ class @Question
                   return "notUnique"
                 index -= 1
             return
-
-
     schema
     
 
