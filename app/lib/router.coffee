@@ -7,7 +7,7 @@ Router.configure
 #Router.onBeforeAction('dataNotFound')
 Router.onBeforeAction( ->
   AccountsEntry.signInRequired(this)	
-, {except: ["entrySignIn", "entrySignUp", "entryForgotPassword", "entrySignOut", "entryResetPassword"] })
+, {except: ["entrySignIn", "entrySignUp", "entryForgotPassword", "entrySignOut", "entryResetPassword", "appDumpHTTP"] })
 
 #Router.plugin('ensureSignedIn',
 #  except: ["entrySignIn", "entrySignUp", "entryForgotPassword", "entrySignOut", "entryResetPassword"]
