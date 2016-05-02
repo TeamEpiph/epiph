@@ -65,6 +65,8 @@ Meteor.methods
     _id
 
   updateQuestionnaire: (modifier, docId) ->
+    #workaround strange unique errors
+    #https://github.com/aldeed/meteor-collection2/issues/218
     if (id=modifier['$set'].id)?
       if Questionnaires.find(
         _id: $ne: docId
