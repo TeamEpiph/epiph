@@ -38,6 +38,16 @@ class @Questionnaire
 Questionnaires.before.insert BeforeInsertTimestampHook
 Questionnaires.before.update BeforeUpdateTimestampHook
 
+_schema =
+  title:
+    type: String
+  id:
+    label: 'ID'
+    type: String
+    index: true
+    unique: true
+Questionnaires.attachSchema(new SimpleSchema(_schema))
+
 Questionnaires.allow
   update: (userId, doc, fieldNames, modifier) ->
     #TODO check if allowed
@@ -45,21 +55,37 @@ Questionnaires.allow
     return false if notAllowedFields.length > 0
     true
 
+
 Meteor.methods
-  "createQuestionnaire": (title) ->
+  createQuestionnaire: (title) ->
     _id = Questionnaires.insert
       title: "new Questionnaire"
+      id: __findUnique(Questionnaires, "id", "newq")
       creatorId: Meteor.userId()
     _id
 
-  "copyQuestionnaire": (questionnaireId) ->
-    console.log "copyQuestionnaire"
+  updateQuestionnaire: (modifier, docId) ->
+    if (id=modifier['$set'].id)?
+      if Questionnaires.find(
+        _id: $ne: docId
+        id: id
+      ).count() > 0
+        details = EJSON.stringify [
+          name: "id"
+          type: "notUnique"
+          value: ""
+        ]
+        throw new Meteor.Error(400, "validationError", details)
+    Questionnaires.update docId, modifier
+
+  copyQuestionnaire: (questionnaireId) ->
     questionnaire = Questionnaires.findOne questionnaireId
     throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
 
     delete questionnaire._id
     delete questionnaire.createdAt
-    questionnaire.title += " copy"
+    questionnaire.title = __findUnique(Questionnaires, "title", questionnaire.title)
+    questionnaire.id = __findUnique(Questionnaires, "id", questionnaire.id)
     qId = Questionnaires.insert questionnaire
 
     Questions.find(
@@ -71,7 +97,7 @@ Meteor.methods
       Questions.insert q
     return
 
-  "removeQuestionnaire": (_id) ->
+  removeQuestionnaire: (_id) ->
     #TODO: check if studies are affected
     Questionnaires.remove
       _id: _id

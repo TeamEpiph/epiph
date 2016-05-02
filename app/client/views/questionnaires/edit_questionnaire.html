@@ -117,7 +117,7 @@
             </div>
             {{/autoForm}}
             {{else}}
-            {{#autoForm doc=this collection="Questionnaires" schema=questionnaireSchema id="questionnaireEditForm" type="update" class="questionEditForm" autosave=false}}
+            {{#autoForm doc=this schema=questionnaireSchema id="questionnaireEditForm" type="method-update" meteormethod="updateQuestionnaire" class="questionEditForm" autosave=false}}
             {{#each afFieldNames}}
             {{> afQuickField name=this.name options=afOptionsFromSchema}}
             {{/each}}
