@@ -49,22 +49,26 @@ class @Question
 
   getMetaSchemaDict: ->
     schema = {}
-
     noWhitespaceRegex = /^\S*$/ #don't match if contains whitespace
-    if @type isnt "description"
+
+    if @type is "table" or @type is "table_polar"
+        label:
+          label: "Title"
+          type: String
+          optional: true
+          autoform:
+            type: "textarea"
+    else if @type isnt @description
       _.extend schema, 
         code:
           label: "Code"
           type: String
           optional: false
           regEx: noWhitespaceRegex
-        optional:
-          label: "Optional"
-          type: Boolean
         label:
-          label: if (@type is "table" or @type is 'table_polar') then "Title" else "Question"
+          label: "Question"
           type: String
-          optional: (@type is "table" or @type is 'table_polar')
+          optional: false
           autoform:
             type: "textarea"
 
@@ -89,6 +93,12 @@ class @Question
       break:
         label: "insert pagebreak after this item"
         type: Boolean
+
+    if @type isnt "description"
+      _.extend schema, 
+        optional:
+          label: "Optional"
+          type: Boolean
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema, 

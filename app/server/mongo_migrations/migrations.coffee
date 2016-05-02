@@ -197,6 +197,7 @@ Migrations.add
     Questions.find().forEach (q) ->
       if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
         #console.log q
+        return if !q.choices? #invalid questions :(
         if q.mode is 'checkbox'
           q.choices.forEach (c) ->
             delete c.value
@@ -217,15 +218,15 @@ Migrations.add
     c = 0
     Questions.find().forEach (q) ->
       if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
-        console.log q
+        #console.log q
         if q.mode is 'checkbox'
           q.mode = 'multi'
         else #if q.mode is 'radio'
           q.mode = 'single'
         q.selectionMode = q.mode
         delete q.mode
-        console.log q
-        console.log "\n\n\n"
+        #console.log q
+        #console.log "\n\n\n"
         c += Questions.update q._id,
           $set: selectionMode: q.selectionMode
         Questions.update q._id,
@@ -241,17 +242,98 @@ Migrations.add
     Questions.find().forEach (q) ->
       if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
         if q.selectionMode is 'multi'
-          console.log q
+          #console.log q
           q.choices.forEach (c) ->
             c.value = c.variable
             delete c.variable
-          console.log q
-          console.log "\n\n\n"
+          #console.log q
+          #console.log "\n\n\n"
           counter += Questions.update q._id,
             $set: choices: q.choices
     console.log counter+" questions updated"
     return
 
+Migrations.add
+  version: 13
+  up: ->
+    console.log "fix empty subquestions"
+    Questions.find({}).forEach (question) ->
+      if question.subquestions?
+        subquestions = question.subquestions.filter (subq) ->
+          subq?
+        if subquestions.length isnt question.subquestions.length
+          console.log "fix subquestions"
+          Questions.update question._id,
+            $set: subquestions: subquestions
+      else if question.type is "table" or question.type is "table_polar"
+        console.log "missing subquestions for table question:"
+        console.log question
+        Questions.remove question._id
+    return
+
+Migrations.add
+  version: 14
+  up: ->
+    console.log "uniquify and complement questionnaires ids"
+    ids = {}
+    counter = 0
+    Questionnaires.find().forEach (q) ->
+      if !q.id
+        q.id = q.title.replace(" ", "-").trim()
+        Questionnaires.update q._id,
+          $set: id: q.id
+      if ids[q.id]?
+        counter += 1
+        id = q.id+"_1"
+        i = 2
+        while ids[id]?
+          id = id.slice(0, -(id.length-id.lastIndexOf('_')))+"_"+i
+          i += 1
+        ids[id] = q
+        Questionnaires.update q._id,
+          $set: id: id
+      else
+        ids[q.id] = q
+    console.log counter+" questionnaires fixed"
+    return
+
+Migrations.add
+  version: 15
+  up: ->
+    console.log "remove question.code for table questions and descriptions"
+    counter = 0
+    Questions.find({}).forEach (q) ->
+      if (q.type is "table" or q.type is "table_polar" or q.type is "description") and q.code?
+        counter += 1
+        Questions.update q._id,
+          $unset: code: 1
+    console.log counter+" questionnaires fixed"
+    return
+
+Migrations.add
+  version: 16
+  up: ->
+    console.log "set new question codes"
+    counter = 0
+    Questionnaires.find({}).forEach (qn) ->
+      i = 1
+      Questions.find({questionnaireId: qn._id}, {sort: {index: 1}}).forEach (q) ->
+        if q.type is "table" or q.type is "table_polar"
+          q.subquestions.forEach (sq) ->
+            sq.code = "#{i}"
+            i += 1
+            counter += 1
+          Questions.update q._id,
+            $set: subquestions: q.subquestions
+        else if q.type isnt "description"
+          Questions.update q._id,
+            $set: code: "#{i}"
+          i += 1
+          counter += 1
+    console.log counter+" question codes set"
+    return
+
 Meteor.startup ->
-  #Migrations.migrateTo('12,rerun')
   Migrations.migrateTo('latest')
+  #Migrations.migrateTo('13,rerun')
+  #Migrations.migrateTo('14,rerun')
