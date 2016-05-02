@@ -1,7 +1,7 @@
 _isFullscreen = new ReactiveVar(false)
 
 AutoForm.hooks
-  questionnaireForm:
+  questionsDummyForm:
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
       @done()
       false
