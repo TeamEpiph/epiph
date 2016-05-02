@@ -71,13 +71,6 @@ Router.map ->
     data: ->
       Studies.findOne {_id: @params._id}
 
-  @route "users",
-    path: "users"
-    waitOn: ->
-      [
-        Meteor.subscribe("users")
-      ]
-
   @route "export",
     path: "export"
     waitOn: ->
@@ -90,6 +83,16 @@ Router.map ->
         Meteor.subscribe("visits")
         Meteor.subscribe("therapists")
       ]
+
+  @route "users",
+    path: "users"
+    waitOn: ->
+      [
+        Meteor.subscribe("users")
+      ]
+
+  @route "backup",
+    path: "backup"
 
 
 if Meteor.isClient	
