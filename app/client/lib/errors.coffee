@@ -1,12 +1,16 @@
 Meteor.startup ->
   #http://stackoverflow.com/questions/951791/javascript-global-error-handling
   window.onerror = (msg, url, line, col, error) ->
-    # Note that col & error are new to the HTML 5 spec and may not be 
+    # Note that col & error are new to the HTML 5 spec and may not be
     # supported in every browser.  It worked for me in Chrome.
     extra = if !col then '' else ' column: ' + col
 
     throwError 'Error: ' + msg + '\n\nat: ' + url + '\n\nline: ' + line + extra
-    # return true, so error alerts (like in older versions of 
+
+    #throw errors to console
+    throw error
+
+    # return true, so error alerts (like in older versions of
     # Internet Explorer) will be suppressed.
     return true
 
