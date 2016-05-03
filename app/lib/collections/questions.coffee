@@ -2,29 +2,39 @@ class @Question
   constructor: (doc) ->
     _.extend this, doc
 
+  getModifiedPlainObject: (modifier) ->
+    TempCollection = new Mongo.Collection("temp", connection: null)
+    TempCollection.insert(@)
+    selector = { _id: @_id }
+    TempCollection.update(selector, modifier)
+    simulation = TempCollection.findOne(selector)
+    TempCollection.remove(selector)
+    simulation.updatedAt = Date.now()
+    JSON.parse(JSON.stringify(simulation))
+
   getSchemaDict: ->
     s = _.pickDeep @, 'type', 'label', 'optional', 'min', 'max', 'decimal', 'options', 'options.label', 'options.value'
     switch @type
       when "text"
         s.type = String
-        s.autoform = 
+        s.autoform =
           type: "textarea"
       when "number"
         s.type = Number
       when "boolean"
         s.type = Boolean
-        s.autoform = 
+        s.autoform =
           type: "boolean-radios"
       when "date"
         s.type = Date
-        s.autoform = 
+        s.autoform =
           type: "bootstrap-datepicker"
       when "dateTime"
         s.type = Date
-        s.autoform = 
+        s.autoform =
           type: "bootstrap-datetimepicker"
       when "multipleChoice"
-        s.autoform = 
+        s.autoform =
           options: @choices
         if @selectionMode is "multi"
           s.type = [String]
@@ -40,14 +50,14 @@ class @Question
             s.autoform.type = "select-radio"
       when "description"
         s.type = String
-        s.label = ' ' 
-        s.autoform = 
+        s.label = ' '
+        s.autoform =
           type: "description"
     delete s.options
-    s
+    return s
 
 
-  getMetaSchemaDict: ->
+  getMetaSchemaDict: (finalValidation)->
     schema = {}
     noWhitespaceRegex = /^\S*$/ #don't match if contains whitespace
 
@@ -59,20 +69,20 @@ class @Question
           autoform:
             type: "textarea"
     else if @type isnt "description"
-      _.extend schema, 
+      _.extend schema,
         code:
           label: "Code"
           type: String
-          optional: false
           regEx: noWhitespaceRegex
+          defaultValue: new Mongo.ObjectID()._str
         label:
           label: "Question"
           type: String
-          optional: false
+          min: 1
           autoform:
             type: "textarea"
 
-    _.extend schema, 
+    _.extend schema,
       type:
         label: "Type"
         type: String
@@ -93,18 +103,21 @@ class @Question
       break:
         label: "insert pagebreak after this item"
         type: Boolean
+        defaultValue: false
 
     if @type isnt "description"
-      _.extend schema, 
+      _.extend schema,
         optional:
           label: "Optional"
           type: Boolean
+          defaultValue: true
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
-      _.extend schema, 
+      _.extend schema,
         selectionMode:
           label: "Mode"
           type: String
+          defaultValue: "single"
           autoform:
             type: "select-radio-inline"
             options: [
@@ -116,10 +129,11 @@ class @Question
             ]
 
     if @type is "multipleChoice"
-      _.extend schema, 
+      _.extend schema,
         orientation:
           label: "Orientation"
           type: String
+          defaultValue: "vertical"
           autoform:
             type: "select-radio-inline"
             options: [
@@ -131,16 +145,17 @@ class @Question
             ]
 
     if @type is "description"
-      _.extend schema, 
+      _.extend schema,
         label:
           label: "Text (markdown)"
           type: String
+          defaultValue: "Insert text here"
           autoform:
             type: "textarea"
             rows: 10
 
     if @type is "number"
-      _.extend schema, 
+      _.extend schema,
         min:
           type: Number
           optional: true
@@ -153,11 +168,12 @@ class @Question
           type: Boolean
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
-      _.extend schema, 
+      _.extend schema,
         choices:
           type: [Object]
           label: "Choices"
           minCount: 1
+          defaultValue: [{label: "Insert choice here", value: "1"}]
         'choices.$.label':
           type: String
           optional: true
@@ -181,11 +197,12 @@ class @Question
           return
 
     if @type is "table"
-      _.extend schema, 
+      _.extend schema,
         subquestions:
           type: [Object]
           label: "Subquestions"
           minCount: 1
+          defaultValue: [{label: "Insert question here", code: new Mongo.ObjectID()._str}]
         'subquestions.$.label':
           type: String
           autoform:
@@ -206,11 +223,12 @@ class @Question
             return
 
     if @type is "table_polar"
-      _.extend schema, 
+      _.extend schema,
         subquestions:
           type: [Object]
           label: "Subquestions"
           minCount: 1
+          defaultValue: [{code: new Mongo.ObjectID()._str}]
         'subquestions.$.minLabel':
           label: "min label"
           type: String
@@ -233,8 +251,25 @@ class @Question
                   return "notUnique"
                 index -= 1
             return
-    schema
-    
+
+    if finalValidation
+      _.extend schema,
+        _id:
+          type: String
+          optional: true
+        questionnaireId:
+          type: String
+        index:
+          type: Number
+        createdAt:
+          type: Number
+          optional: true
+        updatedAt:
+          type: Number
+          optional: true
+
+    return schema
+
 
 @Questions = new Meteor.Collection("questions",
   transform: (doc) ->
@@ -244,55 +279,98 @@ class @Question
 Questions.before.insert BeforeInsertTimestampHook
 Questions.before.update BeforeUpdateTimestampHook
 
-#TODO check if allowed
-#TODO check consistency
-Questions.allow
-  insert: (userId, doc) ->
-    true
-  update: (userId, doc, fieldNames, modifier) ->
-    true
-  remove: (userId, doc) ->
-    true
-
 Meteor.methods
   insertQuestion: (question) ->
+    checkIfAdmin()
+
     check(question.questionnaireId, String)
     questionnaire = Questionnaires.findOne
       _id:  question.questionnaireId
+    throw new Meteor.Error(400, "questionnaire #{question.questionnaireId}) not found.") unless questionnaire?
 
     check(question.type, String)
-    if question.type isnt 'table' and question.type isnt 'table_polar'
-      check(question.label, String)
 
-    numQuestions = Questions.find
-      questionnaireId: questionnaire._id
-    .count()
+    numQuestions = Questions.find(questionnaireId: questionnaire._id).count()
     nextIndex = numQuestions+1
     if (question.index? and question.index > nextIndex) or !question.index?
-      question.index = nextIndex 
+      question.index = nextIndex
 
-    #TODO filter question atters
-    _id = Questions.insert question
-    _id
+    q = new Question(question)
+    ss = new SimpleSchema(q.getMetaSchemaDict(true))
+    ss.clean(question)
+    check(question, ss)
 
-  removeQuestion: (_id) ->
-    check(_id, String)
-    question = Questions.findOne _id
-    questionnaire = Questionnaires.findOne
-      _id:  question.questionnaireId
+    Questions.insert question
 
-    Questions.remove _id
 
-    Questions.update
-      questionnaireId: questionnaire._id
-      index: { $gt: question.index }
-    ,
-      $inc: { index: -1 }
-    ,
-      multi: true
+  updateQuestion: (modifier, docId) ->
+    checkIfAdmin()
+    check(modifier, Object)
+    check(docId, String)
+
+    question = Questions.findOne docId
+    throw new Meteor.Error(403, "question (#{docId}) not found.") unless question?
+
+    typeChange = false
+    dangerousChange = false
+    if (type=modifier['$set'].type)? and Object.keys(modifier['$set']).length is 1
+      typeChange = true
+      dangerousChange = true
+
+    if (choices = modifier['$set'].choices)?
+      if choices.length < question.choices.length
+        dangerousChange = true
+      else
+        i = 0
+        while i<choices.length and !dangerousChange
+          c = choices[i]
+          co = question.choices[i]
+          if co? and c.value isnt co.value #co can be null if s is being added
+            dangerousChange = true
+          i += 1
+
+    if (subquestions = modifier['$set'].subquestions)
+      if subquestions.length < question.subquestions.length
+        dangerousChange = true
+      else
+        i = 0
+        while i<subquestions.length and !dangerousChange
+          s = subquestions[i]
+          so = question.subquestions[i]
+          if so? s.code isnt so.code #so can be null if s is being added
+            dangerousChange = true
+          i += 1
+
+    if (selectionMode=modifier['$set'].selectionMode)? and selectionMode isnt question.selectionMode
+      dangerousChange = true
+
+    if dangerousChange
+      count = Answers.find(
+        questionId: docId
+      ).count()
+      if count > 0
+        throw new Meteor.Error(400, "validationErrorQuestionInUse")
+
+    q = new Question(question).getModifiedPlainObject(modifier)
+    schema = new Question(q).getMetaSchemaDict(true)
+    ss = new SimpleSchema(schema)
+    if typeChange
+      #only the type changed: we need to clean the new object
+      #to ornament it with default values
+      #apply modifier
+      ss.clean(q)
+      check(q, ss)
+      #replace question entirely
+      #use direct to prevent $set.updatedAt being added
+      Questions.direct.update docId, q
+    else
+      check(q, ss)
+      Questions.update docId, modifier
+    return
 
 
   moveQuestion: (questionnaireId, oldIndex, newIndex) ->
+    checkIfAdmin()
     check(questionnaireId, String)
     check(oldIndex, Match.Integer)
     check(newIndex, Match.Integer)
@@ -323,4 +401,34 @@ Meteor.methods
       _id: question._id
     ,
       $set: { index: newIndex}
-    null
+    return
+
+
+  removeQuestion: (id) ->
+    checkIfAdmin()
+    check(id, String)
+
+    question = Questions.findOne id
+    throw new Meteor.Error(403, "question (#{id}) not found.") unless question?
+    questionnaire = Questionnaires.findOne
+      _id:  question.questionnaireId
+    throw new Meteor.Error(403, "questionnaire (#{question.questionnaireId}) not found.") unless questionnaire?
+
+    #check if question is used
+    count = Answers.find(
+      questionId: id
+    ).count()
+    if count > 0
+      throw new Meteor.Error(400, "validationErrorQuestionInUse")
+
+    Questions.remove id
+
+    #update index of remaining questions
+    Questions.update
+      questionnaireId: questionnaire._id
+      index: { $gt: question.index }
+    ,
+      $inc: { index: -1 }
+    ,
+      multi: true
+    return

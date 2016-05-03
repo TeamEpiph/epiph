@@ -130,9 +130,28 @@ Template.editQuestionnaire.events
     #type without validation
     evt.preventDefault()
     evt.stopPropagation()
-    Questions.update Session.get('selectedQuestionId'),
-      $set:
-        type: evt.target.value
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to change the question type?\nThis operation is submitted immediately.'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+    }, (confirmed) ->
+      if confirmed
+        Meteor.call "updateQuestion", 
+          $set:
+            type: evt.target.value
+        ,
+          Session.get('selectedQuestionId')
+        , (error) ->
+          if error?
+            Meteor.setTimeout ->
+              AutoForm.resetForm('questionForm')
+              throwError error
+            , 50
+      else
+        AutoForm.resetForm('questionForm')
+      return
     false
 
   "click #editQuestionnaire": (evt) ->
@@ -152,9 +171,8 @@ Template.editQuestionnaire.events
     return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
-      label: " "
+      label: "Insert label here"
       type: "text"
-      optional: true
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
@@ -164,7 +182,7 @@ Template.editQuestionnaire.events
     return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
-      label: " "
+      label: "Insert label here"
       type: "description"
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
@@ -192,9 +210,14 @@ Template.editQuestionnaire.events
       showCancelButton: true
       confirmButtonText: 'Yes'
     }, ->
-      Meteor.call "removeQuestion", sid, (error, _id) ->
-        throwError error if error?
-        Session.set 'selectedQuestionId', null
+      Meteor.call "removeQuestion", sid, (error) ->
+        if error?
+          Meteor.setTimeout ->
+            AutoForm.resetForm('questionForm')
+            throwError error
+          , 50
+        else
+          Session.set 'selectedQuestionId', null
       return
     return false
 

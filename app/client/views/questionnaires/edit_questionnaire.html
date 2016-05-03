@@ -99,7 +99,7 @@
           {{/with}}
           <div class="panel-body">
             {{#with selectedQuestion}}
-            {{#autoForm doc=this collection="Questions" schema=questionFormSchema id="questionForm" type="update" class="questionForm"}}
+            {{#autoForm doc=this schema=questionFormSchema id="questionForm" type="method-update" meteormethod="updateQuestion" class="questionForm"}}
             <div class="buttons-container">
               <div class="buttons pull-right">
                 <button type="button" id="removeQuestion" class="btn btn-danger">Delete</button>

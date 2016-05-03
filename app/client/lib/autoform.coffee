@@ -3,15 +3,19 @@ AutoForm.addHooks null,
   beginSubmit: ->
     AutoForm.templateInstanceForForm(@formId)._stickyErrors = {}
   onError: (formType, error) ->
+    form = @
     try
       fieldErrors = JSON.parse(error.details)
     catch e
       # don't care
     finally
-      if !fieldErrors? or fieldErrors.length is 0 
+      if error.reason is "validationErrorQuestionInUse"
+        AutoForm.resetForm form.formId
         throwError error
         return
-    form = @
+      else if !fieldErrors? or fieldErrors.length is 0 
+        throwError error
+        return
     JSON.parse(error.details).forEach (e) ->
       form.addStickyValidationError(e.name, e.type)
 
