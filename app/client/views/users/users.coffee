@@ -34,7 +34,7 @@ Template.usersTableButtons.events
     id = $(evt.target).closest("button").data().id
     role = $(evt.target).closest("button").data().role
     Meteor.call "addUserToRoles", id, role, (error) ->
-      throwError error.reason if error
+      throwError error if error
 
   "click .removeFromRole": (evt)->
     evt.stopImmediatePropagation()
@@ -48,7 +48,7 @@ Template.usersTableButtons.events
       confirmButtonText: 'Yes'
     }, ->
       Meteor.call "removeUserFromRoles", id, role, (error) ->
-        throwError error.reason if error
+        throwError error if error
 
 Template.usersTableButtons.helpers
   isInRole: (_id, role) ->

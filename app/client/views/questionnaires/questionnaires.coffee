@@ -31,7 +31,7 @@ Template.questionnaires.events
   "click button.copy": (evt) ->
     evt.stopPropagation()
     Meteor.call "copyQuestionnaire", @_id, (error) ->
-      throwError error.reason if error
+      throwError error if error
     return false
 
   "click button.remove": (evt) ->
@@ -44,6 +44,6 @@ Template.questionnaires.events
       confirmButtonText: 'Yes'
     }, ->
       Meteor.call "removeQuestionnaire", id, (error) ->
-        throwError error.reason if error
+        throwError error if error
       return
     return false

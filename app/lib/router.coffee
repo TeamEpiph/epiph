@@ -96,10 +96,6 @@ Router.map ->
 
 
 if Meteor.isClient	
-  Router.onBeforeAction ->
-    clearErrors()
-    @next()
-    return
   Accounts.ui.config
     passwordSignupFields: 'USERNAME_AND_EMAIL'
 

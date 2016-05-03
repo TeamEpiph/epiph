@@ -37,6 +37,6 @@ Template.studies.events
       confirmButtonText: 'Yes'
     }, ->
       Meteor.call "removeStudy", id, (error) ->
-        throwError error.reason if error
+        throwError error if error
       return
     return false
