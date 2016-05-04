@@ -333,7 +333,27 @@ Migrations.add
     console.log counter+" question codes set"
     return
 
+Migrations.add
+  version: 17
+  up: ->
+    console.log "clean existing questions"
+    Questions.find({}).forEach (q) ->
+      #question = JSON.parse(JSON.stringify(q))
+      schema = new Question(q).getMetaSchemaDict(true)
+      ss = new SimpleSchema(schema)
+      ss.clean(q)
+      check(q, ss)
+      #if Object.keys(question).length isnt Object.keys(q).length
+      #if question.label? and !q.label?
+      #  console.log question
+      #  console.log q
+      #  console.log "\n\n"
+      #replace question entirely
+      #use direct to prevent $set.updatedAt being added
+      Questions.direct.update q._id, q
+    return
+ 
+
 Meteor.startup ->
   Migrations.migrateTo('latest')
-  #Migrations.migrateTo('13,rerun')
-  #Migrations.migrateTo('14,rerun')
+  #Migrations.migrateTo('17,rerun')
