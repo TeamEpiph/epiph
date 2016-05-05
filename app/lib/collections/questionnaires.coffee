@@ -48,16 +48,11 @@ _schema =
     unique: true
 Questionnaires.attachSchema(new SimpleSchema(_schema))
 
-Questionnaires.allow
-  update: (userId, doc, fieldNames, modifier) ->
-    #TODO check if allowed
-    notAllowedFields = _.without fieldNames, 'title', 'id', 'updatedAt'
-    return false if notAllowedFields.length > 0
-    true
-
 
 Meteor.methods
   createQuestionnaire: (title) ->
+    checkIfAdmin()
+    check(title, String)
     _id = Questionnaires.insert
       title: "new Questionnaire"
       id: __findUnique(Questionnaires, "id", "newq")
@@ -65,6 +60,9 @@ Meteor.methods
     _id
 
   updateQuestionnaire: (modifier, docId) ->
+    checkIfAdmin()
+    check(modifier, Object)
+    check(docId, String)
     #workaround strange unique errors
     #https://github.com/aldeed/meteor-collection2/issues/218
     if (id=modifier['$set'].id)?
@@ -81,6 +79,9 @@ Meteor.methods
     Questionnaires.update docId, modifier
 
   copyQuestionnaire: (questionnaireId) ->
+    checkIfAdmin()
+    check(questionnaireId, String)
+
     questionnaire = Questionnaires.findOne questionnaireId
     throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
 
@@ -99,9 +100,37 @@ Meteor.methods
       Questions.insert q
     return
 
-  removeQuestionnaire: (_id) ->
-    #TODO: check if studies are affected
+  removeQuestionnaire: (questionnaireId) ->
+    checkIfAdmin()
+    check(questionnaireId, String)
+
+    questionnaire = Questionnaires.findOne questionnaireId
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
+
+    #check if studies are affected
+    studyIds = []
+    studyDesignIds = StudyDesigns.find(
+      questionnaireIds: questionnaireId
+    ).map (sd) -> 
+      studyIds.push sd.studyId
+      sd._id
+    studyIds = _.uniq studyIds
+    if studyDesignIds.length > 0
+      usedIn = ""
+      Studies.find(_id: $in: studyIds).forEach (s) ->
+        usedIn += "#{s.title} ("
+        StudyDesigns.find(
+          _id: $in: studyDesignIds
+          studyId: s._id
+          questionnaireIds: questionnaireId
+        ).forEach (sd) ->
+          usedIn += "#{sd.title}, "
+        usedIn = "#{usedIn.slice(0, -2)}), "
+      usedIn = usedIn.slice(0, -2)
+      throw new Meteor.Error(400, "validationErrorQuestionnaireInUse", usedIn)
+
     Questionnaires.remove
-      _id: _id
+      _id: questionnaireId
     Questions.remove
-      questionnaireId: _id
+      questionnaireId: questionnaireId
+    return

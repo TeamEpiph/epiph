@@ -42,8 +42,12 @@ Template.questionnaires.events
       type: 'warning'
       showCancelButton: true
       confirmButtonText: 'Yes'
+      closeOnConfirm: false
     }, ->
       Meteor.call "removeQuestionnaire", id, (error) ->
-        throwError error if error
-      return
+        if error?
+          throwError error
+        else
+          swal.close()
+      return true
     return false
