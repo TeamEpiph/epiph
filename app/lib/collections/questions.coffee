@@ -289,6 +289,8 @@ Meteor.methods
     throw new Meteor.Error(400, "questionnaire #{question.questionnaireId}) not found.") unless questionnaire?
 
     check(question.type, String)
+    delete question._id
+    delete question.code
 
     numQuestions = Questions.find(questionnaireId: questionnaire._id).count()
     nextIndex = numQuestions+1

@@ -196,6 +196,7 @@ Template.editQuestionnaire.events
       _id: sid
     delete selectedQuestion._id
     delete selectedQuestion.index
+    delete selectedQuestion.code
     Meteor.call "insertQuestion", selectedQuestion, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
