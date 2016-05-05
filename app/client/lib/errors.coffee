@@ -54,6 +54,22 @@ You might:
       showCancelButton: false
       confirmButtonText: 'OK'
     }
+  else if error.reason? and error.reason is "validationErrorAnswersExistForStudy"
+    console.log "swal"
+    swal {
+      title: 'Error'
+      html: true
+      customClass: "text-left"
+      text: """Error: This questionnaire is in use by the following studies: #{error.details}. Removing it is therefore not allowed.<br><br>
+You might:
+<ul>
+<li>Remove the questionnaire from the study designs.</li>
+<li>Ask an administrator to make this change in the data base</li>
+</ul>"""
+      type: 'error'
+      showCancelButton: false
+      confirmButtonText: 'OK'
+    }
   else
     swal {
       title: 'Error'
