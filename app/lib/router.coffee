@@ -91,6 +91,14 @@ Router.map ->
         Meteor.subscribe("users")
       ]
 
+  @route "activities",
+    path: "activities"
+    waitOn: ->
+      [
+        Meteor.subscribe("users")
+        Meteor.subscribe("activities")
+      ]
+
   @route "backup",
     path: "backup"
 

@@ -43,6 +43,11 @@
         {{/if}}
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <li class="{{activeRouteClass 'activities'}}">
+          <a href="{{pathFor 'activities'}}">
+            Activities
+          </a>
+        </li>
         <li class="{{activeRouteClass 'users'}}">
           <a href="{{pathFor 'users'}}">
             Users

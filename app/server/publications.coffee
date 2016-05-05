@@ -177,3 +177,9 @@ Meteor.publish "questionsForQuestionnaire", (questionnaireId)->
   return unless onlyIfUser.call(@) 
   Questions.find
     questionnaireId: questionnaireId
+
+#####################################
+
+Meteor.publish "activities", ->
+  return unless onlyIfAdmin.call(@) 
+  Activities.find()
