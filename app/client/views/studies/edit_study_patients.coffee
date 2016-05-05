@@ -27,7 +27,7 @@ Template.editStudyPatients.helpers
       { key: 'id', label: "ID" },
       { key: 'hrid', label: "HRID" },
       { key: 'therapistId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
-      { key: 'therapistId', label: "Therapist", fn: (v,o) -> therapist = o.therapist(); return therapist.profile.name if therapist? },
+      { key: 'therapistId', label: "Therapist", fn: (v,o) -> getUserDescription(o.therapist()) },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow() },
       { key: 'buttons', label: '', tmpl: Template.studyPatientsTableButtons }
@@ -59,7 +59,7 @@ Template.editStudyPatients.helpers
     therapists = Meteor.users.find(
       roles: "therapist"
     ).map (t) ->
-      label: t.profile.name
+      label: getUserDescription(t)
       value: t._id
     designs = StudyDesigns.find(
       studyId: @_id

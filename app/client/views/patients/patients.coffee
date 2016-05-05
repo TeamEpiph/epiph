@@ -129,7 +129,10 @@ Template.patients.helpers
       key: 'therapistId', label: "Therapist"
       fn: (v,o) -> 
         therapist = o.therapist()
-        return therapist.profile.name if therapist?
+        if therapist?
+          getUserDescription therapist
+        else
+          ""
     ,
       key: '', label: "no. sheduled visits"
       fn: (v,o) -> 
