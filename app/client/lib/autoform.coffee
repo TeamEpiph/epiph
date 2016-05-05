@@ -13,11 +13,12 @@ AutoForm.addHooks null,
         AutoForm.resetForm form.formId
         throwError error
         return
-      else if !fieldErrors? or fieldErrors.length is 0 
+      else if (!fieldErrors? or fieldErrors.length is 0) and !error.invalidKeys?
         throwError error
         return
-    JSON.parse(error.details).forEach (e) ->
-      form.addStickyValidationError(e.name, e.type)
+    if fieldErrors?
+      fieldErrors.forEach (e) ->
+        form.addStickyValidationError(e.name, e.type)
 
 
 # Fix null array items

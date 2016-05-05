@@ -19,6 +19,8 @@ Meteor.startup ->
     reason = error
   else
     reason = error.reason
+  if !reason? or reason.length is 0
+    reason = "unknown reason"
   if error.reason? and error.reason is "validationErrorQuestionInUse"
     swal {
       title: 'Error'
