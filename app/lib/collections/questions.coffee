@@ -314,6 +314,20 @@ Meteor.methods
     throw new Meteor.Error(403, "question (#{docId}) not found.") unless question?
 
     typeChange = false
+    
+    #check if question.code is unique
+    if (code = modifier['$set'].code) and code isnt question.code
+      count = Questions.find(
+        _id: $ne: question._id
+        questionnaireId: question.questionnaireId
+        $or: [ {code: code}, {'subquestions.code': code} ]
+      ).count()
+      if count > 0
+        details = EJSON.stringify [ {name: "code", type: "notUnique", value: code} ]
+        throw new Meteor.Error(400, "validationError", details)
+
+    #check for dangerous changes not allowed for already answered questions
+    #don't check if subquestions.$.code and choices.$.value are unique, we do that in the schema
     dangerousChange = false
     if (type=modifier['$set'].type)? and Object.keys(modifier['$set']).length is 1
       typeChange = true
@@ -324,11 +338,17 @@ Meteor.methods
         dangerousChange = true
       else
         i = 0
-        while i<choices.length and !dangerousChange
+        values = {}
+        while i<choices.length
           c = choices[i]
           co = question.choices[i]
-          if co? and c.value isnt co.value #co can be null if s is being added
+          if co? and c.value isnt co.value #co can be null if c is being added
             dangerousChange = true
+          #check if s.value is unique within this questions choices
+          if values[c.value]?
+            details = EJSON.stringify [ {name: "choices.#{i}.value", type: "notUnique", value: c.value} ]
+            throw new Meteor.Error(400, "validationError", details)
+          values[c.value] = i
           i += 1
 
     if (subquestions = modifier['$set'].subquestions)
@@ -336,11 +356,27 @@ Meteor.methods
         dangerousChange = true
       else
         i = 0
-        while i<subquestions.length and !dangerousChange
+        codes = {}
+        while i<subquestions.length
           s = subquestions[i]
           so = question.subquestions[i]
-          if so? s.code isnt so.code #so can be null if s is being added
+          if so? and s.code isnt so.code #so can be null if s is being added
             dangerousChange = true
+          #check if s.code is unique
+          #check within this questions subquestions
+          if codes[s.code]?
+            details = EJSON.stringify [ {name: "subquestions.#{i}.code", type: "notUnique", value: s.code} ]
+            throw new Meteor.Error(400, "validationError", details)
+          codes[s.code] = i
+          #check within other questions of this questionnaire
+          count = Questions.find(
+            _id: $ne: question._id
+            questionnaireId: question.questionnaireId
+            $or: [ {code: s.code}, {'subquestions.code': s.code} ]
+          ).count()
+          if count > 0
+            details = EJSON.stringify [ {name: "subquestions.#{i}.code", type: "notUnique", value: s.code} ]
+            throw new Meteor.Error(400, "validationError", details)
           i += 1
 
     if (selectionMode=modifier['$set'].selectionMode)? and selectionMode isnt question.selectionMode
