@@ -130,28 +130,36 @@ Template.editQuestionnaire.events
     #type without validation
     evt.preventDefault()
     evt.stopPropagation()
-    swal {
-      title: 'Are you sure?'
-      text: 'Do you really want to change the question type?\nThis operation is submitted immediately.'
-      type: 'warning'
-      showCancelButton: true
-      confirmButtonText: 'Yes'
-    }, (confirmed) ->
-      if confirmed
-        Meteor.call "updateQuestion", 
-          $set:
-            type: evt.target.value
-        ,
-          Session.get('selectedQuestionId')
-        , (error) ->
-          if error?
-            Meteor.setTimeout ->
-              AutoForm.resetForm('questionForm')
-              throwError error
-            , 50
-      else
-        AutoForm.resetForm('questionForm')
-      return
+    questionId = Session.get('selectedQuestionId')
+    question = Questions.findOne questionId
+    t = question.type
+    newType = evt.target.value
+    changeQuestionType = (questionId, newType) ->
+      Meteor.call "updateQuestion", 
+        $set: type: newType
+      ,
+        questionId
+      , (error) ->
+        if error?
+          Meteor.setTimeout ->
+            AutoForm.resetForm('questionForm')
+            throwError error
+          , 50
+    if t isnt "multipleChoice" and t isnt "table" and t isnt "table_polar"
+      changeQuestionType(questionId, newType)
+    else
+      swal {
+        title: 'Are you sure?'
+        text: 'Do you really want to change the question type?\nThis operation is submitted immediately and you might loose data of your question (eg. subquestions or choices).'
+        type: 'warning'
+        showCancelButton: true
+        confirmButtonText: 'Yes'
+      }, (confirmed) ->
+        if confirmed
+          changeQuestionType(questionId, newType)
+        else
+          AutoForm.resetForm('questionForm')
+        return
     false
 
   "click #editQuestionnaire": (evt) ->
