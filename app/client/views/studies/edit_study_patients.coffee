@@ -141,7 +141,7 @@ Template.editStudyPatients.events
       closeOnConfirm: false
     }, (reason) ->
       if !reason? or reason.length is 0
-        swal.showInputError("You need to give a reason!")
+        swal.showInputError("You need to state a reason!")
         return false
       Meteor.call "excludePatient", patientId, reason, (error) ->
         throwError error if error?
