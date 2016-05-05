@@ -62,6 +62,7 @@ class @Question
     noWhitespaceRegex = /^\S*$/ #don't match if contains whitespace
 
     if @type is "table" or @type is "table_polar"
+      _.extend schema,
         label:
           label: "Title"
           type: String
@@ -78,7 +79,7 @@ class @Question
         label:
           label: "Question"
           type: String
-          min: 1
+          defaultValue: "Insert label here"
           autoform:
             type: "textarea"
 

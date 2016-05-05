@@ -171,7 +171,6 @@ Template.editQuestionnaire.events
     return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
-      label: "Insert label here"
       type: "text"
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
@@ -182,7 +181,6 @@ Template.editQuestionnaire.events
     return if warnIfQuestionFormIsDirty()
     question =
       questionnaireId: @_id
-      label: "Insert label here"
       type: "description"
     Meteor.call "insertQuestion", question, (error, _id) ->
       throwError error if error?
