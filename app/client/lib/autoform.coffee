@@ -31,3 +31,10 @@ AutoForm.addHooks null,
         doc.$set[setter] = newValue
       return
     doc
+  before: 'method-update': (doc) ->
+    _.each doc.$set, (value, setter) ->
+      if _.isArray(value)
+        newValue = _.compact(value)
+        doc.$set[setter] = newValue
+      return
+    doc

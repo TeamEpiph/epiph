@@ -343,6 +343,9 @@ Meteor.methods
         while i<choices.length
           c = choices[i]
           co = question.choices[i]
+          if !c? #c was removed
+            dangerousChange = true
+            continue
           if co? and c.value isnt co.value #co can be null if c is being added
             dangerousChange = true
           #check if s.value is unique within this questions choices
@@ -361,7 +364,10 @@ Meteor.methods
         while i<subquestions.length
           s = subquestions[i]
           so = question.subquestions[i]
-          if so? and s.code isnt so.code #so can be null if s is being added
+          if !s? #s was removed
+            dangerousChange = true
+            continue
+          else if so? and s.code isnt so.code #so can be null if s is being added
             dangerousChange = true
           #check if s.code is unique
           #check within this questions subquestions
