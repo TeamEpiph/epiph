@@ -50,9 +50,8 @@ _schema =
 
 
 Meteor.methods
-  createQuestionnaire: (title) ->
+  createQuestionnaire: ->
     checkIfAdmin()
-    check(title, String)
     _id = Questionnaires.insert
       title: "new Questionnaire"
       id: __findUnique(Questionnaires, "id", "newq")
