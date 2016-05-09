@@ -167,6 +167,7 @@ class @Question
           decimal: true
         decimal:
           type: Boolean
+          defaultValue: false
 
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema,
