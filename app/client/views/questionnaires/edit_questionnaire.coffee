@@ -260,14 +260,12 @@ Template.editQuestionnaireQuestion.rendered = ->
         #$(".ui-sortable-disabled").hide()
         #console.log parseInt(ui.item.data("index"))
         #our indices begin at 1
-        index = ui.item.index()+1
-        #console.log index
+        index = $(ui.item).data('index')
         $(this).attr('data-pIndex', index)
         return
       stop: (event, ui) -> # fired when an item is dropped
         #our indices begin at 1
         newIndex = parseInt(ui.item.index())+1
-        #oldIndex = parseInt(ui.item.data("index"))
         oldIndex = parseInt($(this).attr('data-pIndex'))
 
         questionnaireId  = Session.get 'editingQuestionnaireId'
@@ -279,10 +277,6 @@ Template.editQuestionnaireQuestion.rendered = ->
             if error?
               $(".questions").sortable("cancel")
               throwError error
-            else
-              #$(".questionnaireForm").sortable("refreshPositions")
-              $(".questionnaireForm").sortable("refresh")
-              #$(".ui-sortable-disabled").show()
         return
     , 800)
 
