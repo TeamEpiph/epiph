@@ -60,11 +60,17 @@ Template.editStudyDesignsTags.events =
         throwError error if error?
     return
 
+Template.editStudyDesigns.destroyed = ->
+  _ignoreAddEvents = true
+
 Template.editStudyDesigns.rendered = ->
   _ignoreAddEvents = false
   Meteor.setTimeout ->
     $("button.accordion-toggle").first().click()
   , 400
+  Meteor.setTimeout ->
+    _ignoreAddEvents = false
+  , 1000
 
 Template.editStudyDesigns.helpers
   allQuestionnaires: ->
@@ -80,8 +86,8 @@ Template.editStudyDesigns.helpers
     value: design.title
     emptytext: "no title"
     success: (response, newVal) ->
-      StudyDesigns.update design._id,
-        $set: {title: newVal}
+      Meteor.call "updateStudyDesignTitle", design._id, newVal, (error) ->
+        throwError error if error?
       return
 
   #this design=design
@@ -195,9 +201,13 @@ Template.editStudyDesigns.events
       type: 'warning'
       showCancelButton: true
       confirmButtonText: 'Yes'
+      closeOnConfirm: false
     }, ->
       Meteor.call "removeStudyDesign", designId, (error) ->
-        throwError error if error?
+        if error?
+          throwError error
+        else
+          swal.close()
       return
     return false
 
@@ -255,8 +265,12 @@ Template.editStudyDesigns.events
       type: 'warning'
       showCancelButton: true
       confirmButtonText: 'Yes'
+      closeOnConfirm: false
     }, ->
       Meteor.call "removeStudyDesignVisit", designId, visitId, (error) ->
-        throwError error if error?
+        if error?
+          throwError error
+        else
+          swal.close()
       return
     return false

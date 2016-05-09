@@ -1,11 +1,4 @@
-class @StudyDesign
-  constructor: (doc) ->
-    _.extend this, doc
-
-@StudyDesigns = new Meteor.Collection("study_designs",
-  transform: (doc) ->
-    new StudyDesign(doc)
-)
+@StudyDesigns = new Meteor.Collection("study_designs")
 
 StudyDesigns.before.insert BeforeInsertTimestampHook
 StudyDesigns.before.update BeforeUpdateTimestampHook
@@ -20,25 +13,38 @@ schema =
   'visits':
     type: [Object]
     optional: true
-  'visits._id':
+  'visits.$._id':
     type: String
-  'visits.title':
+  'visits.$.title':
     type: String
-  'visits.index':
+  'visits.$.index':
     type: Number
-#TODO: attach schema
-#StudyDesigns.attachSchema new SimpleSchema(schema)
+  'visits.$.day':
+    type: Number
+    optional: true
+  'visits.$.questionnaireIds':
+    type: [String]
+    optional: true
+  'visits.$.recordPhysicalData':
+    type: Boolean
+    optional: true
+  'questionnaireIds':
+    type: [String]
+    optional: true
+  'recordPhysicalData':
+    type: Boolean
+    optional: true
+  'updatedAt':
+    type: Number
+    optional: true
+  'createdAt':
+    type: Number
+    optional: true
+StudyDesigns.attachSchema new SimpleSchema(schema)
 
-StudyDesigns.allow
-  update: (userId, doc, fieldNames, modifier) ->
-    #TODO check if allowed
-    notAllowedFields = _.without fieldNames, 'title', 'updatedAt'
-    return false if notAllowedFields.length > 0
-    true
-
-#TODO secure methods
 Meteor.methods
-  "createStudyDesign": (studyId, title) ->
+  "createStudyDesign": (studyId) ->
+    checkIfAdmin()
     count = StudyDesigns.find(
       studyId: studyId
     ).count()
@@ -54,19 +60,27 @@ Meteor.methods
       ]
     _id
 
+  "updateStudyDesignTitle": (studyDesignId, title) ->
+    checkIfAdmin()
+    check title, String
+    studyDesign = StudyDesigns.findOne studyDesignId
+    throw new Meteor.Error(403, "studyDesign not found.") unless studyDesign?
+    StudyDesigns.update studyDesignId,
+      $set: title: title
+    return
+
   "removeStudyDesign": (studyDesignId) ->
+    checkIfAdmin()
     check studyDesignId, String
 
-    design = StudyDesigns.findOne
-      _id: studyDesignId
-    throw new Meteor.Error(500, "removeStudyDesign: studyDesign (#{studyDesignId}) not found") unless design?
+    design = StudyDesigns.findOne studyDesignId
+    throw new Meteor.Error(400, "removeStudyDesign: studyDesign (#{studyDesignId}) not found") unless design?
 
     #check patients
     patientIds = Patients.find
       studyDesignId: design._id
     .map (patient) ->
       patient.id
-
     if patientIds.length > 0
       throw new Meteor.Error(500, "Can't remove study design because these patients are mapped to it: #{patientIds.join(", ")}")
 
@@ -81,17 +95,16 @@ Meteor.methods
       next
 
     if error?
-      throw e
+      throw error
 
-    StudyDesigns.remove
-      _id: design._id
+    StudyDesigns.remove design._id
     return
 
   "addStudyDesignVisit": (studyDesignId) ->
+    checkIfAdmin()
     check studyDesignId, String
 
-    design = StudyDesigns.findOne
-      _id: studyDesignId
+    design = StudyDesigns.findOne studyDesignId
     throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
 
     index = design.visits.length
@@ -101,13 +114,11 @@ Meteor.methods
       title: title
       index: index
 
-    StudyDesigns.update
-      _id: studyDesignId
-    ,
-      $push:
-        visits: visit
+    StudyDesigns.update studyDesignId,
+      $push: visits: visit
 
   "changeStudyDesignVisitTitle": (studyDesignId, visitId, title) ->
+    checkIfAdmin()
     check studyDesignId, String
     check visitId, String
     check title, String
@@ -116,21 +127,20 @@ Meteor.methods
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $set:
-        'visits.$.title': title
+      $set: 'visits.$.title': title
     throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
 
     #update existing visits
     Visits.update
       designVisitId: visitId
     ,
-      $set:
-        title: title
+      $set: title: title
     ,
       multi: true
     return
 
   "changeStudyDesignVisitDay": (studyDesignId, visitId, day) ->
+    checkIfAdmin()
     check studyDesignId, String
     check visitId, String
     day = parseInt(day)
@@ -141,21 +151,20 @@ Meteor.methods
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $set:
-        'visits.$.day': day
+      $set: 'visits.$.day': day
     throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
 
     #update existing visits
     Visits.update
       designVisitId: visitId
     ,
-      $set:
-        day: day
+      $set: day: day
     ,
       multi: true
     return
 
   "scheduleQuestionnairesAtVisit": (studyDesignId, visitId, questionnaireIds) ->
+    checkIfAdmin()
     check studyDesignId, String
     check visitId, String
     check questionnaireIds, [String]
@@ -164,8 +173,7 @@ Meteor.methods
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $set:
-        'visits.$.questionnaireIds': questionnaireIds
+      $set: 'visits.$.questionnaireIds': questionnaireIds
     throw new Meteor.Error(500, "scheduleQuestionnaireAtVisit: no StudyDesign with that visit found") unless n > 0
 
     #update existing visits
@@ -204,14 +212,14 @@ Meteor.methods
 
 
   "scheduleRecordPhysicalDataAtVisit": (studyDesignId, visitId, doSchedule) ->
+    checkIfAdmin()
     check visitId, String
     check studyDesignId, String
     n = StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $set:
-        'visits.$.recordPhysicalData': doSchedule
+      $set: 'visits.$.recordPhysicalData': doSchedule
     throw new Meteor.Error(500, "scheduleRecordPhysicalDataAtVisit: no StudyDesign with that visit found") unless n > 0
 
     updateRecordPhysicalDataOfStudyDesign(studyDesignId)
@@ -222,21 +230,19 @@ Meteor.methods
     .forEach (visit) ->
       if doSchedule
         Visits.update visit._id,
-          $set:
-            recordPhysicalData: true
+          $set: recordPhysicalData: true
       else
         Visits.update visit._id,
-          $set:
-            recordPhysicalData: false
+          $set: recordPhysicalData: false
     return
 
 
   "moveStudyDesignVisit": (studyDesignId, visitId, up) ->
+    checkIfAdmin()
     check visitId, String
     check studyDesignId, String
 
-    design = StudyDesigns.findOne
-      _id: studyDesignId
+    design = StudyDesigns.findOne studyDesignId
     throw new Meteor.Error(500, "removeStudyDesignVisit: studyDesign not found") unless design?
 
     visit = _.find design.visits, (v) ->
@@ -251,14 +257,12 @@ Meteor.methods
       _id: studyDesignId
       'visits.index': visit.index+move
     ,
-      $inc:
-        'visits.$.index': -move
+      $inc: 'visits.$.index': -move
     StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
     ,
-      $inc:
-        'visits.$.index': move
+      $inc: 'visits.$.index': move
 
     #update existing visits
     designVisitIds = design.visits.map (designVisit) ->
@@ -267,20 +271,19 @@ Meteor.methods
       designVisitId: { $in: designVisitIds }
       index: visit.index+move
     ,
-      $inc:
-        index: -move
+      $inc: index: -move
     ,
       multi: true
     Visits.update
       designVisitId: visitId
     ,
-      $inc:
-        index: move
+      $inc: index: move
     ,
       multi: true
     return
 
   "removeStudyDesignVisit": (studyDesignId, visitId) ->
+    checkIfAdmin()
     check visitId, String
     check studyDesignId, String
 
@@ -312,9 +315,11 @@ Meteor.methods
       return false
     throw new Meteor.Error(500, "The visit is used by at least one patient and has data attached to it. Please consult your system operator for further information.") if foundData
  
-    StudyDesigns.update
-      _id: studyDesignId
-    ,
+    #remove existing visits
+    Visits.remove
+      designVisitId: visitId
+
+    StudyDesigns.update studyDesignId,
       $pull: {visits: {_id: visitId}}
 
     #TODO normalize visits into it's own collection
@@ -348,11 +353,9 @@ updateQuestionnaireIdsOfStudyDesign = (studyDesignId) ->
       designVisitId: visit._id
     ).forEach (v) ->
       questionnaireIds = _.union questionnaireIds, v.questionnaireIds
-  StudyDesigns.update
-    _id: studyDesignId
-  ,
-    $set:
-      questionnaireIds: questionnaireIds
+  StudyDesigns.update studyDesignId,
+    $set: questionnaireIds: questionnaireIds
+  return
 
 updateRecordPhysicalDataOfStudyDesign = (studyDesignId) ->
   design = StudyDesigns.findOne studyDesignId
@@ -362,8 +365,6 @@ updateRecordPhysicalDataOfStudyDesign = (studyDesignId) ->
     if visit.recordPhysicalData?
       recordPhysicalData = visit.recordPhysicalData
     recordPhysicalData
-  StudyDesigns.update
-    _id: studyDesignId
-  ,
-    $set:
-      recordPhysicalData: recordPhysicalData
+  StudyDesigns.update studyDesignId,
+    $set: recordPhysicalData: recordPhysicalData
+  return
