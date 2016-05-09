@@ -1,4 +1,3 @@
 FROM patte/meteord:onbuild
 ENV PORT 3000
 ENV ROOT_URL https://epiph.stage.kjpk.patpat.org
-ENV DISABLE_WEBSOCKETS=1
