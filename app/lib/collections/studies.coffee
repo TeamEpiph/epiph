@@ -17,7 +17,7 @@ Studies.before.insert BeforeInsertTimestampHook
 Studies.before.update BeforeUpdateTimestampHook
 
 Meteor.methods
-  "createStudy": (title) ->
+  "createStudy": ->
     checkIfAdmin()
     Studies.insert
       title: "new Study"
