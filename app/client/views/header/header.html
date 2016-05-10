@@ -43,6 +43,7 @@
         {{/if}}
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        {{#if isInRole 'admin'}}
         <li class="{{activeRouteClass 'activities'}}">
           <a href="{{pathFor 'activities'}}">
             Activities
@@ -53,6 +54,7 @@
             Users
           </a>
         </li>
+        {{/if}}
         {{> loginButtons}}
       </ul>
     </div><!-- /.navbar-collapse -->
