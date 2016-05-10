@@ -82,13 +82,39 @@ class @Visit
 Visits.before.insert BeforeInsertTimestampHook
 Visits.before.update BeforeUpdateTimestampHook
 
+schema =
+  'patientId':
+    type: String
+  'designVisitId':
+    type: String
+  'title':
+    type: String
+  'questionnaireIds':
+    type: [String]
+  'recordPhysicalData':
+    type: Boolean
+  'index':
+    type: Number
+  'day':
+    type: Number
+    optional: true
+  'date':
+    type: Number
+    optional: true
+  'updatedAt':
+    type: Number
+    optional: true
+  'createdAt':
+    type: Number
+    optional: true
+Visits.attachSchema new SimpleSchema(schema)
+
 Meteor.methods
   "initVisit": (designVisitId, patientId) ->
     check designVisitId, String
     check patientId, String
 
-    patient = Patients.findOne
-      _id:  patientId
+    patient = Patients.findOne patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
     throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
 
@@ -134,8 +160,7 @@ Meteor.methods
     visit = Visits.findOne visitId
     throw new Meteor.Error(403, "visit can't be found.") unless visit?
 
-    patient = Patients.findOne
-      _id:  visit.patientId
+    patient = Patients.findOne visit.patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
     throw new Meteor.Error(433, "you are not allowed change this visit") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
 
@@ -145,3 +170,4 @@ Meteor.methods
     else
       Visits.update visitId,
         $unset: date: ''
+    return
