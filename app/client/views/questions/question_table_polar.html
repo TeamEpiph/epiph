@@ -1,4 +1,7 @@
 <template name="questionTablePolar">
+<label class="control-label">
+  {{#markdown}}{{question.label}}{{/markdown}}
+</label>
 <table class="table question-table question-table-polar">
   <thead>
     <tr>
@@ -13,18 +16,20 @@
     {{#each question.subquestions}}
     <tr>
       <td>
-        {{minLabel}}
+        {{#markdown}}{{minLabel}}{{/markdown}}
       </td>
       {{#each ../question.choices}}
       <td>
         {{#with answer=../../answer question=../../question subquestion=.. choice=. readonly=../../readonly}}
         {{> questionTableInput}}
-        <p>{{choice.label}}</p>
+        <p>
+        {{#markdown}}{{choice.label}}{{/markdown}}
+        </p>
         {{/with}}
       </td>
       {{/each}}
       <td>
-        {{maxLabel}}
+        {{#markdown}}{{maxLabel}}{{/markdown}}
       </td>
     </tr>
     {{/each}}

@@ -7,13 +7,11 @@
   {{else}}
     <div class="col-xs-12">
       {{#if eq type "table"}}
-        <b>{{label}}</b>
         {{#with question=this}}
           {{> questionTable}}
         {{/with}}
       {{else}}
         {{#if eq type "table_polar"}}
-          <b>{{label}}</b>
           {{#with question=this}}
             {{> questionTablePolar}}
           {{/with}}

@@ -1,11 +1,14 @@
 <template name="questionTable">
+<label class="control-label">
+  {{#markdown}}{{question.label}}{{/markdown}}
+</label>
 <table class="table question-table">
   <thead>
     <tr>
       <td></td>
       {{#each question.choices}}
       <td>
-        {{label}}
+        {{#markdown}}{{label}}{{/markdown}}
       </td>
       {{/each}}
     </tr>
@@ -14,7 +17,7 @@
     {{#each question.subquestions}}
     <tr>
       <td>
-        {{label}}
+        {{#markdown}}{{label}}{{/markdown}}
       </td>
       {{#each ../question.choices}}
       <td>
