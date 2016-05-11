@@ -157,6 +157,7 @@ Template.patients.helpers
 
 Template.patients.events
   "click #patientsTable table tr": (evt) ->
+    return if !@_id #header
     selectPatientId(@_id)
     return
 
