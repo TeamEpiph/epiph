@@ -1,6 +1,6 @@
 <template name="editStudyPatients">
-<div class="row">
-  <div class="col-xs-12 col-md-3 col-md-push-9 text-right">
+<div class="editStudyPatients row">
+  <div class="col-xs-12 col-md-3 col-md-push-9">
     <br>
     <div class="panel panel-info">
       <div class="panel-heading">{{editingPanelTitle}}</div>
@@ -11,6 +11,7 @@
               {{> afQuickField name=this.name options=afOptionsFromSchema}}
             {{/each}}
             <button type="submit" class="btn btn-primary">Save</button>
+            <button type="reset" class="btn btn-warning">Reset</button>
           {{/autoForm}}
         {{else}}
           <i class="fa fa-hand-o-left"></i> Select patients to edit them.<br>
