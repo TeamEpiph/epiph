@@ -1,6 +1,6 @@
 <template name="questionTablePolar">
 <label class="control-label">
-  {{#markdown}}{{question.label}}{{/markdown}}
+  {{question.label}}
 </label>
 <table class="table question-table question-table-polar">
   <thead>
@@ -16,7 +16,7 @@
     {{#each question.subquestions}}
     <tr>
       <td>
-        {{#markdown}}{{minLabel}}{{/markdown}}
+        {{minLabel}}
       </td>
       {{#each ../question.choices}}
       <td>
@@ -29,7 +29,7 @@
       </td>
       {{/each}}
       <td>
-        {{#markdown}}{{maxLabel}}{{/markdown}}
+        {{maxLabel}}
       </td>
     </tr>
     {{/each}}
