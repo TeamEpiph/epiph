@@ -124,12 +124,7 @@ Template.editStudyPatients.events
 
     
   "click button.show": (evt) ->
-    patientId = @_id
-    openPatientIds = Session.get("openPatientIds") or []
-    openPatientIds.push patientId
-    openPatientIds = _.uniq openPatientIds
-    Session.set "openPatientIds", openPatientIds
-    Session.set "selectedPatientId", patientId
+    selectPatientId(@_id)
     Router.go "patients"
 
   "click button.remove": (evt) ->

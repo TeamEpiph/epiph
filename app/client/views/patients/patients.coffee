@@ -20,7 +20,6 @@ Template.patients.rendered = ->
       #liveSearch: true
 
   $(window).on('hashchange', hashchange)
-  hashchange()
 
   @autorun ->
     Session.get('selectedStudyIds')
@@ -48,11 +47,14 @@ Template.patients.helpers
   patients: ->
     selectedStudyIds = Session.get 'selectedStudyIds'
     selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
+    selectedPatientId = Session.get 'selectedPatientId'
     find = {}
-    if selectedStudyIds?
+    if selectedStudyIds? and selectedStudyIds.length > 0
       find.studyId = {$in: selectedStudyIds}
-    if selectedStudyDesignIds?
+    if selectedStudyDesignIds? and selectedStudyDesignIds.length > 0
       find.studyDesignId = {$in: selectedStudyDesignIds}
+    if !find.selectedStudyIds? and !find.selectedStudyDesignIds? and selectedPatientId?
+      find._id = selectedPatientId
     Patients.find(find, {sort: {studyId: 1}})
 
   visits: ->
@@ -206,21 +208,26 @@ Template.patients.events
     Session.set 'selectedQuestionnaireId', id
     return
 
-selectPatientId = (id) ->
+@selectPatientId = (id) ->
   if id?
     patient = Patients.findOne id
-    studyDesign = StudyDesigns.findOne patient.studyDesignId
+    if patient.studyDesignId?
+      studyDesign = StudyDesigns.findOne patient.studyDesignId
 
-    selectedStudyIds = Session.get('selectedStudyIds') or []
-    selectedStudyIds.push studyDesign.studyId
-    selectedStudyIds = _.unique selectedStudyIds
-    Session.set 'selectedStudyIds', selectedStudyIds
+      selectedStudyIds = Session.get('selectedStudyIds') or []
+      selectedStudyIds.push studyDesign.studyId
+      selectedStudyIds = _.unique selectedStudyIds
+      Session.set 'selectedStudyIds', selectedStudyIds
 
-    selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
-    selectedStudyDesignIds.push studyDesign._id
-    selectedStudyDesignIds = _.unique selectedStudyDesignIds
-    Session.set 'selectedStudyDesignIds', selectedStudyDesignIds
+      selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
+      selectedStudyDesignIds.push studyDesign._id
+      selectedStudyDesignIds = _.unique selectedStudyDesignIds
+      Session.set 'selectedStudyDesignIds', selectedStudyDesignIds
+    else
+      Session.set 'selectedStudyIds', null
+      Session.set 'selectedStudyDesignIds', null
   Session.set 'selectedPatientId', id
+  return
 
 refreshSelectValues = ->
   Meteor.setTimeout ->
