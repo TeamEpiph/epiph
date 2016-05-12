@@ -13,6 +13,7 @@ class @Export
         questionnaire = Questionnaires.findOne questionnaire._id
         Questions.find(
           questionnaireId: questionnaire._id
+          type: $ne: 'description'
         ,
           sort: {index: 1}
         ).forEach (question) ->
@@ -97,6 +98,7 @@ class @Export
         questionnaire = Questionnaires.findOne questionnaire._id
         Questions.find(
           questionnaireId: questionnaire._id
+          type: $ne: 'description'
         ,
           sort: {index: 1}
         ).forEach (question) ->
