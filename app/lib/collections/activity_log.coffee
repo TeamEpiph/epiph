@@ -10,7 +10,8 @@ Meteor.methods
   "logActivity": (description, level, reason, payload) ->
     check description, String
     check level, String
-    userId = Meteor.userId() or "anonymous"
+    userId = Meteor.userId()
+    throw new Meteor.Error(401, "You need to login") unless userId?
     console.log "logActivity: #{description}, #{level}, #{userId}, #{payload}"
     Activities.insert
       description: description
