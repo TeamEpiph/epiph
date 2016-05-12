@@ -66,5 +66,5 @@ Template.studies.events
             throwError error
         else
           swal.close()
-      return false
+      return
     return false
