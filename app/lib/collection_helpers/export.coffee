@@ -18,18 +18,16 @@ class @Export
           sort: {index: 1}
         ).forEach (question) ->
           #console.log question
-          if !question.code?
-            question.code = "question code missing (index: #{question.index} in questionnaire: #{questionnaire.title})"
           if question.type is 'table' or question.type is 'table_polar'
             if question.subquestions?
               question.subquestions.forEach (subquestion) ->
                 if question.selectionMode is "multi"
                   question.choices.forEach (choice) ->
                     cols.push
-                      title: "#{subquestion.code}-#{choice.value}"
+                      title: "#{questionnaire.id}_#{subquestion.code}-#{choice.value}"
                 else #if question.selectionMode is "single"
                   cols.push
-                    title: "#{subquestion.code}"
+                    title: "#{questionnaire.id}_#{subquestion.code}"
             else
               cols.push
                 title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
@@ -38,16 +36,18 @@ class @Export
               if question.selectionMode is "multi"
                 question.choices.forEach (choice) ->
                   cols.push
-                    title: "#{question.code}-#{choice.value}"
+                    title: "#{questionnaire.id}_#{question.code}-#{choice.value}"
               else# if question.selectionMode is "single"
                 cols.push
-                  title: "#{question.code}"
+                  title: "#{questionnaire.id}_#{question.code}"
             else
               cols.push
-                title: "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
+                title: "#{questionnaire.id}_#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else
+            if !question.code?
+              question.code = "question code missing (index: #{question.index} in questionnaire: #{questionnaire.title})"
             cols.push
-              title: "#{question.code}"
+              title: "#{questionnaire.id}_#{question.code}"
     cols
 
   @rows: (selection) ->
