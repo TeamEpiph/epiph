@@ -38,22 +38,26 @@
     <button class="btn btn-primary show" data-id={{_id}} title="show">
       <i class="fa fa-lg fa-info"></i>
     </button>
-    {{#unless isExcluded}}
+    {{#if isExcluded}}
+      <button class="btn btn-danger include" data-id={{_id}} title="include">
+        <i class="fa fa-lg fa-link"></i>
+      </button>
+    {{else}}
       <button class="btn btn-danger exclude" data-id={{_id}} title="exclude">
         <i class="fa fa-lg fa-unlink"></i>
       </button>
-    {{/unless}}
-    {{#unless hasData}}
-      <button class="btn btn-danger remove" data-id={{_id}} title="remove">
-        <i class="fa fa-lg fa-trash"></i>
-      </button>
-    {{/unless}}
+    {{/if}}
+    <button class="btn btn-danger remove" data-id={{_id}} title="remove">
+      <i class="fa fa-lg fa-trash"></i>
+    </button>
   </div>
 </template>
 
 <template name="studyPatientsTableExcluded">
   {{#if isExcluded}}
-  yes <i class="fa fa-lg fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="{{fullDateTime excludedAt}}: {{excludeReason}}"></i>
+    {{#with lastExcludeInclude}}
+  yes <i class="fa fa-lg fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="{{fullDateTime createdAt}}: {{reason}}"></i>
+    {{/with}}
   {{else}}
   -
   {{/if}}

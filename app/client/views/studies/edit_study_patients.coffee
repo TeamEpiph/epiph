@@ -131,13 +131,40 @@ Template.editStudyPatients.events
     patientId = @_id
     swal {
       title: 'Are you sure?'
-      text: 'Do you really want to delete this patient?'
+      text: 'Do you really want to delete this patient? A log entry will be created.'
       type: 'warning'
       showCancelButton: true
       confirmButtonText: 'Yes'
+      closeOnConfirm: false
     }, ->
       Meteor.call "removePatient", patientId, (error) ->
-        throwError error if error?
+        if error?
+          if error.reason is "patientHasData"
+            swal {
+              title: 'Attention!'
+              text: """The patient you are about to remove has data entries. Please consider using the exclude checkbox instead. If you really want to proceed removing the patient please state a reason. A log entry will be created."""
+              type: 'input'
+              showCancelButton: true
+              confirmButtonText: 'Yes'
+              inputPlaceholder: "Please state a reason."
+              closeOnConfirm: false
+            }, (confirmedWithReason)->
+              if confirmedWithReason is false #cancel
+                swal.close()
+              else
+                if !confirmedWithReason? or confirmedWithReason.length is 0
+                  swal.showInputError("You need to state a reason!")
+                else
+                  Meteor.call "removePatient", patientId, confirmedWithReason, (error2) ->
+                    if error2?
+                      throwError error2
+                    else
+                      swal.close()
+              return false
+          else
+            throwError error
+        else
+          swal.close()
       return
     return false
 
@@ -152,6 +179,9 @@ Template.editStudyPatients.events
       inputPlaceholder: "Reason for exclusion."
       closeOnConfirm: false
     }, (reason) ->
+      if reason is false #cancel
+        swal.close()
+        return
       if !reason? or reason.length is 0
         swal.showInputError("You need to state a reason!")
         return false
@@ -161,5 +191,40 @@ Template.editStudyPatients.events
       return true
     return false
 
+  "click button.include": (evt) ->
+    patientId = @_id
+    swal {
+      title: 'Include patient'
+      text: 'If you really want to include this patient again, type a reason and choose Yes.'
+      type: 'input'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+      inputPlaceholder: "Reason for inclusion."
+      closeOnConfirm: false
+    }, (reason) ->
+      if reason is false #cancel
+        swal.close()
+        return
+      if !reason? or reason.length is 0
+        swal.showInputError("You need to state a reason!")
+        return false
+      Meteor.call "includePatient", patientId, reason, (error) ->
+        throwError error if error?
+        swal("the patient has been included.")
+      return true
+    return false
+
 Template.studyPatientsTableExcluded.rendered = ->
-  @$('[data-toggle=tooltip]').tooltip()
+  tmpl = @
+  @autorun ->
+    Template.currentData()
+    tmpl.$('[data-toggle=tooltip]').tooltip()
+  return
+
+Template.studyPatientsTableExcluded.helpers
+  lastExcludeInclude: ->
+    l = @excludesIncludes.length
+    if l > 0
+      @excludesIncludes[l-1]
+    else
+      null
