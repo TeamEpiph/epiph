@@ -22,27 +22,6 @@ if Meteor.users.find().count() is 0
     password: "asdfasdf"
     roles: ["admin", "therapist", "analyst"]
     }
-    {
-    name: "Sigmund Freud"
-    email: "sigmund.freud@patpat.ch"
-    username: "sigmund.freud"
-    password: "asdfasdf"
-    roles: ["therapist"]
-    }
-    {
-    name: "Carl Gustav Jung"
-    email: "carl.jung@patpat.ch"
-    username: "carl.jung"
-    password: "asdfasdf"
-    roles: ["therapist"]
-    }
-    {
-    name: "Karl Popper"
-    email: "karl.popper@patpat.ch"
-    username: "karl.popper"
-    password: "asdfasdf"
-    roles: ["analyst"]
-    }
   ]
   _.each users, (user) ->
     _id = undefined
