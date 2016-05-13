@@ -24,9 +24,6 @@ Template.usersTableButtons.helpers
     ,
       role: "therapist"
       icon: "fa-user-md"
-    ,
-      role: "analyst"
-      icon: "fa-graduation-cap"
     ]
 
 Template.usersTableButtons.events
