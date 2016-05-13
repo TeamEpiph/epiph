@@ -286,11 +286,12 @@ Meteor.methods
     checkIfAdmin()
 
     check(question.questionnaireId, String)
-    questionnaire = Questionnaires.findOne
-      _id:  question.questionnaireId
+    questionnaire = Questionnaires.findOne question.questionnaireId
     throw new Meteor.Error(400, "questionnaire #{question.questionnaireId}) not found.") unless questionnaire?
 
     check(question.type, String)
+    if question.type isnt "text" and question.type isnt "description"
+      throw new Meteor.Error(400, "only text and description questions can be inserted")
     delete question._id
     delete question.code
 
@@ -298,6 +299,32 @@ Meteor.methods
     nextIndex = numQuestions+1
     if (question.index? and question.index > nextIndex) or !question.index?
       question.index = nextIndex
+
+    q = new Question(question)
+    ss = new SimpleSchema(q.getMetaSchemaDict(true))
+    ss.clean(question)
+    check(question, ss)
+
+    Questions.insert question
+
+
+  copyQuestion: (questionId) ->
+    checkIfAdmin()
+    check questionId, String
+
+    question = Questions.findOne questionId
+    throw new Meteor.Error(403, "question (#{questionId}) not found.") unless question?
+    questionnaire = Questionnaires.findOne question.questionnaireId
+    throw new Meteor.Error(400, "questionnaire #{question.questionnaireId}) not found.") unless questionnaire?
+
+    delete question._id
+    delete question.code
+
+    if question.subquestions?
+      question.subquestions.forEach (q) ->
+        q.code = new Mongo.ObjectID()._str
+
+    question.index = Questions.find(questionnaireId: questionnaire._id).count()+1
 
     q = new Question(question)
     ss = new SimpleSchema(q.getMetaSchemaDict(true))

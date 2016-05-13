@@ -197,16 +197,12 @@ Template.editQuestionnaire.events
 
   "click #copyQuestion": (evt) ->
     return if warnIfQuestionFormIsDirty()
-    sid = Session.get 'selectedQuestionId'
-    selectedQuestion = Questions.findOne
-      _id: sid
-    delete selectedQuestion._id
-    delete selectedQuestion.index
-    delete selectedQuestion.code
-    Meteor.call "insertQuestion", selectedQuestion, (error, _id) ->
+    questionId = Session.get 'selectedQuestionId'
+    Meteor.call "copyQuestion", questionId, (error, _id) ->
       throwError error if error?
       Session.set 'selectedQuestionId', _id
       Meteor.setTimeout scrollToEditingQuestion, 300
+    return false
 
   "click #removeQuestion": (evt) ->
     sid = Session.get 'selectedQuestionId'
