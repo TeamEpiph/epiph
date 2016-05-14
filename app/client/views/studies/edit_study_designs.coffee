@@ -187,12 +187,16 @@ Template.editStudyDesigns.events
   "click #createStudyDesign": (evt) ->
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?
+      $("#collapse_#{studyDesignId}").collapse('show')
+      __scrollToBottom()
 
   "click .copyDesign": (evt) ->
     evt.preventDefault()
     Meteor.call "copyStudyDesign", @design._id, (error, studyDesignId) ->
       if error?
         throwError error
+      $("#collapse_#{studyDesignId}").collapse('show')
+      __scrollToBottom()
     return false
 
   "click .removeDesign": (evt) ->
