@@ -192,11 +192,16 @@ Template.editStudyDesigns.events
 
   "click .copyDesign": (evt) ->
     evt.preventDefault()
+    _ignoreAddEvents = true
     Meteor.call "copyStudyDesign", @design._id, (error, studyDesignId) ->
       if error?
+        _ignoreAddEvents = false
         throwError error
       $("#collapse_#{studyDesignId}").collapse('show')
       __scrollToBottom()
+      Meteor.setTimeout ->
+        _ignoreAddEvents = false
+      , 500
     return false
 
   "click .removeDesign": (evt) ->
