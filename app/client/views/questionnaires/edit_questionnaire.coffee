@@ -273,6 +273,8 @@ Template.editQuestionnaireQuestion.rendered = ->
             if error?
               $(".questions").sortable("cancel")
               throwError error
+            else
+              repositionQuestionEditor()
         return
     , 800)
 
