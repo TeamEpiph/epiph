@@ -82,6 +82,9 @@ Meteor.methods
     design.title += " copy"
     design.creatorId = Meteor.userId()
 
+    design.visits.forEach (v) ->
+      v._id = new Mongo.ObjectID()._str
+
     StudyDesigns.insert design
 
   "removeStudyDesign": (studyDesignId) ->
