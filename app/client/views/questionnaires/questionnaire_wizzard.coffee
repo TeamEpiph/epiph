@@ -366,8 +366,7 @@ Template.questionnaireWizzard.helpers
 
   isOnLastPageOfLastQuestionnaire: ->
     # deactiavted: go to next questionnaire automatically
-    #_pageIndex.get() is _numPages.get()-1 and (_preview.get() or _nextQuestionnaire is null)
-    true
+    _pageIndex.get() is _numPages.get()-1# and (_preview.get() or _nextQuestionnaire is null)
 
 
 Template.questionnaireWizzard.events
