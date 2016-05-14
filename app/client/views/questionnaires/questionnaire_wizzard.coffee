@@ -45,10 +45,12 @@ doShowQuestionnaireWizzard = (data) ->
       showCancelButton: true
       confirmButtonText: 'Save and exit'
       cancelButtonText: "Exit without saving"
+      closeOnConfirm: false
     }, (save) ->
       if save
         submitAllForms('close')
       else
+        swal.close()
         Modal.hide('questionnaireWizzard')
   else
     Modal.hide('questionnaireWizzard')
@@ -119,6 +121,7 @@ submitAllForms = (goto) ->
       }, ->
         doSubmitAllForms(numFormsToSubmit)
   else
+    swal.close() #possibly open swal "unsaved changes"
     doSubmitAllForms(numFormsToSubmit)
 
 doSubmitAllForms = (numFormsToSubmit) ->
