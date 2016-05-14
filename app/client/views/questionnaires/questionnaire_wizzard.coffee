@@ -1,6 +1,40 @@
 @__showQuestionnaireWizzard = (data) ->
   Session.set 'selectedQuestionnaireWizzard', data
+  if !data.readonly
+    #check if this questionnaire was answered before by this patient
+    questionIds = Questions.find(
+      questionnaireId: data.questionnaire._id
+    ).map (q) -> q._id
+    count = Answers.find(
+      visitId: data.visit._id
+      questionId: $in: questionIds
+    ).count()
+    if count > 0
+      swal {
+        title: 'Attention!'
+        text: "This questionnaire was alredy filled out. To view data, please use the ‘show’ button. Do you want to proceed? Old data will be overwritten. A log entry will be created. Please state reason. "
+        type: 'input'
+        inputPlaceholder: "Please state a reason."
+        showCancelButton: true
+        confirmButtonText: 'Yes'
+        closeOnConfirm: false
+      }, (confirmedWithReason)->
+        if confirmedWithReason is false #cancel
+          swal.close()
+        else
+          if !confirmedWithReason? or confirmedWithReason.length is 0
+            swal.showInputError("You need to state a reason!")
+          else
+            Meteor.call "logActivity", "reopen questionnaire (#{data.questionnaire.id}) for editing which was already filled out (patient: #{data.patient.id} visit:#{data.visit.title})", "notice", confirmedWithReason, data
+            swal.close()
+            doShowQuestionnaireWizzard(data)
+        return
+    else
+      doShowQuestionnaireWizzard(data)
+
+doShowQuestionnaireWizzard = (data) ->
   Modal.show('questionnaireWizzard', data, keyboard: false)
+
 
 @__closeQuestionnaireWizzard = ->
   if isAFormDirty()
