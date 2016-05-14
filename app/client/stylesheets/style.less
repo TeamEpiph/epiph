@@ -252,15 +252,15 @@ table.collapsed {
 
   .panel-group {
     margin-top: 1em;
-    .panel:nth-child(odd) {
-      .panel-heading {
-        background-color: @table-bg-accent !important;
-      }
-    }
-    .panel:first-child {
-      border-top: none;
-    }
     .panel {
+      &:first-child {
+        border-top: none;
+      }
+      &:nth-child(odd) {
+        .panel-heading {
+          background-color: @table-bg-accent !important;
+        }
+      }
       margin-top: 0px;
       border-radius: 0 !important;
       border: none;
