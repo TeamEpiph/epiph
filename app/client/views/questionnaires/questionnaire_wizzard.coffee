@@ -109,11 +109,12 @@ formSubmitted = ->
 
 nextPage = ->
   if _pageIndex.get() is _numPages.get()-1
-    if _nextQuestionnaire?
-      _pageIndex.set 0
-      _questionnaire.set _nextQuestionnaire
-    else
-      Modal.hide('questionnaireWizzard')
+    # deactiavted: go to next questionnaire automatically
+    #if _nextQuestionnaire?
+    #  _pageIndex.set 0
+    #  _questionnaire.set _nextQuestionnaire
+    #else
+    Modal.hide('questionnaireWizzard')
   else
     _pageIndex.set _pageIndex.get()+1
 
@@ -166,7 +167,7 @@ Template.questionnaireWizzard.created = ->
   @autorun ->
     self.subscribe("questionsForQuestionnaire", _questionnaire.get()._id)
 
-  #get manage nextQuestionnaire
+  #manage nextQuestionnaire
   @autorun ->
     return if _preview.get()
     data = Template.currentData()
@@ -323,7 +324,9 @@ Template.questionnaireWizzard.helpers
     _pageIndex.get() is 0
 
   isOnLastPageOfLastQuestionnaire: ->
-    _pageIndex.get() is _numPages.get()-1 and (_preview.get() or _nextQuestionnaire is null)
+    # deactiavted: go to next questionnaire automatically
+    #_pageIndex.get() is _numPages.get()-1 and (_preview.get() or _nextQuestionnaire is null)
+    true
 
 
 Template.questionnaireWizzard.events
