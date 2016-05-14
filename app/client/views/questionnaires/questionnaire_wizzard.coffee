@@ -292,6 +292,9 @@ Template.questionnaireWizzard.helpers
   readonly: ->
     _readonly.get()
 
+  preview: ->
+    _preview.get()
+
   formType: ->
     if _readonly.get()
       "disabled"

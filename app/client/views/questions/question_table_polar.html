@@ -8,6 +8,9 @@
       <td></td>
       {{#each question.choices}}
       <td>
+        {{#if ../preview}}
+          <p class="code">{{value}}</p>
+        {{/if}}
       </td>
       {{/each}}
     </tr>
@@ -16,6 +19,9 @@
     {{#each question.subquestions}}
     <tr>
       <td>
+        {{#if ../preview}}
+          <p class="code">{{code}}</p>
+        {{/if}}
         {{minLabel}}
       </td>
       {{#each ../question.choices}}
