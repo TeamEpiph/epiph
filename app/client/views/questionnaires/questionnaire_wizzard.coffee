@@ -2,6 +2,8 @@
   Session.set 'selectedQuestionnaireWizzard', data
   if !data.readonly
     #check if this questionnaire was answered before by this patient
+    #we do this on the client only, because we can't check it properly by the
+    #server anyway
     questionIds = Questions.find(
       questionnaireId: data.questionnaire._id
     ).map (q) -> q._id
@@ -31,6 +33,8 @@
         return
     else
       doShowQuestionnaireWizzard(data)
+  else
+    doShowQuestionnaireWizzard(data)
 
 doShowQuestionnaireWizzard = (data) ->
   Modal.show('questionnaireWizzard', data, keyboard: false)
