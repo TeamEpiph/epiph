@@ -58,10 +58,14 @@ Meteor.methods
       creatorId: Meteor.userId()
     _id
 
-  updateQuestionnaire: (modifier, docId) ->
+  updateQuestionnaire: (modifier, docId, forceReason) ->
     checkIfAdmin()
     check(modifier, Object)
     check(docId, String)
+
+    questionnaire = Questionnaires.findOne docId
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
+
     #workaround strange unique errors
     #https://github.com/aldeed/meteor-collection2/issues/218
     if (id=modifier['$set'].id)?
@@ -75,6 +79,20 @@ Meteor.methods
           value: ""
         ]
         throw new Meteor.Error(400, "validationError", details)
+    #check if questionnaire is used
+    questionIds = Questions.find(
+      questionnaireId: docId
+    ).map (q) ->
+      q._id
+    count = Answers.find(
+      questionId: $in: questionIds
+    ).count()
+    if count > 0
+      if !forceReason
+        throw new Meteor.Error(400, "questionnaireIsUsedProvideReason")
+      else
+        s = modifier['$set']
+        Meteor.call "logActivity", "change title/id of questionnaire (#{questionnaire.title} / #{questionnaire.id}) which in use to (#{s.title} / #{s.id})", "notice", forceReason, modifier['$set']
     Questionnaires.update docId, modifier
 
   copyQuestionnaire: (questionnaireId) ->

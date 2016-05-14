@@ -5,6 +5,40 @@ AutoForm.hooks
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
       @done()
       false
+  questionnaireEditForm:
+    onSubmit: (insertDoc, modifier, currentDoc) ->
+      form = @
+      Meteor.call "updateQuestionnaire", modifier, currentDoc._id, (error) ->
+        if error?
+          if error.reason is "questionnaireIsUsedProvideReason"
+            swal {
+              title: 'Attention!'
+              text: """The questionnaire you are about to change is used in studies. If you continue the changes are reflected on all places already using the questionnaire. A log entry will be created. If you want to proceed please state a reason:"""
+              type: 'input'
+              showCancelButton: true
+              confirmButtonText: 'Yes'
+              inputPlaceholder: "Please state a reason."
+              closeOnConfirm: false
+            }, (confirmedWithReason)->
+              if confirmedWithReason is false #cancel
+                swal.close()
+                form.done()
+              else
+                if !confirmedWithReason? or confirmedWithReason.length is 0
+                  swal.showInputError("You need to state a reason!")
+                else
+                  Meteor.call "updateQuestionnaire", modifier, currentDoc._id, confirmedWithReason, (error2) ->
+                    if error2?
+                      form.done(error2)
+                    else
+                      swal.close()
+                      form.done()
+              return
+          else 
+            form.done(error)
+        else
+          form.done()
+      false
 
 
 resizeQuestionEditor = ->
