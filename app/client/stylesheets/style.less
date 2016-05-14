@@ -198,6 +198,15 @@ table.collapsed {
     td:not(:first-child) {
       text-align: center;
     }
+    tr:nth-child(even) {
+      background-color: #ecf0f1;
+    }
+    tr:nth-child(odd).missing-answer {
+      background-color: rgba(231, 76, 60, 0.3) !important;
+    }
+    tr:nth-child(even).missing-answer {
+      background-color: rgba(231, 76, 60, 0.45) !important;
+    }
   }
   .question-table-polar {
     td:not(:first-child):not(:last-child) {
@@ -205,6 +214,12 @@ table.collapsed {
     }
     td:last-child {
       text-align: right;
+    }
+  }
+  .questionAutoform {
+    &.missing-answer {
+      padding: 15px;
+      background-color: rgba(231, 76, 60, 0.3) !important;
     }
   }
 }

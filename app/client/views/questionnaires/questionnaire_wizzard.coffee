@@ -48,13 +48,48 @@ submitAllForms = (goto) ->
     throw new Error("Can't submitAllForms because _readonly == true")
   _goto = goto
   numFormsToSubmit = 0
-  $("form").each () ->
+  missingAnswer = false
+  #count forms and check for empty inputs
+  $("form").each ->
     e = $(@)
     classes = e.attr('class')
     if classes? and classes.indexOf('question') > -1
       numFormsToSubmit += 1
+      if classes? and classes.indexOf('questionForm') > -1
+        #check multiple subquestions forms
+        lines = e.find('tbody tr')
+        lines.each ->
+          l = $(@)
+          lineAnswered = l.find('input:checked').length > 0
+          if !lineAnswered
+            missingAnswer = true
+            l.addClass("missing-answer")
+          else
+            l.removeClass("missing-answer")
+      else
+        #check one question forms
+        updateDoc = AutoForm.getFormValues(e.attr('id')).updateDoc
+        if Object.keys(updateDoc).length is 0 or updateDoc?['$unset']?.value is ""
+          missingAnswer = true
+          e.addClass("missing-answer")
+        else
+          e.removeClass("missing-answer")
+  if missingAnswer?
+      swal {
+        title: 'missing answers'
+        text: "You have left some questions unanswered, are you sure you want to continue?"
+        type: 'warning'
+        showCancelButton: true
+        confirmButtonText: 'Yes'
+        cancelButtonText: "Cancel"
+      }, ->
+        doSubmitAllForms(numFormsToSubmit)
+  else
+    doSubmitAllForms(numFormsToSubmit)
+
+doSubmitAllForms = (numFormsToSubmit) ->
   _numFormsToSubmit = numFormsToSubmit
-  $("form").each () ->
+  $("form").each ->
     e = $(@)
     classes = e.attr('class')
     if classes? and classes.indexOf('question') > -1
