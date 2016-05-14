@@ -69,6 +69,21 @@ Meteor.methods
       $set: title: title
     return
 
+  "copyStudyDesign": (studyDesignId) ->
+    checkIfAdmin()
+    check studyDesignId, String
+
+    design = StudyDesigns.findOne studyDesignId
+    throw new Meteor.Error(400, "studyDesign (#{studyDesignId}) not found") unless design?
+    study = Studies.findOne design.studyId
+    throw new Meteor.Error(400, "study (#{design.studyDesignId}) not found") unless study?
+
+    delete design._id
+    design.title += " copy"
+    design.creatorId = Meteor.userId()
+
+    StudyDesigns.insert design
+
   "removeStudyDesign": (studyDesignId) ->
     checkIfAdmin()
     check studyDesignId, String
@@ -313,7 +328,7 @@ Meteor.methods
         console.log visit
         return true
       return false
-    throw new Meteor.Error(500, "The visit is used by at least one patient and has data attached to it. Please consult your system operator for further information.") if foundData
+    throw new Meteor.Error(500, "The visit is used by at least one patient, has data attached to it and can therefore not be deleted. Please consider using a copy of this design and assign it to new patients.") if foundData
  
     #remove existing visits
     Visits.remove

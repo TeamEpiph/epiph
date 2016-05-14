@@ -188,6 +188,13 @@ Template.editStudyDesigns.events
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?
 
+  "click .copyDesign": (evt) ->
+    evt.preventDefault()
+    Meteor.call "copyStudyDesign", @design._id, (error, studyDesignId) ->
+      if error?
+        throwError error
+    return false
+
   "click .removeDesign": (evt) ->
     evt.preventDefault()
     designId = @design._id
