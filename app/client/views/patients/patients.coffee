@@ -261,6 +261,7 @@ refreshUrlParams = ->
 hashchange = ->
   hash = window.location.hash
   if hash? and hash.length > 1
+    hash = decodeURI(hash)
     hash = JSON.parse hash.slice(1)
     Session.set 'selectedStudyIds', hash.studyIds
     Session.set 'selectedStudyDesignIds', hash.designIds
