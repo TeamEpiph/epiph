@@ -46,7 +46,7 @@ _schema =
     type: String
     index: true
     unique: true
-#Questionnaires.attachSchema(new SimpleSchema(_schema))
+Questionnaires.attachSchema(new SimpleSchema(_schema))
 
 
 Meteor.methods
