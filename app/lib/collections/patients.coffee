@@ -111,8 +111,6 @@ Meteor.methods
     if update['$set']?['studyDesignId']? or update['$unset']?['studyDesignId']?
       patientIds = []
       Patients.find(_id: $in: ids).forEach (p) ->
-        console.log "check patient"
-        console.log p
         if p.hasData and p.studyDesignId isnt update['$set.studyDesignId']
           patientIds.push p.id
 
