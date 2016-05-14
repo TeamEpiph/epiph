@@ -391,10 +391,12 @@ Template.questionnaireWizzard.events
         showCancelButton: true
         confirmButtonText: 'Save'
         cancelButtonText: "Don't save"
+        closeOnConfirm: false
       }, (save) ->
         if save
           submitAllForms(pageIndex: pageIndex)
         else
+          swal.close()
           _pageIndex.set pageIndex
     else
       _pageIndex.set pageIndex
