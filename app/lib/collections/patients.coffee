@@ -122,7 +122,13 @@ Meteor.methods
         Visits.remove patientId: p._id
 
     ids.forEach (id) ->
-      Patients.update _id: id, update
+      try
+        Patients.update _id: id, update
+      catch e
+        if e.code is 11000 #MongoError: E11000 duplicate key error
+          throw new Meteor.Error(400, "The HRID you entered exists already, please choose a unique value.")
+        else
+          throw e
     return
 
   "excludePatient": (patientId, reason) ->
