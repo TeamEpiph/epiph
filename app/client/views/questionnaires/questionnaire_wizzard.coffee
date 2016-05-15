@@ -114,7 +114,7 @@ submitAllForms = (goto) ->
           e.addClass("missing-answer")
         else
           e.removeClass("missing-answer")
-  if missingAnswer?
+  if missingAnswer
       swal {
         title: 'missing answers'
         text: "You have left some questions unanswered, are you sure you want to continue?"
