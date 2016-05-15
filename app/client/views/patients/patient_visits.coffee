@@ -14,30 +14,34 @@ Template.patientVisits.helpers
         a.index - b.index
       previousDate = null
       visits.forEach (v) ->
+        date = null
         if v.date
-          v.showDate = true
           previousDate = moment(v.date)
         else
-          if v.index is 0
-            v.showDate = true
-          else if previousDate?
-            date = previousDate.add(v.day, 'days')
-            if date.isBefore(Date.now())
-              css = "due"
-            else
-              css = "future"
-            v.scheduledAt = 
-              date: date
-              css: css
-            previousDate = moment(date)
+          if v.day? and previousDate?
+            v.date = previousDate.add(v.day, 'days')
+            previousDate = moment(v.date)
+        if !v.date?
+          v.dateCSS = "no-date"
+        else 
+          date = moment(v.date)
+          now = moment()
+          if date.year() is now.year() and date.dayOfYear() is now.dayOfYear()
+            v.dateCSS = "due"
+          else if date.isBefore(now)
+            v.dateCSS = "over-due"
+          else
+            v.dateCSS = "future"
       visits
 
   visitDateEO: ->
     visit = @visit
     patient = @patient
-    value: fullDate(visit.date)
+    date = null
+    if visit.date?
+      date = fullDate(visit.date)
+    value: date
     emptytext: "no date set"
-    defaultValue: fullDate(new Date())
     success: (response, newVal) ->
       if newVal.length is 0
         date = null

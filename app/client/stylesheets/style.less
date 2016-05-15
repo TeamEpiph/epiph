@@ -121,8 +121,13 @@ table.collapsed {
   }
   #visits {
     table {
-      .due {color: @brand-danger;}
+      .due{color: @brand-success;}
+      .over-due {color: @brand-warning;}
       .future {font-style: italic;}
+      .no-date span {
+        font-style: italic;
+        color: @text-color !important;
+      }
       .showQuestionnaire {
         display: inline-block;
         padding: 0px 15px;
