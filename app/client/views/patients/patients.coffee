@@ -141,12 +141,6 @@ Template.patients.helpers
         design = o.studyDesign()
         return design.visits.length if design?
     ,
-      key: '', label: "no. completed visits"
-      fn: (v,o) -> 
-        Visits.find
-          patientId: o._id
-        .count()
-    ,
       key: "createdAt", label: 'created', sortByValue: true
       fn: (v,o)->
         moment(v).fromNow()
