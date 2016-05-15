@@ -35,20 +35,36 @@ Template.editStudyDesignsTags.rendered = ->
   visit = @data.visit
   elt.tagsinput('removeAll')
   if visit.questionnaireIds? and visit.questionnaireIds.length > 0
+    #make sure questionnaires are in order
+    questionnaires = {}
     Questionnaires.find
       _id: {$in: visit.questionnaireIds}
     .forEach (q) ->
-      elt.tagsinput 'add', q
+      questionnaires[q._id] = q
+    visit.questionnaireIds.forEach (qId) ->
+      questionnaire = questionnaires[qId]
+      elt.tagsinput 'add', questionnaire
   if visit.recordPhysicalData? and visit.recordPhysicalData
     elt.tagsinput 'add',
       _id: "recordPhysicalData"
       title: "record physical data"
+  return
 
 _ignoreAddEvents = true
 Template.editStudyDesignsTags.events =
   "itemAdded input, itemRemoved input": (evt) ->
     return if _ignoreAddEvents
     questionnaireIds = _.pluck $(evt.target).tagsinput('items'), '_id'
+    #print questionnaires by name
+    #questionnaires = {}
+    #sortedQuestionnaires = []
+    #Questionnaires.find(
+    #  _id: {$in: questionnaireIds}
+    #).forEach (q) ->
+    #  questionnaires[q._id] = q
+    #questionnaireIds.forEach (qId) ->
+    #  sortedQuestionnaires.push questionnaires[qId].title
+    #console.log sortedQuestionnaires
     recordPhysicalData = false
     questionnaireIds = _.filter questionnaireIds, (id) ->
       recordPhysicalData = true if id.valueOf() is "recordPhysicalData"

@@ -198,16 +198,8 @@ Meteor.methods
     Visits.find
       designVisitId: visitId
     .forEach (visit) ->
-      addedQuestionnaireIds = _.difference questionnaireIds, visit.questionnaireIds
-      if addedQuestionnaireIds.length > 0
-        #console.log "pushing:"
-        #console.log addedQuestionnaireIds
-        Visits.update visit._id,
-          $pushAll:
-            questionnaireIds: addedQuestionnaireIds
-
       removedQuestionnaireIds = _.difference visit.questionnaireIds, questionnaireIds
-      removeQuestionnaireIds = removedQuestionnaireIds.filter (rQuestId) ->
+      usedQuestionnaireIds = removedQuestionnaireIds.filter (rQuestId) ->
         rQuestionIds = Questions.find(
           questionnaireId: rQuestId
         ).map( (q) -> q._id )
@@ -216,14 +208,15 @@ Meteor.methods
           questionId: {$in: rQuestionIds}
         ).count()
         if c > 0
-          return false
-        return true
-      if removeQuestionnaireIds.length > 0
-        #console.log "pulling:"
-        #console.log removeQuestionnaireIds
-        Visits.update visit._id,
-          $pullAll:
-            questionnaireIds: removeQuestionnaireIds
+          return true
+        return false
+
+      questionnaireIdsForVisit = _.clone questionnaireIds
+      usedQuestionnaireIds.forEach (qId) ->
+        questionnaireIdsForVisit.push qId
+
+      Visits.update visit._id,
+        $set: questionnaireIds: questionnaireIdsForVisit
 
     updateQuestionnaireIdsOfStudyDesign(studyDesignId)
     return

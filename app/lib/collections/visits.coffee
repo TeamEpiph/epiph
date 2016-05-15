@@ -12,10 +12,15 @@ class @Visit
 
   questionnaires: ->
     qIds = @questionnaireIds or []
-    qs = Questionnaires.find
+    questionnaires = {}
+    sortedQuestionnaires = []
+    Questionnaires.find(
       _id: {$in: qIds}
-    qs
-
+    ).forEach (q) ->
+      questionnaires[q._id] = q
+    qIds.forEach (qId) ->
+      sortedQuestionnaires.push questionnaires[qId]
+    sortedQuestionnaires
 
   validatedDoc: ->
     valid = true
