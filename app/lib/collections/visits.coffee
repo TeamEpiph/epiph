@@ -99,8 +99,10 @@ schema =
     type: String
   'questionnaireIds':
     type: [String]
+    defaultValue: []
   'recordPhysicalData':
     type: Boolean
+    defaultValue: false
   'index':
     type: Number
   'day':
