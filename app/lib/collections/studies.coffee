@@ -16,6 +16,22 @@ class @Study
 Studies.before.insert BeforeInsertTimestampHook
 Studies.before.update BeforeUpdateTimestampHook
 
+schema =
+  'title':
+    type: String
+  'isLocked':
+    type: Boolean
+    defaultValue: false
+  'creatorId':
+    type: String
+  'updatedAt':
+    type: Number
+    optional: true
+  'createdAt':
+    type: Number
+    optional: true
+Studies.attachSchema new SimpleSchema(schema)
+
 Meteor.methods
   "createStudy": ->
     checkIfAdmin()
