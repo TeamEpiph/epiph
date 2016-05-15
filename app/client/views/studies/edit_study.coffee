@@ -4,8 +4,8 @@ Template.editStudy.rendered = ->
     Router.go "editStudy",
       _id: @data._id
       page: "editStudyDesigns"
-    
-  
+    ,
+      replaceState: true
 Template.editStudy.helpers
   titleEO: ->
     self = @
