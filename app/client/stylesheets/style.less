@@ -232,6 +232,13 @@ table.collapsed {
 
 ////////////////////////////////
 // editStudy
+#studyPageOverlay {
+  z-index: 1000; //navbar is 1030
+  cursor: not-allowed;
+  &:hover {
+    background-color: rgba(222, 219, 219, 0.5);
+  }
+}
 .editStudyPatients {
   table tr{
     cursor: pointer;

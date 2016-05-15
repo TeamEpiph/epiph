@@ -8,6 +8,7 @@ Template.studies.helpers
     showFilter: true,
     fields: [
       { key: 'title', label: "Title" },
+      { key: 'isLocked', label: "Locked", sortByValue: true, fn: (v,o)-> if v then "locked" else "unlocked" },
       { key: 'creator', label: "Creator", fn: (v,o) -> getUserDescription(o.creator()) },
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
       { key: 'buttons', label: '', tmpl: Template.editRemoveTableButtons }

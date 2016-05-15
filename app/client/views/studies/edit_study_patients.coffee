@@ -160,7 +160,7 @@ Template.editStudyPatients.events
                       throwError error2
                     else
                       swal.close()
-              return false
+              return
           else
             throwError error
         else
@@ -186,8 +186,10 @@ Template.editStudyPatients.events
         swal.showInputError("You need to state a reason!")
         return false
       Meteor.call "excludePatient", patientId, reason, (error) ->
-        throwError error if error?
-        swal("the patient has been excluded.")
+        if error?
+          throwError error
+        else
+          swal("the patient has been excluded.")
       return true
     return false
 
@@ -209,8 +211,10 @@ Template.editStudyPatients.events
         swal.showInputError("You need to state a reason!")
         return false
       Meteor.call "includePatient", patientId, reason, (error) ->
-        throwError error if error?
-        swal("the patient has been included.")
+        if error?
+          throwError error 
+        else
+          swal("the patient has been included.")
       return true
     return false
 

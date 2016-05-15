@@ -29,17 +29,50 @@ Meteor.methods
     check(title, String)
     study = Studies.findOne studyId
     throw new Meteor.Error(403, "study not found.") unless study?
+    throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
     Studies.update studyId,
       $set: title: title
     return
 
 if Meteor.isServer
   Meteor.methods
-    "removeStudy": (studyId, forceReason) ->
+    "lockStudy": (studyId, forceReason) ->
       checkIfAdmin() 
+      check studyId, String
+      check forceReason, String
 
       study = Studies.findOne studyId
       throw new Meteor.Error(403, "study not found.") unless study?
+      throw new Meteor.Error(400, "study is already locked.") if study.isLocked
+
+      Meteor.call "logActivity", "lock study (#{study.title})", "notice", forceReason, null
+
+      Studies.update studyId,
+        $set: isLocked: true
+      return
+
+    "unlockStudy": (studyId, forceReason) ->
+      checkIfAdmin() 
+      check studyId, String
+      check forceReason, String
+
+      study = Studies.findOne studyId
+      throw new Meteor.Error(403, "study not found.") unless study?
+      throw new Meteor.Error(400, "study is already unlocked.") if study.isLocked? and !study.isLocked
+
+      Meteor.call "logActivity", "unlock study (#{study.title})", "notice", forceReason, null
+
+      Studies.update studyId,
+        $set: isLocked: false
+      return
+
+    "removeStudy": (studyId, forceReason) ->
+      checkIfAdmin() 
+      check studyId, String
+
+      study = Studies.findOne studyId
+      throw new Meteor.Error(403, "study not found.") unless study?
+      throw new Meteor.Error(400, "study is locked. Please unlock it first.") if study.isLocked
 
       #check if a visit with answer exists
       visitTemplateIds = []

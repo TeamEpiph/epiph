@@ -1,8 +1,16 @@
 <template name="editStudy">
-<div class="questions">
+<div class="questions editStudy">
   <div class="row">
     <div class="col-xs-12">
-      <h2>{{> xEditable titleEO}}</h2>
+      <h2>{{> xEditable titleEO}}
+        <div class="lock pull-right cursorPointer">
+          {{#if isLocked}}
+            <i class="fa fa-lg fa-lock unlockStudy"></i>
+          {{else}}
+            <i class="fa fa-lg fa-unlock lockStudy"></i>
+          {{/if}}
+        </div>
+      </h2>
     </div>
   </div>
   <div class="row">
@@ -16,6 +24,7 @@
         </li>
         {{/each}}
       </ul>
+      <div id="studyPageOverlay"></div>
       <div id="studyPage">
         {{> Template.dynamic template=template data=this}}
       </div>

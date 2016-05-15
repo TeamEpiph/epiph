@@ -45,6 +45,11 @@ StudyDesigns.attachSchema new SimpleSchema(schema)
 Meteor.methods
   "createStudyDesign": (studyId) ->
     checkIfAdmin()
+
+    study = Studies.findOne studyId
+    throw new Meteor.Error(403, "study not found.") unless study?
+    throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
+
     count = StudyDesigns.find(
       studyId: studyId
     ).count()
@@ -63,6 +68,9 @@ Meteor.methods
   "updateStudyDesignTitle": (studyDesignId, title) ->
     checkIfAdmin()
     check title, String
+
+    checkStudyDesignAndStudy(studyDesignId)
+
     studyDesign = StudyDesigns.findOne studyDesignId
     throw new Meteor.Error(403, "studyDesign not found.") unless studyDesign?
     StudyDesigns.update studyDesignId,
@@ -73,10 +81,8 @@ Meteor.methods
     checkIfAdmin()
     check studyDesignId, String
 
+    checkStudyDesignAndStudy(studyDesignId)
     design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(400, "studyDesign (#{studyDesignId}) not found") unless design?
-    study = Studies.findOne design.studyId
-    throw new Meteor.Error(400, "study (#{design.studyDesignId}) not found") unless study?
 
     delete design._id
     design.title += " copy"
@@ -91,10 +97,10 @@ Meteor.methods
     checkIfAdmin()
     check studyDesignId, String
 
-    design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(400, "removeStudyDesign: studyDesign (#{studyDesignId}) not found") unless design?
+    checkStudyDesignAndStudy(studyDesignId)
 
     #check patients
+    design = StudyDesigns.findOne studyDesignId
     patientIds = Patients.find
       studyDesignId: design._id
     .map (patient) ->
@@ -122,9 +128,9 @@ Meteor.methods
     checkIfAdmin()
     check studyDesignId, String
 
-    design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
+    checkStudyDesignAndStudy(studyDesignId)
 
+    design = StudyDesigns.findOne studyDesignId
     index = design.visits.length
     title = "visit #{index+1}"
     visit =
@@ -140,6 +146,8 @@ Meteor.methods
     check studyDesignId, String
     check visitId, String
     check title, String
+
+    checkStudyDesignAndStudy(studyDesignId)
 
     n = StudyDesigns.update
       _id: studyDesignId
@@ -165,6 +173,8 @@ Meteor.methods
     check day, Number
     day = null if isNaN(day)
 
+    checkStudyDesignAndStudy(studyDesignId)
+
     n = StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
@@ -186,6 +196,8 @@ Meteor.methods
     check studyDesignId, String
     check visitId, String
     check questionnaireIds, [String]
+
+    checkStudyDesignAndStudy(studyDesignId)
 
     n = StudyDesigns.update
       _id: studyDesignId
@@ -226,6 +238,9 @@ Meteor.methods
     checkIfAdmin()
     check visitId, String
     check studyDesignId, String
+
+    checkStudyDesignAndStudy(studyDesignId)
+
     n = StudyDesigns.update
       _id: studyDesignId
       'visits._id': visitId
@@ -253,9 +268,9 @@ Meteor.methods
     check visitId, String
     check studyDesignId, String
 
-    design = StudyDesigns.findOne studyDesignId
-    throw new Meteor.Error(500, "removeStudyDesignVisit: studyDesign not found") unless design?
+    checkStudyDesignAndStudy(studyDesignId)
 
+    design = StudyDesigns.findOne studyDesignId
     visit = _.find design.visits, (v) ->
       v._id is visitId
     throw new Meteor.Error(500, "removeStudyDesignVisit: visit not found") unless visit?
@@ -298,10 +313,9 @@ Meteor.methods
     check visitId, String
     check studyDesignId, String
 
-    design = StudyDesigns.findOne
-      _id: studyDesignId
-    throw new Meteor.Error(500, "removeStudyDesignVisit: studyDesign not found") unless design?
+    checkStudyDesignAndStudy(studyDesignId)
 
+    design = StudyDesigns.findOne studyDesignId
     visit = _.find design.visits, (v) ->
       v._id is visitId
     throw new Meteor.Error(500, "removeStudyDesignVisit: visit not found") unless visit?
@@ -348,6 +362,14 @@ Meteor.methods
     updateQuestionnaireIdsOfStudyDesign(studyDesignId)
     updateRecordPhysicalDataOfStudyDesign(studyDesignId)
     return
+
+checkStudyDesignAndStudy = (studyDesignId) ->
+  design = StudyDesigns.findOne studyDesignId
+  throw new Meteor.Error(500, "StudyDesign #{studyDesignId} not found!") unless design?
+  study = Studies.findOne design.studyId
+  throw new Meteor.Error(400, "study (#{design.studyDesignId}) not found") unless study?
+  throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
+  return
 
 
 updateQuestionnaireIdsOfStudyDesign = (studyDesignId) ->

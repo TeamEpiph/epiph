@@ -74,6 +74,10 @@ if Meteor.isServer
     "createPatient": (studyId) ->
       checkIfAdmin()
       check studyId, String
+      study = Studies.findOne studyId
+      throw new Meteor.Error(403, "study not found.") unless study?
+      throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
+
       _id = null
       tries = 0
       loop
@@ -107,6 +111,11 @@ Meteor.methods
     "$unset.studyDesignId",
     "$unset.hrid"
 
+    Patients.find(_id: $in: ids).forEach (p) ->
+      study = Studies.findOne p.studyId
+      throw new Meteor.Error(403, "study not found.") unless study?
+      throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
+
     #check if changing studyDesign for a patient which has data
     if update['$set']?['studyDesignId']? or update['$unset']?['studyDesignId']?
       patientIds = []
@@ -139,6 +148,9 @@ Meteor.methods
     patient = Patients.findOne patientId
     throw new Meteor.Error(500, "Patient can't be found.") unless patient?
     throw new Meteor.Error(500, "Patient is already excluded.") if patient.isExcluded
+    study = Studies.findOne patient.studyId
+    throw new Meteor.Error(403, "study not found.") unless study?
+    throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
 
     Patients.update patientId,
       $push: excludesIncludes:
@@ -157,6 +169,9 @@ Meteor.methods
     patient = Patients.findOne patientId
     throw new Meteor.Error(500, "Patient can't be found.") unless patient?
     throw new Meteor.Error(500, "Patient isn't excluded.") if !patient.isExcluded
+    study = Studies.findOne patient.studyId
+    throw new Meteor.Error(403, "study not found.") unless study?
+    throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
 
     Patients.update patientId,
       $push: excludesIncludes:
@@ -173,6 +188,9 @@ Meteor.methods
 
     patient = Patients.findOne patientId
     throw new Meteor.Error(500, "Patient can't be found.") unless patient?
+    study = Studies.findOne patient.studyId
+    throw new Meteor.Error(403, "study not found.") unless study?
+    throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
 
     if patient.hasData and !forceReason
       throw new Meteor.Error(500, "patientHasData")
