@@ -17,9 +17,12 @@ class @Visit
     Questionnaires.find(
       _id: {$in: qIds}
     ).forEach (q) ->
-      questionnaires[q._id] = q
+      if q?
+        questionnaires[q._id] = q
     qIds.forEach (qId) ->
-      sortedQuestionnaires.push questionnaires[qId]
+      questionnaire = questionnaires[qId]
+      if questionnaire?
+        sortedQuestionnaires.push questionnaire
     sortedQuestionnaires
 
   validatedDoc: ->
