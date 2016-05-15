@@ -62,7 +62,7 @@
      * Adds the given item as a new tag. Pass true to dontPushVal to prevent
      * updating the elements val()
      */
-    add: function(item, dontPushVal, options) {
+    add: function(item, dontPushVal, options, position) {
       var self = this;
 
       if (self.options.maxTags && self.itemsArray.length >= self.options.maxTags)
@@ -130,7 +130,12 @@
         return;
 
       // register item in internal array and map
-      self.itemsArray.push(item);
+      //modified by patte
+      if(position !== undefined) {
+        self.itemsArray.splice(position, 0, item);
+      } else {
+        self.itemsArray.push(item);
+      }
 
       // add a tag element
 
@@ -357,7 +362,18 @@
             if (typeaheadDatasets.valueKey)
               self.add(datum[typeaheadDatasets.valueKey]);
             else
-              self.add(datum);
+              //modified by patte
+              //get position
+              var pos = 0;
+              var i = 0;
+              self.$container.children().each( function() {
+                e = $(this)
+                if( e.attr("class").indexOf("typeahead") > -1 ) {
+                  pos = i;
+                }
+                i++
+              });
+              self.add(datum, null, null, pos);
             self.$input.typeahead('val', '');
           }, self));
       }
