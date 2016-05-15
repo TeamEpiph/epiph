@@ -52,7 +52,6 @@ Meteor.methods
         $set: hasData: true
 
     if !visit.date?
-      Visits.update visit._id,
-        $set: date: Date.now()
+      Meteor.call "changeVisitDate", visit._id, Date.now()
 
     return answerId
