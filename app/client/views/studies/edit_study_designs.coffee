@@ -163,13 +163,39 @@ Template.editStudyDesigns.helpers
       return
 
   #this visit design
-  visitDayEO: ->
+  hasDaysOffsetFromPrevious: ->
+    @visit.daysOffsetFromPrevious?
+
+  visitDaysOffsetFromPreviousEO: ->
     visit = @visit
     design = @design
-    value: visit.day
+    value: visit.daysOffsetFromPrevious
     emptytext: "no day set"
     success: (response, newVal) ->
-      Meteor.call "changeStudyDesignVisitDay", design._id, visit._id, newVal, (error) ->
+      if newVal is "-"
+        newVal = null
+      if newVal? and visit.daysOffsetFromBaseline?
+        return "a visit can either have an offset from previous or baseline"
+      Meteor.call "changeStudyDesignVisitDaysOffset", design._id, visit._id, newVal, "previous", (error) ->
+        throwError error if error?
+      return
+
+  #this visit design
+  hasDaysOffsetFromBaseline: ->
+    @visit.daysOffsetFromBaseline?
+
+  #this visit design
+  visitDaysOffsetFromBaselineEO: ->
+    visit = @visit
+    design = @design
+    value: visit.daysOffsetFromBaseline
+    emptytext: "no day set"
+    success: (response, newVal) ->
+      if newVal is "-"
+        newVal = null
+      if newVal? and visit.daysOffsetFromPrevious?
+        return "a visit can either have an offset from previous or baseline"
+      Meteor.call "changeStudyDesignVisitDaysOffset", design._id, visit._id, newVal, "baseline", (error) ->
         throwError error if error?
       return
 

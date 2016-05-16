@@ -37,7 +37,8 @@
                 <thead>
                   <tr>
                     <th>Title</th>
-                    <th>Day offset</th>
+                    <th>Days offset from previous</th>
+                    <th>Days offset from baseline</th>
                     <th>Scheduled Questionnaires</th>
                     <th></th>
                     <!--
@@ -72,12 +73,20 @@
                   {{#each visits}}
                   {{#with visit=. design=../design}}
                     <tr>
-                      <th class="visitTd">
+                      <td class="visitTd title">
                         {{> xEditable visitTitleEO}}
-                      </th>
+                      </td>
 
                       <td class="visitTd">
-                        {{> xEditable visitDayEO}}
+                        {{#unless hasDaysOffsetFromBaseline}}
+                          {{> xEditable visitDaysOffsetFromPreviousEO}}
+                        {{/unless}}
+                      </td>
+
+                      <td class="visitTd">
+                        {{#unless hasDaysOffsetFromPrevious}}
+                          {{> xEditable visitDaysOffsetFromBaselineEO}}
+                        {{/unless}}
                       </td>
                       
                       <td class="visitTd">

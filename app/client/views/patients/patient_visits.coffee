@@ -2,37 +2,26 @@ Template.patientVisits.helpers
   visits: ->
     patient = @patient
     studyDesign = patient.studyDesign()
-    if studyDesign?
-      visits = studyDesign.visits.map (designVisit) ->
-        visit = Visits.findOne
-          designVisitId: designVisit._id
-          patientId: patient._id
-        #dummy visit for validation to work
-        visit = new Visit(designVisit) if !visit?
-        visit.validatedDoc()
-      visits.sort (a,b) ->
-        a.index - b.index
-      previousDate = null
-      visits.forEach (v) ->
-        date = null
-        if v.date
-          previousDate = moment(v.date)
+    if !studyDesign?
+      return null
+    visits = __getScheduledVisitsForPatientId(patient._id)
+    now = moment()
+    visits.forEach (v) ->
+      date = null
+      if v.date?
+        date = moment(v.date)
+      else if v.dateScheduled?
+        date = moment(v.dateScheduled)
+      if !date?
+        v.dateCSS = "no-date"
+      else 
+        if date.year() is now.year() and date.dayOfYear() is now.dayOfYear()
+          v.dateCSS = "due"
+        else if date.isBefore(now)
+          v.dateCSS = "over-due"
         else
-          if v.day? and previousDate?
-            v.date = previousDate.add(v.day, 'days')
-            previousDate = moment(v.date)
-        if !v.date?
-          v.dateCSS = "no-date"
-        else 
-          date = moment(v.date)
-          now = moment()
-          if date.year() is now.year() and date.dayOfYear() is now.dayOfYear()
-            v.dateCSS = "due"
-          else if date.isBefore(now)
-            v.dateCSS = "over-due"
-          else
-            v.dateCSS = "future"
-      visits
+          v.dateCSS = "future"
+    visits
 
   visitDateEO: ->
     visit = @visit
@@ -40,10 +29,12 @@ Template.patientVisits.helpers
     date = null
     if visit.date?
       date = fullDate(visit.date)
+    else if visit.dateScheduled?
+      date = fullDate(visit.dateScheduled)
     value: date
     emptytext: "no date set"
     success: (response, newVal) ->
-      if newVal.length is 0
+      if newVal is "-"
         date = null
       else
         date = sanitizeDate(newVal)

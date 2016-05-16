@@ -113,11 +113,23 @@ Template.export.rendered = ->
     icon: _visitIcon
     state: { opened: true }
   nodes.push
-    id: '__visitTemplate.title'
+    id: '__visit.title'
     parent: '_visit'
     text: 'title'
     icon: _visitIcon
     state: { selected: true, disabled: true }
+  nodes.push
+    id: '__visit.date'
+    parent: '_visit'
+    text: 'date'
+    icon: _visitIcon
+    state: { selected: false }
+  nodes.push
+    id: '__visit.dateScheduled'
+    parent: '_visit'
+    text: 'scheduled date'
+    icon: _visitIcon
+    state: { selected: false }
 
   nodes.push
     id: '_studies'

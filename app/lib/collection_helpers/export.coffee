@@ -53,8 +53,8 @@ class @Export
   @rows: (selection) ->
     rows = []
     selection.designs.forEach (design) ->
-      studyDesign = StudyDesigns.findOne
-        _id: design._id
+      studyDesign = StudyDesigns.findOne design._id
+      #filter based on selection
       visitTemplates = studyDesign.visits.filter (visit) ->
         design.visitIds.indexOf(visit._id) > -1
       patients = Patients.find(
@@ -62,10 +62,33 @@ class @Export
       ).forEach (patient) ->
         studyDesign = StudyDesigns.findOne patient.studyDesignId
         study = Studies.findOne studyDesign.studyId
+        mixedVisits = __getScheduledVisitsForPatientId(patient._id)
+        #filter based on selection
+        mixedVisits = mixedVisits.filter (mv) ->
+          id = mv.designVisitId or mv._id
+          design.visitIds.indexOf(id) > -1
         visitTemplates.forEach (visitTemplate) ->
           visit = Visits.findOne
             patientId: patient._id
             designVisitId: visitTemplate._id
+          #we use visit in rows
+          if !visit?
+            visit = {}
+          #ornament visit with title
+          visit.title = visitTemplate.title
+          #sanitise date
+          if visit.date?
+            visit.date = fullDate(visit.date)
+          #ornament visit with dates
+          scheduledVisit = mixedVisits.find (mv) ->
+            id = mv.designVisitId or mv._id
+            id is visitTemplate._id
+          console.log "scheduledVisit"
+          console.log scheduledVisit
+          if scheduledVisit? and scheduledVisit.dateScheduled?
+            visit.dateScheduled = fullDate(scheduledVisit.dateScheduled)
+          console.log "visit"
+          console.log visit
           rows.push
             study: study
             studyDesign: studyDesign
@@ -91,7 +114,10 @@ class @Export
               val = row[entity][variable]
           else
             val = empty#"#{entity}.#{variable}"
-          cols.push "#{val}"
+          if val?
+            cols.push "#{val}"
+          else
+            cols.push empty
 
     if selection.questionnaires?
       selection.questionnaires.forEach (questionnaire) ->

@@ -105,7 +105,10 @@ schema =
     defaultValue: false
   'index':
     type: Number
-  'day':
+  'daysOffsetFromPrevious':
+    type: Number
+    optional: true
+  'daysOffsetFromBaseline':
     type: Number
     optional: true
   'date':
@@ -155,7 +158,8 @@ Meteor.methods
       questionnaireIds: visitTemplate.questionnaireIds
       recordPhysicalData: visitTemplate.recordPhysicalData
       index: visitTemplate.index
-      day: visitTemplate.day if visitTemplate.day?
+      daysOffsetFromPrevious: visitTemplate.daysOffsetFromPrevious if visitTemplate.daysOffsetFromPrevious?
+      daysOffsetFromBaseline: visitTemplate.daysOffsetFromBaseline if visitTemplate.daysOffsetFromBaseline?
 
     _id = Visits.insert visit
     _id
@@ -181,3 +185,48 @@ Meteor.methods
       Visits.update visitId,
         $unset: date: ''
     return
+
+
+@__getScheduledVisitsForPatientId = (patientId) ->
+  check patientId, String
+
+  patient = Patients.findOne patientId
+  throw new Meteor.Error(403, "patient can't be found.") unless patient?
+
+  studyDesign = patient.studyDesign()
+  if !studyDesign?
+    return []
+
+  visits = studyDesign.visits.map (designVisit) ->
+    visit = Visits.findOne
+      designVisitId: designVisit._id
+      patientId: patient._id
+    #dummy visit for validation to work
+    visit = new Visit(designVisit) if !visit?
+    visit.validatedDoc()
+  visits.sort (a,b) ->
+    a.index - b.index
+  previousDate = null
+  previousVisit = null
+  baselineDate = null
+  visits.forEach (v) ->
+    if previousDate? and v.daysOffsetFromPrevious?
+      v.dateScheduled = moment(previousDate).add(v.daysOffsetFromPrevious, 'days')
+    else if baselineDate? and v.daysOffsetFromBaseline?
+      v.dateScheduled = moment(baselineDate).add(v.daysOffsetFromBaseline, 'days')
+
+    if !baselineDate? and v.daysOffsetFromBaseline is 0 #this is our baseline
+      if v.date?
+        baselineDate = moment(v.date)
+      #special case for visit before baseline with negative daysOffsetFromBaseline
+      #if there are multiple such vists, the one closest to the baseline wins
+      if previousVisit.daysOffsetFromBaseline < 0 and previousDate?
+        v.dateScheduled = moment(previousDate).add(-previousVisit.daysOffsetFromBaseline, 'days')
+        baselineDate = moment(v.dateScheduled)
+
+    if v.date?
+      previousDate = moment(v.date)
+    else if v.dateScheduled?
+      previousDate = moment(v.dateScheduled)
+    previousVisit = v
+  return visits

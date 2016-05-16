@@ -19,7 +19,10 @@ schema =
     type: String
   'visits.$.index':
     type: Number
-  'visits.$.day':
+  'visits.$.daysOffsetFromPrevious':
+    type: Number
+    optional: true
+  'visits.$.daysOffsetFromBaseline':
     type: Number
     optional: true
   'visits.$.questionnaireIds':
@@ -165,30 +168,61 @@ Meteor.methods
       multi: true
     return
 
-  "changeStudyDesignVisitDay": (studyDesignId, visitId, day) ->
+  "changeStudyDesignVisitDaysOffset": (studyDesignId, visitId, daysOffset, from) ->
     checkIfAdmin()
     check studyDesignId, String
     check visitId, String
-    day = parseInt(day)
-    check day, Number
-    day = null if isNaN(day)
+    check from, String
+    if from isnt "previous" and from isnt "baseline"
+      throw new Meteor.Error(500, "from must be 'previous' or 'baseline'") 
+
+    daysOffset = null if isNaN(daysOffset)
+    if daysOffset? #allow null
+      daysOffset = parseInt(daysOffset)
+      check daysOffset, Number
 
     checkStudyDesignAndStudy(studyDesignId)
 
-    n = StudyDesigns.update
-      _id: studyDesignId
-      'visits._id': visitId
-    ,
-      $set: 'visits.$.day': day
-    throw new Meteor.Error(500, "changeStudyVisitTitle: no StudyDesign.visit to update found") unless n > 0
+    design = StudyDesigns.findOne studyDesignId
+    visit = _.find design.visits, (v) ->
+      v._id is visitId
+    throw new Meteor.Error(500, "studyDesign.visit not found") unless visit?
+
+    if daysOffset? and ( (from is "previous" and visit.daysOffsetFromBaseline?) or (from is "baseline" and visit.daysOffsetFromPrevious?))
+        throw new Meteor.Error("a visit can either have an offset from previous or baseline")
+
+    if from is "previous"
+      n = StudyDesigns.update { _id: studyDesignId, 'visits._id': visitId},
+        $set: 'visits.$.daysOffsetFromPrevious': daysOffset
+    else
+      n = StudyDesigns.update { _id: studyDesignId, 'visits._id': visitId},
+        $set: 'visits.$.daysOffsetFromBaseline': daysOffset
+    throw new Meteor.Error(500, "no StudyDesign.visit to update found") unless n > 0
 
     #update existing visits
-    Visits.update
-      designVisitId: visitId
-    ,
-      $set: day: day
-    ,
-      multi: true
+    if from is "previous"
+      if daysOffset?
+        Visits.update { designVisitId: visitId },
+          $set: daysOffsetFromPrevious: daysOffset
+        ,
+          multi: true
+      else
+        Visits.update { designVisitId: visitId },
+          $unset: daysOffsetFromPrevious: 1
+        ,
+          multi: true
+    else
+      if daysOffset?
+        Visits.update { designVisitId: visitId },
+          $set: daysOffsetFromBaseline: daysOffset
+        ,
+          multi: true
+      else
+        Visits.update { designVisitId: visitId },
+          $unset: daysOffsetFromBaseline: 1
+        ,
+          multi: true
+
     return
 
   "scheduleQuestionnairesAtVisit": (studyDesignId, visitId, questionnaireIds) ->
