@@ -1,10 +1,10 @@
-@Exports = new (FS.Collection)('exports',
+@ExportCSVs = new (FS.Collection)('exportCSVs',
   stores: [ 
-    new FS.Store.GridFS('exports')
+    new FS.Store.GridFS('exportsCSVs')
   ]
 )
 
-Exports.allow
+ExportCSVs.allow
   download: (userId, doc) ->
     Roles.userIsInRole(userId, ['admin'])
 
@@ -18,8 +18,8 @@ SyncedCron.add
     find =
       'metadata.createdAt':
         $lt: Date.now()-validFor
-    count = Exports.find(find).count()
-    Exports.remove find
+    count = ExportCSVs.find(find).count()
+    ExportCSVs.remove find
     "#{count} old exports removed"
 
 #FS.debug = true
@@ -61,7 +61,7 @@ Meteor.methods
       if error?
         future.throw error
         return
-      Exports.insert newFile, (err, fileObj) ->
+      ExportCSVs.insert newFile, (err, fileObj) ->
         if err?
           future.throw err
           return
