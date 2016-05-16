@@ -29,7 +29,7 @@ Template.editStudyPatients.helpers
       { key: 'therapistId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
       { key: 'therapistId', label: "Therapist", fn: (v,o) -> getUserDescription(o.therapist()) },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
-      { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->moment(v).fromNow() },
+      { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->fullDate(v) },
       { key: 'buttons', label: '', tmpl: Template.studyPatientsTableButtons }
     ]
 

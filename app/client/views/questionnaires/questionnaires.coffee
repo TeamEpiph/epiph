@@ -11,7 +11,7 @@ Template.questionnaires.helpers
       { key: 'numQuestions', label: "num. questions" },
       { key: 'numPages', label: "num. pages" },
       { key: 'creator', label: "Creator", fn: (v,o) -> getUserDescription(o.creator()) },
-      { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
+      { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->fullDate(v)},
       { key: 'buttons', label: '', tmpl: Template.questionnairesTableButtons }
     ]
 

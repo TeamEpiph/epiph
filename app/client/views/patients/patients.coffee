@@ -142,8 +142,7 @@ Template.patients.helpers
         return design.visits.length if design?
     ,
       key: "createdAt", label: 'created', sortByValue: true
-      fn: (v,o)->
-        moment(v).fromNow()
+      fn: (v,o)-> fullDate(v)
     ]
 
   selectedPatient: ->

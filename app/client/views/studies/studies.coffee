@@ -10,7 +10,7 @@ Template.studies.helpers
       { key: 'title', label: "Title" },
       { key: 'isLocked', label: "Locked", sortByValue: true, fn: (v,o)-> if v then "locked" else "unlocked" },
       { key: 'creator', label: "Creator", fn: (v,o) -> getUserDescription(o.creator()) },
-      { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->moment(v).fromNow()},
+      { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->fullDate(v)},
       { key: 'buttons', label: '', tmpl: Template.editRemoveTableButtons }
     ]
 

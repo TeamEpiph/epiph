@@ -28,10 +28,13 @@ Template.patientVisits.helpers
     patient = @patient
     date = null
     if visit.date?
-      date = fullDate(visit.date)
+      date = fullDate(visit.date, true)
     else if visit.dateScheduled?
-      date = fullDate(visit.dateScheduled)
+      date = fullDate(visit.dateScheduled, true)
     value: date
+    display: (value) ->
+      return if !value
+      $(@).html fullDate(moment(value, __dateFormat))
     emptytext: "no date set"
     success: (response, newVal) ->
       if newVal is "-"

@@ -11,26 +11,24 @@ if Meteor.isClient
 @__dateFormat = "L"
 @__dateTimeFormat = "LLL"
 
-@fullDate = (date) ->
+@fullDate = (date, noOrnamentation) ->
   return null unless date?
   date = moment(date)
   formatted = date.format __dateFormat
-  if Meteor.isClient
-    if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
-      formatted += " (today)"
+  if Meteor.isClient and (!noOrnamentation? or (noOrnamentation? and noOrnamentation is false))
+    formatted += " (#{date.fromNow()})"
   formatted
 
 if Meteor.isClient
   Template.registerHelper "fullDate", (date) ->
     fullDate(date)
 
-@fullDateTime = (date)->
+@fullDateTime = (date, noOrnamentation)->
   return null unless date?
   date = moment(date)
   formatted = date.format __dateTimeFormat
-  if Meteor.isClient
-    if date.dayOfYear() is moment(TimeSync.serverTime()).dayOfYear()
-      formatted += " (today)"
+  if Meteor.isClient and (!noOrnamentation? or (noOrnamentation? and noOrnamentation is false))
+    formatted += " (#{date.fromNow()})"
   formatted
 
 if Meteor.isClient
