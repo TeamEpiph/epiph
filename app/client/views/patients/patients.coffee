@@ -254,7 +254,15 @@ refreshUrlParams = ->
 hashchange = ->
   hash = window.location.hash
   if hash? and hash.length > 1
-    hash = decodeURI(hash)
+    error = null
+    #TODO fix decodeURI in safari
+    try
+      hash = decodeURI(hash)
+    catch e
+      console.log "decodeURI error:"
+      console.log e
+      error = e
+    return if error?
     hash = JSON.parse hash.slice(1)
     Session.set 'selectedStudyIds', hash.studyIds
     Session.set 'selectedStudyDesignIds', hash.designIds
