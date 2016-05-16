@@ -6,6 +6,19 @@
         <div class="modal-content">
           <div class="modal-header">
             <h2 class="modal-title">{{title}}</h2>
+            <div class="regulations">
+              {{#unless preview}}
+              <table>
+                <tr>
+                  <td>Case Manager:&nbsp;</td> <td>{{userDescription}}&nbsp;&nbsp;</td>
+                  <td>Patient:&nbsp;</td> <td>{{patientDescription}}&nbsp;</td>
+                </tr><tr>
+                  <td></td><td></td>
+                  <td>Visit:&nbsp;</td> <td>{{visit.title}}&nbsp;</td>
+                </tr>
+              </table>
+              {{/unless}}
+            </div>
           </div>
 
           <div class="modal-body question">

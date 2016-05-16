@@ -262,6 +262,15 @@ Template.questionnaireWizzard.destroyed = ->
 
 
 Template.questionnaireWizzard.helpers
+  patientDescription: ->
+    d = @patient.id
+    if @patient.hrid
+      d += " (#{@patient.hrid})"
+    d
+  userDescription: ->
+    getUserDescription(Meteor.user())
+
+
   templateGestures:
     'swipeleft div': (evt, templateInstance) ->
       nextQuestion()
