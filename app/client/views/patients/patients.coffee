@@ -118,7 +118,7 @@ Template.patients.helpers
     ,
       key: 'hrid', label: "hrid"
     ,
-      key: 'studyId', label: "Study", sort: true
+      key: 'studyId', label: "Study", sortOrder: 0
       fn: (v,o) -> 
         study = o.study()
         return study.title if study?
