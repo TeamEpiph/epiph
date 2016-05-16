@@ -3,7 +3,7 @@
     role: "admin"
     icon: "fa-child"
   ,
-    role: "therapist"
+    role: "caseManager"
     icon: "fa-user-md"
   ,
     role: "mongoRead"

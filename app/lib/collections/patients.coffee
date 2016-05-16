@@ -2,12 +2,12 @@ class @Patient
   constructor: (doc) ->
     _.extend this, doc
 
-  therapist: ->
-    return null unless @therapistId?
-    Meteor.users.findOne _id: @therapistId
+  caseManager: ->
+    return null unless @caseManagerId?
+    Meteor.users.findOne _id: @caseManagerId
 
-  therapistName: ->
-    getUserDescription @therapist()
+  caseManagerName: ->
+    getUserDescription @caseManager()
 
   study: ->
     return null unless @studyId?
@@ -45,7 +45,7 @@ schema =
   'studyDesignId':
     type: String
     optional: true
-  'therapistId':
+  'caseManagerId':
     type: String
     optional: true
   'hasData':
@@ -104,10 +104,10 @@ Meteor.methods
 
     #pick whitelisted keys
     update = _.pickDeep update,
-    "$set.therapistId",
+    "$set.caseManagerId",
     "$set.studyDesignId",
     "$set.hrid",
-    "$unset.therapistId",
+    "$unset.caseManagerId",
     "$unset.studyDesignId",
     "$unset.hrid"
 

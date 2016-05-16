@@ -4,7 +4,7 @@ _visitIcon = 'fa fa-calendar-check-o'
 _patientIcon = 'fa fa-user'
 _questionnaireIcon = 'fa fa-file-text-o' 
 _questionIcon = 'fa fa-cube'
-_therapistIcon = 'fa fa-user-md'
+_caseManagerIcon = 'fa fa-user-md'
 _answerIcon = 'fa fa-edit'
 Template.export.rendered = ->
   # nodes are leafes in the export tree
@@ -43,7 +43,7 @@ Template.export.rendered = ->
     text: 'internal ID'
     icon: _patientIcon
   nodes.push
-    id: '__patient.therapistName'
+    id: '__patient.caseManagerName'
     parent: '_patient'
     text: 'case manager'
     icon: _patientIcon
@@ -69,10 +69,10 @@ Template.export.rendered = ->
     icon: _visitIcon
     state: { opened: true }
   nodes.push
-    id: '_therapist'
+    id: '_caseManager'
     parent: '_systemVariables'
-    text: 'Therapist'
-    icon: _therapistIcon
+    text: 'Case Manager'
+    icon: _caseManagerIcon
     state: { opened: true }
   nodes.push
     id: '_answer'

@@ -16,7 +16,7 @@
     <div id="navbar-collapse" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         {{#if currentUser}}
-        {{#if isInRole 'admin, therapist'}}
+        {{#if isInRole 'admin, caseManager'}}
         <li class="{{activeRouteClass 'patients'}}">
           <a href="{{pathFor 'patients'}}" id="patientsA">
             Patients &amp; Questioning

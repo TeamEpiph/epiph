@@ -6,21 +6,21 @@ if Meteor.users.find().count() is 0
     email: "patrick.recher@gmail.com"
     username: "patte"
     password: "mammut"
-    roles: ["admin", "therapist"]
+    roles: ["admin", "caseManager"]
     }
     {
     name: "Lukas Fürer"
     email: "lukas.fuerer@unibas.ch"
     username: "lukas.fuerer"
     password: "asdfasdf"
-    roles: ["admin", "therapist"]
+    roles: ["admin", "caseManager"]
     }
     {
     name: "Ronan Zimmermann"
     email: "ronan.zimmermann@unibas.ch"
     username: "ronan.zimmermann"
     password: "asdfasdf"
-    roles: ["admin", "therapist"]
+    roles: ["admin", "caseManager"]
     }
   ]
   _.each users, (user) ->

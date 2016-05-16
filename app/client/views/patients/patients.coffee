@@ -4,7 +4,7 @@ Template.patients.destroyed = ->
 Template.patients.rendered = ->
   @subscribe("studies", onReady: -> refreshSelectValues())
   @subscribe("patients", onReady: -> refreshSelectValues())
-  @subscribe("therapists", onReady: -> refreshSelectValues())
+  @subscribe("caseManagers", onReady: -> refreshSelectValues())
 
   tmpl = @ 
   @autorun ->
@@ -128,11 +128,11 @@ Template.patients.helpers
         design = o.studyDesign()
         return design.title if design?
     ,
-      key: 'therapistId', label: "Therapist"
+      key: 'caseManagerId', label: "Case Manager"
       fn: (v,o) -> 
-        therapist = o.therapist()
-        if therapist?
-          getUserDescription therapist
+        caseManager = o.caseManager()
+        if caseManager?
+          getUserDescription caseManager
         else
           ""
     ,

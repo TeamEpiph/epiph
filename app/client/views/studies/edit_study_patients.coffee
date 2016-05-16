@@ -4,7 +4,7 @@ AutoForm.hooks
       self = @
       ids = Session.get 'editingPatientIds'
       if ids.length > 1
-        updateDoc = _.pickDeep updateDoc, "$set.therapistId", "$set.studyDesignId"
+        updateDoc = _.pickDeep updateDoc, "$set.caseManagerId", "$set.studyDesignId"
       Meteor.call "updatePatients", Session.get('editingPatientIds'), updateDoc, (error) ->
         self.done()
         throwError error if error?
@@ -26,8 +26,8 @@ Template.editStudyPatients.helpers
       { key: 'id', label: "", sortable: false, fn: (v, o) -> new Spacebars.SafeString("<input type='checkbox' data-id=#{o._id} />") },
       { key: 'id', label: "ID" },
       { key: 'hrid', label: "HRID" },
-      { key: 'therapistId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
-      { key: 'therapistId', label: "Therapist", fn: (v,o) -> getUserDescription(o.therapist()) },
+      { key: 'caseManagerId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
+      { key: 'caseManagerId', label: "Case Manager", fn: (v,o) -> getUserDescription(o.caseManager()) },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->fullDate(v) },
       { key: 'buttons', label: '', tmpl: Template.studyPatientsTableButtons }
@@ -56,8 +56,8 @@ Template.editStudyPatients.helpers
       Patients.findOne _id: ids[0]
     
   editSessionPatientsSchema: ->
-    therapists = Meteor.users.find(
-      roles: "therapist"
+    caseManagers = Meteor.users.find(
+      roles: "caseManager"
     ).map (t) ->
       label: getUserDescription(t)
       value: t._id
@@ -67,13 +67,13 @@ Template.editStudyPatients.helpers
       label: d.title
       value: d._id
     schema =
-      therapistId:
-        label: "Therapist"
+      caseManagerId:
+        label: "Case Manager"
         type: String
         optional: true
         autoform:
           type: "select"
-          options: therapists
+          options: caseManagers
       studyDesignId:
         label: "Design"
         type: String

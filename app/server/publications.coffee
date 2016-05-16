@@ -5,13 +5,6 @@ onlyIfAdmin = ->
     @ready()
     return 
 
-onlyIfTherapist = ->
-  if Roles.userIsInRole(@userId, ['therapist'])
-    return true
-  else
-    @ready()
-    return
-
 onlyIfUser = ->
   if @userId
     return true
@@ -21,10 +14,10 @@ onlyIfUser = ->
 
 #################################################
 
-Meteor.publish "therapists", ->
+Meteor.publish "caseManagers", ->
   return unless onlyIfAdmin.call(@) 
   Meteor.users.find(
-    roles: "therapist"
+    roles: "caseManager"
   ,
     fields:
       _id: 1
@@ -79,8 +72,8 @@ Meteor.publish "studyDesignsForStudy", (studyIds) ->
 Meteor.publish "patients", ->
   if Roles.userIsInRole(@userId, ['admin'])
     return Patients.find()
-  else if Roles.userIsInRole(@userId, ['therapist'])
-    return Patients.find therapistId: @userId
+  else if Roles.userIsInRole(@userId, ['caseManager'])
+    return Patients.find caseManagerId: @userId
   else
     @ready()
     return
@@ -96,10 +89,10 @@ Meteor.publish "studyForPatient", (_id) ->
     patient = Patients.findOne _id: _id
     if patient?
       return Studies.find _id: patient.studyId
-  else if Roles.userIsInRole(@userId, ['therapist'])
+  else if Roles.userIsInRole(@userId, ['caseManager'])
     patient = Patients.findOne
       _id: _id
-      therapistId: @userId
+      caseManagerId: @userId
     if patient?
       return Studies.find _id: patient.studyId
   @ready()
@@ -109,7 +102,7 @@ Meteor.publish "studyDesignForPatient", (_id) ->
 	if patient?
     studyDesign = StudyDesigns.find studyId: patient.studyId
     if Roles.userIsInRole(@userId, ['admin']) or 
-    (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+    (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
       return studyDesign
   @ready()
 
@@ -119,7 +112,7 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
     patient = Patients.findOne _id: patientId
     if patient?
       if Roles.userIsInRole(@userId, ['admin']) or 
-      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+      (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
         return Patients.find _id: patientId
     return null
   children: [
@@ -150,7 +143,7 @@ Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
     patient = Patients.findOne patientId
     if patient?
       if Roles.userIsInRole(@userId, ['admin']) or 
-      (Roles.userIsInRole(@userId, 'therapist') and patient.therapistId is @userId)
+      (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
         return Patients.find _id: patientId
     return null
   children: [
