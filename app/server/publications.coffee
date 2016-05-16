@@ -5,6 +5,13 @@ onlyIfAdmin = ->
     @ready()
     return 
 
+onlyIfAdminOrCaseManager = ->
+  if Roles.userIsInRole(@userId, ['admin', 'caseManager'])
+    return true
+  else
+    @ready()
+    return 
+
 onlyIfUser = ->
   if @userId
     return true
@@ -53,17 +60,17 @@ Meteor.publish "userProfiles", ->
   )
 
 Meteor.publish "studies", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@) 
   Studies.find()
 Meteor.publish "study", (_id) ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@) 
   Studies.find(_id: _id)
 
 Meteor.publish "studyDesigns", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@) 
   StudyDesigns.find()
 Meteor.publish "studyDesignsForStudy", (studyIds) ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@) 
   if typeof studyIds is 'string'
     studyIds = [studyIds]
   StudyDesigns.find
