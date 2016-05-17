@@ -82,6 +82,7 @@ Router.map ->
         Meteor.subscribe("patients")
         Meteor.subscribe("visits")
         Meteor.subscribe("caseManagers")
+        Meteor.subscribe("exportTables")
       ]
 
   @route "users",

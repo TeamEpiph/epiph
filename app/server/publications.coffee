@@ -183,3 +183,9 @@ Meteor.publish "questionsForQuestionnaire", (questionnaireId)->
 Meteor.publish "activities", ->
   return unless onlyIfAdmin.call(@) 
   Activities.find()
+
+#####################################
+
+Meteor.publish "exportTables", ->
+  return unless onlyIfAdmin.call(@) 
+  ExportTables.find()

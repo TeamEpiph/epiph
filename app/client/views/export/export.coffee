@@ -349,6 +349,7 @@ Template.export.rendered = ->
 
 _selection = new ReactiveVar []
 _waitingForDownload = new ReactiveVar false
+_waitingForExportTable = new ReactiveVar false
 
 Template.export.helpers
   columnHeaders: ->
@@ -369,6 +370,15 @@ Template.export.helpers
   waitingForDownload: ->
     _waitingForDownload.get()
 
+  waitingForExportTable: ->
+    _waitingForExportTable.get()
+
+  hasExportTables: ->
+    ExportTables.find().count() > 0
+
+  exportTables: ->
+    ExportTables.find({}, {sort: name: -1})
+
 Template.export.events
   'click #downloadCSV': (evt) ->
     _waitingForDownload.set true
@@ -378,3 +388,19 @@ Template.export.events
       _waitingForDownload.set false
       throwError error if error?
       window.open url#, '_blank'
+    return false
+
+  'click #createExportTable': (evt) ->
+    _waitingForExportTable.set true
+    selection = _selection.get()
+    Meteor.call 'createExportTable', selection, (error) ->
+      _waitingForExportTable.set false
+      throwError error if error?
+    return false
+
+  'click .removeExportTable': (evt) ->
+    _waitingForExportTable.set true
+    Meteor.call 'removeExportTable', @name, (error) ->
+      _waitingForExportTable.set false
+      throwError error if error?
+    return false
