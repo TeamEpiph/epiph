@@ -204,6 +204,11 @@ Template.questionnaireWizzard.created = ->
     return
   )
 
+  #close if user has been logged out
+  @autorun ->
+    if !Meteor.user()
+      __closeQuestionnaireWizzard()
+
   self = @
   @autorun ->
     self.subscribe("questionsForQuestionnaire", _questionnaire.get()._id)
