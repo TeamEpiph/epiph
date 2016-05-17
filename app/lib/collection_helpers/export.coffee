@@ -83,12 +83,8 @@ class @Export
           scheduledVisit = mixedVisits.find (mv) ->
             id = mv.designVisitId or mv._id
             id is visitTemplate._id
-          console.log "scheduledVisit"
-          console.log scheduledVisit
           if scheduledVisit? and scheduledVisit.dateScheduled?
             visit.dateScheduled = fullDate(scheduledVisit.dateScheduled)
-          console.log "visit"
-          console.log visit
           rows.push
             study: study
             studyDesign: studyDesign
