@@ -5,7 +5,15 @@ Meteor.startup ->
     # supported in every browser.  It worked for me in Chrome.
     extra = if !col then '' else ' column: ' + col
 
-    throwError 'Error: ' + msg + '\n\nat: ' + url + '\n\nline: ' + line + extra
+    fullErrorMessage = 'Error: ' + msg + '\n\nat: ' + url + '\n\nline: ' + line + extra
+
+    #workaround strange errors
+    if msg.toString().indexOf('getTime') > 0 or msg.toString().indexOf('INVALID')
+      console.log "ignoring error"
+      console.log fullErrorMessage
+      return
+
+    throwError fullErrorMessage
 
     #throw errors to console
     throw error
