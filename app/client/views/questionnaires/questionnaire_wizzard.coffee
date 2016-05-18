@@ -14,7 +14,7 @@
     if count > 0
       swal {
         title: 'Attention!'
-        text: "This questionnaire was alredy filled out. To view data, please use the ‘show’ button. Do you want to proceed? Old data will be overwritten. A log entry will be created. Please state reason. "
+        text: "This questionnaire was alredy filled out. To view data, please use the ‘show’ button. Do you want to proceed? Old data will be overwritten. A log entry will be created. Please state a reason."
         type: 'input'
         inputPlaceholder: "Please state a reason."
         showCancelButton: true
