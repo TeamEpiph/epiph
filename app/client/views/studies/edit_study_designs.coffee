@@ -28,7 +28,7 @@ Template.editStudyDesignsTags.rendered = ->
     itemText: 'title'
     typeaheadjs:
       name: 'tags'
-      displayKey: 'title'
+      displayKey: 'id'
       source: _bloodhound.ttAdapter()
       allowDuplicates: true
 
