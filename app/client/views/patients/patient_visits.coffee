@@ -1,3 +1,11 @@
+Template.patientVisits.destroyed = ->
+  $('.x-editable-meteorized').off 'shown', __editableDateSanitizer
+
+refreshEditableDateSanitizer = ->
+  Meteor.setTimeout ->
+    $('.x-editable-meteorized').on 'shown', __editableDateSanitizer
+  , 100
+
 Template.patientVisits.helpers
   visits: ->
     patient = @patient
@@ -24,17 +32,14 @@ Template.patientVisits.helpers
     visits
 
   visitDateEO: ->
+    refreshEditableDateSanitizer()
     visit = @visit
     patient = @patient
-    date = null
-    if visit.date?
-      date = fullDate(visit.date, true)
-    else if visit.dateScheduled?
-      date = fullDate(visit.dateScheduled, true)
-    value: date
-    display: (value) ->
-      return if !value
-      $(@).html fullDate(moment(value, __dateFormat))
+    date = visit.date or visit.dateScheduled or null 
+    dateString = null
+    if date?
+      dateString = fullDate(date)
+    value: dateString
     emptytext: "no date set"
     success: (response, newVal) ->
       if newVal is "-"

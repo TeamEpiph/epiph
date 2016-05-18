@@ -48,3 +48,6 @@ if Meteor.isClient
   if isNaN(date)
     return null
   return date
+
+@__editableDateSanitizer = (e, editable) ->
+  editable.input.$input.val editable.value.replace(/\(.*\)/, "").trim()
