@@ -43,7 +43,7 @@
               </form>
               {{else}}
                 {{#if preview}}
-                  <p class="code">{{question.code}}</p>
+                  <p class="code">{{questionnaire.id}}_{{question.code}}</p>
                 {{/if}}
                 {{#autoForm doc=doc schema=answerFormSchema id=question._id type=formType class="questionAutoform" fields="value"}}
                   {{#each afFieldNames}}
