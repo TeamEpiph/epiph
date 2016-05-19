@@ -212,7 +212,7 @@ Template.export.rendered = ->
         nodes.push
           id: 'questionnaire_'+questionnaire._id+'_'+design._id
           parent: '_questionnaires_'+design._id
-          text: questionnaire.title
+          text: questionnaire.id
           icon: _questionnaireIcon
           state:
             opened: false
@@ -223,6 +223,8 @@ Template.export.rendered = ->
           sort: {index: 1}
         ).forEach (question) ->
           title = "#{question.index} - #{question.label}"
+          if title.length > 30
+            title = title.substring(0, 30)+"..."
           nodes.push
             id: 'question_'+question._id+'_'+design._id
             parent: 'questionnaire_'+questionnaire._id+'_'+design._id
