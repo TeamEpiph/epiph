@@ -39,12 +39,12 @@ Meteor.methods
     csv = ""
     separator = ';'
     Export.columnHeaders(selection).forEach (header) ->
-      csv += header.title+separator
+      csv += '"'+header.title+'"'+separator
     csv += '\n'
 
     Export.rows(selection).forEach (row) ->
       Export.columns(selection, row).forEach (col) ->
-        csv += col+separator
+        csv += '"'+col+'"'+separator
       csv += '\n'
 
     #console.log csv
