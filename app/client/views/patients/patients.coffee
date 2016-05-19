@@ -53,7 +53,7 @@ Template.patients.helpers
       find.studyId = {$in: selectedStudyIds}
     if selectedStudyDesignIds? and selectedStudyDesignIds.length > 0
       find.studyDesignId = {$in: selectedStudyDesignIds}
-    if !find.selectedStudyIds? and !find.selectedStudyDesignIds? and selectedPatientId?
+    if !find.studyId? and !find.studyDesignId? and selectedPatientId?
       find._id = selectedPatientId
     Patients.find(find, {sort: {studyId: 1}})
 
