@@ -7,11 +7,12 @@ class @Export
         variables.forEach (variable) ->
           cols.push
             title: "#{entity}.#{variable}"
-      
+
     if selection.questionnaires?
-      selection.questionnaires.forEach (questionnaire) ->
-        questionnaire = Questionnaires.findOne questionnaire._id
+      selection.questionnaires.forEach (questionnaireSelection) ->
+        questionnaire = Questionnaires.findOne questionnaireSelection._id
         Questions.find(
+          _id: $in: questionnaireSelection.questionIds
           questionnaireId: questionnaire._id
           type: $ne: 'description'
         ,
@@ -118,9 +119,10 @@ class @Export
             cols.push empty
 
     if selection.questionnaires?
-      selection.questionnaires.forEach (questionnaire) ->
-        questionnaire = Questionnaires.findOne questionnaire._id
+      selection.questionnaires.forEach (questionnaireSelection) ->
+        questionnaire = Questionnaires.findOne questionnaireSelection._id
         Questions.find(
+          _id: $in: questionnaireSelection.questionIds
           questionnaireId: questionnaire._id
           type: $ne: 'description'
         ,

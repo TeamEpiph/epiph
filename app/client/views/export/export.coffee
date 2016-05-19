@@ -322,6 +322,8 @@ Template.export.rendered = ->
               questionnaireId = questionnaireId.replace(/_.*/, '')
             if step.lastIndexOf("question_", 0) is 0
               questionId = step.replace "question_", ""
+              #sanitize questionId: remove designId
+              questionId = questionId.substring(0, questionId.indexOf("_"))
           debugger if !questionnaireId? or !questionId?
           questionnaire = questionnairesAndQuestionsDict[questionnaireId]
           if !questionnaire?
@@ -330,7 +332,11 @@ Template.export.rendered = ->
               questionIds: [questionId]
           else
             questionnaire.questionIds.push questionId
-            questionnaire.questionIds = _.unique questionnaire.questionIds
+            #sanitize questionIds: remove designId
+            questionIds = _.unique questionnaire.questionIds
+            questionIds.forEach (questionId) ->
+              questionId = questionId.substring(0, questionId.indexOf("_"))
+            questionnaire.questionIds = questionIds
           questionnairesAndQuestionsDict[questionnaireId] = questionnaire
 
     #convert dicts to arrays
