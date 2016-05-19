@@ -128,7 +128,9 @@ submitAllForms = (goto) ->
     swal.close() #possibly open swal "unsaved changes"
     doSubmitAllForms(numFormsToSubmit)
 
+_submittingForms = false
 doSubmitAllForms = (numFormsToSubmit) ->
+  _submittingForms = true
   _numFormsToSubmit = numFormsToSubmit
   $("form").each ->
     e = $(@)
@@ -138,13 +140,14 @@ doSubmitAllForms = (numFormsToSubmit) ->
 
 formSubmitted = ->
   if (_numFormsToSubmit -= 1) <= 0
+    _submittingForms = false
     if _goto is 'nextPage'
       nextPage()
     else if _goto is 'previousPage'
       previousPage()
     else if _goto is 'close'
       Modal.hide('questionnaireWizzard')
-    else if _goto.pageIndex?
+    else if _goto? and _goto.pageIndex?
       _pageIndex.set _goto.pageIndex
 
 
@@ -167,6 +170,9 @@ previousPage = ->
 
 autoformHooks = 
   onSubmit: (insertDoc, updateDoc, currentDoc) ->
+    if !_submittingForms #ignore enter press
+      @done()
+      return false
     if _preview.get() or _readonly.get()
       return
     insertDoc.visitId = currentDoc.visitId 
@@ -199,7 +205,7 @@ Template.questionnaireWizzard.created = ->
   #close on escape key press
   $(document).on('keyup.wizzard', (e)->
     e.stopPropagation()
-    if e.keyCode is 27
+    if e.keyCode is 27 #escape
       __closeQuestionnaireWizzard()
     return
   )
