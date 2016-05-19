@@ -194,6 +194,8 @@ Template.export.rendered = ->
           state:
             opened: true
 
+      design.visits.sort (a, b) ->
+        a.index - b.index
       design.visits.forEach (visit) ->
         nodes.push
           id: 'visit_'+visit._id

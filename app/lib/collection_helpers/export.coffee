@@ -67,6 +67,8 @@ class @Export
         mixedVisits = mixedVisits.filter (mv) ->
           id = mv.designVisitId or mv._id
           design.visitIds.indexOf(id) > -1
+        visitTemplates.sort (a, b) ->
+          a.index - b.index
         visitTemplates.forEach (visitTemplate) ->
           visit = Visits.findOne
             patientId: patient._id

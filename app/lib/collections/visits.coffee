@@ -229,4 +229,6 @@ Meteor.methods
     else if v.dateScheduled?
       previousDate = moment(v.dateScheduled)
     previousVisit = v
+  visits.sort (a, b) ->
+    a.index - b.index
   return visits
