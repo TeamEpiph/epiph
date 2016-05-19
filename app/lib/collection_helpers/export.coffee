@@ -80,13 +80,13 @@ class @Export
           visit.title = visitTemplate.title
           #sanitise date
           if visit.date?
-            visit.date = fullDate(visit.date)
+            visit.date = moment(visit.date).toISOString()
           #ornament visit with dates
           scheduledVisit = mixedVisits.find (mv) ->
             id = mv.designVisitId or mv._id
             id is visitTemplate._id
           if scheduledVisit? and scheduledVisit.dateScheduled?
-            visit.dateScheduled = fullDate(scheduledVisit.dateScheduled)
+            visit.dateScheduled = moment(scheduledVisit.dateScheduled).toISOString()
           rows.push
             study: study
             studyDesign: studyDesign
@@ -183,7 +183,12 @@ class @Export
                 cols.push "#{question.code} missing subquestions (index: #{question.index} in questionnaire: #{questionnaire.title})"
           else #all other question types
             if answer?
-              cols.push answer.value
+              #sanitize dates to ISO-8601
+              if question.type is "date" or question.type is "dateTime"
+                value = moment(answer.value).toISOString()
+                cols.push value
+              else
+                cols.push answer.value
             else
               cols.push empty
     cols
