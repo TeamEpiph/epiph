@@ -442,38 +442,73 @@ Meteor.methods
     return
 
 
-  moveQuestion: (questionnaireId, oldIndex, newIndex) ->
+#  changed at: 2016/08/03: didn't work in production. not able to reproduce, reason unknown.
+#  moveQuestion: (questionnaireId, oldIndex, newIndex) ->
+#    checkIfAdmin()
+#    check(questionnaireId, String)
+#    check(oldIndex, Match.Integer)
+#    check(newIndex, Match.Integer)
+#
+#    questionnaire = Questionnaires.findOne
+#      _id:  questionnaireId
+#
+#    question = Questions.findOne
+#      questionnaireId: questionnaireId
+#      index: oldIndex
+#    throw new Meteor.Error(403, "question with index #{oldIndex} not found.") unless question?
+#
+#    Questions.update
+#      questionnaireId: questionnaireId
+#      index: { $gt: oldIndex }
+#    ,
+#      $inc: { index: -1 }
+#    ,
+#      multi: true
+#    Questions.update
+#      questionnaireId: questionnaireId
+#      index: { $gte: newIndex }
+#    ,
+#      $inc: { index: 1 }
+#    ,
+#      multi: true
+#    Questions.update
+#      _id: question._id
+#    ,
+#      $set: { index: newIndex}
+#    return
+
+  moveQuestion: (questionId, up) ->
     checkIfAdmin()
-    check(questionnaireId, String)
-    check(oldIndex, Match.Integer)
-    check(newIndex, Match.Integer)
+    check(questionId, String)
+    check(up, Boolean)
+
+    question = Questions.findOne questionId
+    throw new Meteor.Error(403, "question not found.") unless question?
 
     questionnaire = Questionnaires.findOne
-      _id:  questionnaireId
+      _id: question.questionnaireId
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
 
-    question = Questions.findOne
-      questionnaireId: questionnaireId
-      index: oldIndex
-    throw new Meteor.Error(403, "question with index #{oldIndex} not found.") unless question?
+    numQuestions = Questions.find(
+      questionnaireId: questionnaire._id
+    ).count()
 
+    if question.index is 1 and up
+      return
+    if question.index is numQuestions-1 and !up
+      return
+
+    addend = -1
+    addend = 1 if !up
     Questions.update
-      questionnaireId: questionnaireId
-      index: { $gt: oldIndex }
+      _id: questionId
     ,
-      $inc: { index: -1 }
-    ,
-      multi: true
+      $inc: { index: addend }
     Questions.update
-      questionnaireId: questionnaireId
-      index: { $gte: newIndex }
+      questionnaireId: question.questionnaireId
+      index: question.index - addend
     ,
-      $inc: { index: 1 }
-    ,
-      multi: true
-    Questions.update
-      _id: question._id
-    ,
-      $set: { index: newIndex}
+      $inc: { index: -addend }
     return
 
 
