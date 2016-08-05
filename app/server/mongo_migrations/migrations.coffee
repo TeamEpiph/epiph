@@ -410,6 +410,23 @@ Migrations.add
     console.log "fixed question indices"
     return
 
+Migrations.add
+  version: 21
+  up: ->
+    console.log "fixing question indices..."
+    Questionnaires.find().forEach (questionnaire) ->
+      i = 1
+      Questions.find(
+        questionnaireId: questionnaire._id
+      ,
+        sort: index: 1
+      ).forEach (question) ->
+        Questions.update question._id,
+          $set: index: i
+        i += 1
+    console.log "fixed question indices"
+    return
+
 Meteor.startup ->
   Migrations.migrateTo('latest')
   #Migrations.migrateTo('17,rerun')
