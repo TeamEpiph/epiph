@@ -495,20 +495,20 @@ Meteor.methods
 
     if question.index is 1 and up
       return
-    if question.index is numQuestions-1 and !up
+    if question.index >= numQuestions and !up
       return
 
     addend = -1
     addend = 1 if !up
     Questions.update
+      questionnaireId: question.questionnaireId
+      index: question.index + addend
+    ,
+      $inc: { index: -addend }
+    Questions.update
       _id: questionId
     ,
       $inc: { index: addend }
-    Questions.update
-      questionnaireId: question.questionnaireId
-      index: question.index - addend
-    ,
-      $inc: { index: -addend }
     return
 
 
