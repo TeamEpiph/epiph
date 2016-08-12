@@ -318,11 +318,12 @@ Meteor.methods
     throw new Meteor.Error(400, "questionnaire #{question.questionnaireId}) not found.") unless questionnaire?
 
     delete question._id
-    delete question.code
+    if question.code?
+      question.code += ":#{new Mongo.ObjectID()._str}"
 
     if question.subquestions?
       question.subquestions.forEach (q) ->
-        q.code = new Mongo.ObjectID()._str
+        q.code += ":#{new Mongo.ObjectID()._str}"
 
     question.index = Questions.find(questionnaireId: questionnaire._id).count()+1
 
