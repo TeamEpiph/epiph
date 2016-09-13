@@ -39,7 +39,6 @@ autoformHooks =
 
 Template.translateQuestionnaireSourceLang.rendered = ->
   @autorun ->
-    console.log "set sourceLang"
     Meteor.setTimeout ->
       $("#source-lang option[value=#{sourceLang.get()}]").attr('selected', true)
     , 100
@@ -57,13 +56,12 @@ Template.translateQuestionnaireSourceLang.helpers
     langs
     
 Template.translateQuestionnaireSourceLang.events
-  "change #sourceLang-lang": (evt) ->
+  "change #source-lang": (evt) ->
     sourceLang.set $(evt.target).find(":selected").attr('value')
 
 
 Template.translateQuestionnaireDestinationLang.rendered = ->
   @autorun ->
-    console.log "set destinationLang"
     Meteor.setTimeout ->
       $("#destination-lang option[value=#{destinationLang.get()}]").attr('selected', true)
     , 100
