@@ -26,7 +26,7 @@ class @Question
     try
       translation = @translations[lang]
     try
-      @label = translation.label
+      @label = translation.label if translation.label?
     try
       @choices.forEach (c) ->
         translatedChoice = translation.choices.find (tc) ->
