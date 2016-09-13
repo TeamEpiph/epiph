@@ -1,0 +1,89 @@
+<template name="editQuestionnaireQuestionTranslate">
+  {{#autoForm doc=doc schema=questionTranslationFormSchema id=_id type="normal" meteormethod="translateQuestion" class="translationForm"}}
+  {{#each afFieldNames}}
+    {{> afQuickField name=this.name options=afOptionsFromSchema template="tight-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}
+  {{/each}}
+{{/autoForm}}
+</template>
+
+<template name="translateQuestionnaireSourceLang">
+  <p>From what language do you want to tranlate from?</p>
+  <select id="source-lang" class="form-control">
+    {{#each langs}}
+    <option value={{code}}>{{name}} ({{nativeName}})</option>
+    {{/each}}
+  </select>
+</template>
+
+<template name="translateQuestionnaireDestinationLang">
+  <p>To what language do you want to tranlate to?</p>
+  <select id="destination-lang" class="form-control">
+    {{#each langs}}
+    <option value={{code}}>{{name}} ({{nativeName}})</option>
+    {{/each}}
+  </select>
+  <button class="btn btn-default" id="submitTranslation">
+    Save
+  </button>
+</template>
+
+<template name="translateQuestionnaire">
+  <div class="translateQuestionnaire editQuestionnaire">
+    <div class="row">
+      <div class="col-xs-12">
+        <h3>{{title}}
+          <small>{{id}}</small>
+          <button id="previewQuestionnaire" class="btn btn-default btn-sm btn-hdr">
+            Preview&nbsp;<i class="fa fa-lg fa-eye"></i>
+          </button>
+          <button id="editQuestionnaire" class="btn btn-default btn-sm btn-hdr">
+            Edit&nbsp;<i class="fa fa-lg fa-pencil"></i>
+          </button>
+        </h3>
+      </div>
+    </div>
+    <div class="translation-settings line">
+      <div class="question row">
+        {{> translateQuestionnaireSourceLang}}
+      </div>
+      <div class="question-translation">
+        {{> translateQuestionnaireDestinationLang}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-12">
+        {{#unless hasQuestions}}
+        This questionnaire contains no questions yet.
+        {{else}}
+        <div class="questionnaire">
+          <div class="questions">
+            {{#each allQuestions}}
+            <div class="line">
+              {{#with questionWithSchema}}
+              {{> editQuestionnaireQuestion }}
+              {{/with}}
+              <div class="question-translation" data-index={{index}} data-id={{_id}}>
+                {{> editQuestionnaireQuestionTranslate}} 
+              </div>
+            </div>
+
+            {{#if break}}
+            <div class="row">
+              <div class="col-xs-12">
+                <div style="height: 2px; background-color: black; text-align: center; margin: 10px 0px;">
+                  <span style="background-color: white; position: relative; top: -0.8em; padding: 0px 5px;">
+                    PAGE BREAK
+                  </span>
+                </div>
+              </div>
+            </div>
+            {{/if}}
+
+            {{/each}}	
+          </div>
+        </div>
+        {{/unless}}
+      </div>
+    </div>
+  </div>
+</template>

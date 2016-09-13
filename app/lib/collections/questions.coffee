@@ -254,6 +254,11 @@ class @Question
                 index -= 1
             return
 
+    _.extend schema,
+      translations:
+        type: Object
+        blackbox: true
+
     if finalValidation
       _.extend schema,
         _id:
@@ -269,6 +274,88 @@ class @Question
         updatedAt:
           type: Number
           optional: true
+
+    return schema
+
+  getTranslationSchemaDict: ->
+    schema = {}
+    noWhitespaceRegex = /^\S*$/ #don't match if contains whitespace
+
+    if @type is "table" or @type is "table_polar"
+      _.extend schema,
+        label:
+          label: "Title"
+          type: String
+          optional: true
+          autoform:
+            type: "textarea"
+    else if @type isnt "description"
+      _.extend schema,
+        label:
+          label: "Question"
+          type: String
+          autoform:
+            type: "textarea"
+
+    if @type is "description"
+      _.extend schema,
+        label:
+          label: "Text (markdown)"
+          type: String
+          autoform:
+            type: "textarea"
+            rows: 10
+
+    if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
+      _.extend schema,
+        choices:
+          type: [Object]
+          label: "Choices"
+          minCount: @choices.length or 1
+          maxCount: @choices.length or 1
+        'choices.$.label':
+          type: String
+          optional: true
+        'choices.$.value':
+          type: String
+          autoform:
+            readonly: true
+
+    if @type is "table"
+      _.extend schema,
+        subquestions:
+          type: [Object]
+          label: "Subquestions"
+          minCount: @subquestions.length or 1
+          maxCount: @subquestions.length or 1
+        'subquestions.$.label':
+          type: String
+          autoform:
+            type: "textarea"
+        'subquestions.$.code':
+          type: String
+          autoform:
+            readonly: true
+
+    if @type is "table_polar"
+      _.extend schema,
+        subquestions:
+          type: [Object]
+          label: "Subquestions"
+          minCount: 0
+          maxCount: @subquestions.length
+        'subquestions.$.minLabel':
+          label: "min label"
+          type: String
+          optional: true
+        'subquestions.$.maxLabel':
+          label: "max label"
+          type: String
+          optional: true
+        'subquestions.$.code':
+          type: String
+          autoform:
+            readonly: true
 
     return schema
 
@@ -540,4 +627,29 @@ Meteor.methods
       $inc: { index: -1 }
     ,
       multi: true
+    return
+
+  translateQuestion: (questionId, translation, lang) ->
+    checkIfAdmin()
+    check(questionId, String)
+    check(translation, Object)
+    check(lang, String)
+
+    question = Questions.findOne questionId
+    throw new Meteor.Error(403, "question (#{questionId}) not found.") unless question?
+
+    ss = new SimpleSchema(question.getTranslationSchemaDict())
+    ss.clean(translation)
+    check(translation, ss)
+
+    Questions.update _id: question._id,
+      $set:
+        "translations.#{lang}": translation
+
+    Questionnaires.update 
+      _id: question.questionnaireId
+    ,
+      $addToSet:
+        translationLanguages: lang
+
     return

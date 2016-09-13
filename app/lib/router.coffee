@@ -49,6 +49,16 @@ Router.map ->
     data: ->
       Questionnaires.findOne {_id: @params._id}
 
+  @route "translateQuestionnaire",
+    path: "questionnaires/translate/:_id"
+    waitOn: ->
+      [
+        Meteor.subscribe("questionnaires")
+        Meteor.subscribe("questionsForQuestionnaire", @params._id)
+      ]
+    data: ->
+      Questionnaires.findOne {_id: @params._id}
+
 
   @route "studies",
     path: "studies"

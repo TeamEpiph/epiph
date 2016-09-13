@@ -218,6 +218,10 @@ Template.editQuestionnaire.events
     Modal.show('questionnaireWizzard', data, keyboard: false)
     false
 
+  "click #translateQuestionnaire": (evt) ->
+    if !warnIfQuestionFormIsDirty()
+      Router.go "translateQuestionnaire", _id: @_id
+
   "click #addQuestion": (evt) ->
     return if warnIfQuestionFormIsDirty()
     question =

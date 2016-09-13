@@ -195,6 +195,35 @@ table.collapsed {
     padding-right: 15px;
   }
 }
+.translateQuestionnaire {
+  .line {
+    display: flex;
+    &:nth-child(even) {
+      background-color: lightgray;
+    }
+  }
+  .question {
+    width: 50%;
+  }
+  .question-translation{
+    max-width: 49%;
+    margin-left: 15px;
+    flex-grow: 1;
+    border-left: 1px solid @brand-primary;
+  }
+  .translation-settings {
+    .row {
+      padding: 10px 25px;
+    }
+    .question-translation {
+      padding: 10px 10px;
+    }
+    select {
+      display: inline-block;
+      width: inherit;
+    }
+  }
+}
 
 ////////////////////////////////
 // questions

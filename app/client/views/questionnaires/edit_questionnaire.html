@@ -26,17 +26,6 @@
     </div>
   {{/if}}
 </div>
-{{#if break}}
-<div class="row">
-  <div class="col-xs-12">
-    <div style="height: 2px; background-color: black; text-align: center; margin: 10px 0px;">
-      <span style="background-color: white; position: relative; top: -0.8em; padding: 0px 5px;">
-        PAGE BREAK
-      </span>
-    </div>
-  </div>
-</div>
-{{/if}}
 </template>
 
 <template name="editQuestionnaire">
@@ -51,6 +40,9 @@
         <button id="previewQuestionnaire" class="btn btn-default btn-sm btn-hdr">
           Preview&nbsp;<i class="fa fa-lg fa-eye"></i>
         </button>
+        <button id="translateQuestionnaire" class="btn btn-default btn-sm btn-hdr">
+          Translate&nbsp;<i class="fa fa-lg fa-language"></i>
+        </button>
       </h3>
     </div>
   </div>
@@ -64,6 +56,17 @@
         <div class="questions">
           {{#each questionSchemas}}
             {{> editQuestionnaireQuestion}}
+            {{#if break}}
+            <div class="row">
+              <div class="col-xs-12">
+                <div style="height: 2px; background-color: black; text-align: center; margin: 10px 0px;">
+                  <span style="background-color: white; position: relative; top: -0.8em; padding: 0px 5px;">
+                    PAGE BREAK
+                  </span>
+                </div>
+              </div>
+            </div>
+            {{/if}}
           {{/each}}	
         </div>
       </div>
