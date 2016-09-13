@@ -109,6 +109,9 @@ Template.editQuestionnaire.helpers
 
 
   questionnaireSchema: ->
+    langs = isoLangs.map (l) ->
+      label: "#{l.name} (#{l.nativeName})"
+      value: l.code
     schema = 
       title:
         type: String
@@ -116,6 +119,12 @@ Template.editQuestionnaire.helpers
         label: 'ID'
         type: String
         optional: true
+      primaryLanguage:
+        label: 'Primary Language'
+        type: String
+        optional: true
+        autoform:
+          options: langs
     new SimpleSchema(schema)
 
   hasQuestions: ->

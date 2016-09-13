@@ -46,6 +46,10 @@ _schema =
     type: String
     index: true
     unique: true
+  primaryLanguage:
+    label: 'Primary Language'
+    type: String
+    optional: true
 Questionnaires.attachSchema(new SimpleSchema(_schema))
 
 
