@@ -47,7 +47,6 @@ You might:
       confirmButtonText: 'OK'
     }
   else if error.reason? and error.reason is "validationErrorQuestionnaireInUse"
-    console.log "swal"
     swal {
       title: 'Error'
       html: true
@@ -63,7 +62,6 @@ You might:
       confirmButtonText: 'OK'
     }
   else if error.reason? and error.reason is "validationErrorAnswersExistForStudy"
-    console.log "swal"
     swal {
       title: 'Error'
       html: true
