@@ -146,6 +146,7 @@ Template.translateQuestionnaire.helpers
       q.translateTo(sourceLang.get())
     schema = {}
     schema[q._id.toString()] = q.getSchemaDict()
+    console.log schema
     q.schema = new SimpleSchema(schema)
     question: q
 
