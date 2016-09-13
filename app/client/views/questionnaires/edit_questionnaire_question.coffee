@@ -5,3 +5,8 @@ Template.editQuestionnaireQuestion.helpers
       "selectedQuestion"
     else
       ""
+
+  schema: ->
+    schema = 
+      "#{@question._id.toString()}": @question.getSchemaDict()
+    new SimpleSchema(schema)

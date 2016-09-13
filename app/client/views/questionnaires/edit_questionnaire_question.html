@@ -12,7 +12,7 @@
         {{#if eq question.type "table_polar"}}
           {{> questionTablePolar}}
         {{else}}
-        {{#autoForm doc=null schema=question.schema id="questionsDummyForm" type="normal" class="questionnaireForm"}}
+        {{#autoForm doc=null schema=schema id="questionsDummyForm" type="normal" class="questionnaireForm"}}
           {{#each afFieldNames}}
             {{> afQuickField name=this.name options=afOptionsFromSchema}}
           {{/each}}

@@ -132,16 +132,13 @@ Template.editQuestionnaire.helpers
       questionnaireId: @_id
     ).count() > 0
 
-  questionSchemas: ->
+  questions: ->
     Questions.find(
       questionnaireId: @_id
     ,
       sort:
         index: 1
     ).map (q) ->
-      schema = {}
-      schema[q._id.toString()] = q.getSchemaDict()
-      q.schema = new SimpleSchema(schema)
       question: q
 
   selectedQuestion: ->
