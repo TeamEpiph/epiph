@@ -34,10 +34,10 @@ Template['afFormGroup_tight-horizontal'].helpers
       else if @name.indexOf('variable') > -1
         "col-md-3"
       else if @name.indexOf('value') > -1
-        "col-md-3"
+        "col-md-3 choice-value"
     else if @name.indexOf('subquestions') > -1 
       if @name.indexOf('code') > -1
-        "col-md-2"
+        "col-md-2 subquestion-code"
       else if @name.indexOf('label') > -1
         "col-md-10"
       else if @name.indexOf('minLabel') > -1
