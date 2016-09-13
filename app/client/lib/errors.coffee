@@ -78,6 +78,14 @@ You might:
       showCancelButton: false
       confirmButtonText: 'OK'
     }
+  else if error.reason? and error.reason is "validationWarningCheckTranslations"
+    swal {
+      title: 'Warning'
+      text: "You made changes that might affect the translations of this question. Make sure to check the translated version again. Your changes have been saved." 
+      type: 'warning'
+      showCancelButton: false
+      confirmButtonText: 'OK'
+    }
   else
     swal {
       title: 'Error'

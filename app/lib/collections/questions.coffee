@@ -553,12 +553,51 @@ Meteor.methods
       #apply modifier
       ss.clean(q)
       check(q, ss)
+      # delete translations entirely on typeChange
+      if question.translations?
+        delete q.translations
       #replace question entirely
       #use direct to prevent $set.updatedAt being added
       Questions.direct.update docId, q
     else
       check(q, ss)
       Questions.update docId, modifier
+
+    # after save tasks
+    # update translated choices and subquestions
+    question = Questions.findOne question._id
+    checkTranslations = false
+    if dangerousChange and question.translations?
+      Object.keys(question.translations).forEach (lang) ->
+        translation = question.translations[lang]
+        if question.choices?
+          checkTranslations = true
+          translatedChoices = []
+          question.choices.forEach (c) ->
+            translatedChoice = translation.choices.find (tc) ->
+              tc.value is c.value
+            if !translatedChoice?
+              translatedChoice = c
+            translatedChoices.push translatedChoice
+          Questions.update question._id,
+            $set:
+              "translations.#{lang}.choices": translatedChoices
+        if question.subquestions?
+          checkTranslations = true
+          translatedSubquestions = []
+          question.subquestions.forEach (s) ->
+            tSubquestion = translation.subquestions.find (ts) ->
+              ts.code is s.code
+            if !tSubquestion?
+              tSubquestion = s
+            translatedSubquestions.push tSubquestion
+          Questions.update question._id,
+            $set:
+              "translations.#{lang}.subquestions": translatedSubquestions
+
+    if checkTranslations
+      throw new Meteor.Error(400, "validationWarningCheckTranslations")
+
     return
 
 

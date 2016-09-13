@@ -185,12 +185,10 @@ Template.editQuestionnaire.events
             AutoForm.resetForm('questionForm')
             throwError error
           , 50
-    if t isnt "multipleChoice" and t isnt "table" and t isnt "table_polar"
-      changeQuestionType(questionId, newType)
-    else
+    if t is "multipleChoice" or t is "table" or t is "table_polar" or question.translations?
       swal {
         title: 'Are you sure?'
-        text: 'Do you really want to change the question type?\nThis operation is submitted immediately and you might loose data of your question (eg. subquestions or choices).'
+        text: 'Do you really want to change the question type?\nThis operation is submitted immediately and you might loose data of your question (eg. subquestions or choices). All translations of this question will be deleted.'
         type: 'warning'
         showCancelButton: true
         confirmButtonText: 'Yes'
@@ -200,6 +198,8 @@ Template.editQuestionnaire.events
         else
           AutoForm.resetForm('questionForm')
         return
+    else
+      changeQuestionType(questionId, newType)
     false
 
   "click #editQuestionnaire": (evt) ->
