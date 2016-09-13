@@ -48,8 +48,13 @@ Template.translateQuestionnaireSourceLang.helpers
   langs: ->
     tl = @translationLanguages or []
     pl = @primaryLanguage
-    isoLangs.filter (l) ->
+    langs = isoLangs.filter (l) ->
       l.code is pl or tl.indexOf(l.code) > -1
+    _.some langs, (l) ->
+      if l.code is pl
+        l.suffix = "- PRIMARY LANGUAGE -"
+      l.code is pl
+    langs
     
 Template.translateQuestionnaireSourceLang.events
   "change #sourceLang-lang": (evt) ->

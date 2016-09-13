@@ -10,7 +10,7 @@
   <p>From what language do you want to tranlate from?</p>
   <select id="source-lang" class="form-control">
     {{#each langs}}
-    <option value={{code}}>{{name}} ({{nativeName}})</option>
+    <option value={{code}}>{{name}} ({{nativeName}}) {{suffix}}</option>
     {{/each}}
   </select>
 </template>
