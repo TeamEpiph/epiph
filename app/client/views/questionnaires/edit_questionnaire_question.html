@@ -1,0 +1,25 @@
+<template name="editQuestionnaireQuestion">
+  <div class="question {{questionCSS}} row" data-index={{question.index}} data-id={{question._id}}>
+  {{#if eq question.type "description"}}
+    <div class="col-xs-12">
+      {{#markdown}}{{question.label}}{{/markdown}}
+    </div>
+  {{else}}
+    <div class="col-xs-12">
+      {{#if eq question.type "table"}}
+        {{> questionTable}}
+      {{else}}
+        {{#if eq question.type "table_polar"}}
+          {{> questionTablePolar}}
+        {{else}}
+        {{#autoForm doc=null schema=question.schema id="questionsDummyForm" type="normal" class="questionnaireForm"}}
+          {{#each afFieldNames}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+          {{/each}}
+        {{/autoForm}}
+        {{/if}}
+      {{/if}}
+    </div>
+  {{/if}}
+</div>
+</template>

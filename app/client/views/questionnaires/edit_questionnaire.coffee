@@ -293,16 +293,7 @@ Template.editQuestionnaire.events
           scrollToEditingQuestion()
         , 150
 
-Template.editQuestionnaireQuestion.helpers
-  #this question
-  questionCSS: ->
-    if @_id is Session.get("selectedQuestionId")
-      "selectedQuestion"
-    else
-      ""
-
-Template.editQuestionnaireQuestion.events
+  #event from inside editQuestionnaireQuestion
   "click .question": (evt) ->
     if !warnIfQuestionFormIsDirty()
-      Session.set 'selectedQuestionId', @_id
-
+      Session.set 'selectedQuestionId', @question._id

@@ -1,33 +1,3 @@
-<template name="editQuestionnaireQuestion">
-  <div class="question {{questionCSS}} row" data-index={{index}} data-id={{_id}}>
-  {{#if eq type "description"}}
-    <div class="col-xs-12">
-      {{#markdown}}{{label}}{{/markdown}}
-    </div>
-  {{else}}
-    <div class="col-xs-12">
-      {{#if eq type "table"}}
-        {{#with question=this}}
-          {{> questionTable}}
-        {{/with}}
-      {{else}}
-        {{#if eq type "table_polar"}}
-          {{#with question=this}}
-            {{> questionTablePolar}}
-          {{/with}}
-        {{else}}
-        {{#autoForm doc=null schema=schema id="questionsDummyForm" type="normal" class="questionnaireForm"}}
-          {{#each afFieldNames}}
-            {{> afQuickField name=this.name options=afOptionsFromSchema}}
-          {{/each}}
-        {{/autoForm}}
-        {{/if}}
-      {{/if}}
-    </div>
-  {{/if}}
-</div>
-</template>
-
 <template name="editQuestionnaire">
 <div class="editQuestionnaire">
   <div class="row">
@@ -55,7 +25,7 @@
       <div class="questionnaire">
         <div class="questions">
           {{#each questionSchemas}}
-            {{> editQuestionnaireQuestion}}
+            {{> editQuestionnaireQuestion question=this options=null}}
             {{#if break}}
             <div class="row">
               <div class="col-xs-12">

@@ -135,12 +135,13 @@ Template.translateQuestionnaire.helpers
       sort: index: 1
     )
 
-  questionWithSchema: ->
+  editQuestionnaireQuestionOptions: ->
     q = _.clone @
     schema = {}
     schema[q._id.toString()] = q.getSchemaDict()
     q.schema = new SimpleSchema(schema)
-    q
+    question: q
+    options: null
 
 
 Template.translateQuestionnaire.events

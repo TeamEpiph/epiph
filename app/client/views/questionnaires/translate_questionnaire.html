@@ -59,8 +59,8 @@
           <div class="questions">
             {{#each allQuestions}}
             <div class="line">
-              {{#with questionWithSchema}}
-              {{> editQuestionnaireQuestion }}
+              {{#with editQuestionnaireQuestionOptions}}
+              {{> editQuestionnaireQuestion}}
               {{/with}}
               <div class="question-translation" data-index={{index}} data-id={{_id}}>
                 {{> editQuestionnaireQuestionTranslate}} 
