@@ -92,6 +92,7 @@ Template.translateQuestionnaire.rendered = ->
       type: 'warning'
       showCancelButton: false
     }, ->
+      Session.set 'selectedQuestionId', null
       Router.go "editQuestionnaire", _id: questionnaire._id
     return
 
