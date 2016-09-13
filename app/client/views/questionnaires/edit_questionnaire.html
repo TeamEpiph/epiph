@@ -25,8 +25,8 @@
       <div class="questionnaire">
         <div class="questions">
           {{#each questionSchemas}}
-            {{> editQuestionnaireQuestion question=this options=null}}
-            {{#if break}}
+            {{> editQuestionnaireQuestion}}
+            {{#if question.break}}
             <div class="row">
               <div class="col-xs-12">
                 <div style="height: 2px; background-color: black; text-align: center; margin: 10px 0px;">

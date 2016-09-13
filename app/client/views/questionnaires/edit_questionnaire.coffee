@@ -142,7 +142,7 @@ Template.editQuestionnaire.helpers
       schema = {}
       schema[q._id.toString()] = q.getSchemaDict()
       q.schema = new SimpleSchema(schema)
-      q
+      question: q
 
   selectedQuestion: ->
     id = Session.get 'selectedQuestionId'

@@ -12,7 +12,38 @@ class @Question
     simulation.updatedAt = Date.now()
     JSON.parse(JSON.stringify(simulation))
 
-  getSchemaDict: ->
+  copy: ->
+    copy = _.clone @
+    #http://stackoverflow.com/questions/597588/how-do-you-clone-an-array-of-objects-in-javascript
+    if @choices?
+      copy.choices = JSON.parse(JSON.stringify(@choices))
+    if @subquestions?
+      copy.subquestions = JSON.parse(JSON.stringify(@subquestions))
+    copy
+
+  translateTo: (lang) ->
+    return if !lang
+    try
+      translation = @translations[lang]
+    try
+      @label = translation.label
+    try
+      @choices.forEach (c) ->
+        translatedChoice = translation.choices.find (tc) ->
+          tc.value is c.value
+        if translatedChoice?
+          c.label = translatedChoice.label
+    try
+      @subquestions.forEach (s) ->
+        tSubquestion = translation.subquestions.find (ts) ->
+          ts.code is s.code
+        if tSubquestion?
+          s.label = tSubquestion.label if tSubquestion.label?
+          s.minLabel = tSubquestion.minLabel if tSubquestion.minLabel?
+          s.maxLabel = tSubquestion.maxLabel if tSubquestion.maxLabel?
+    return @
+
+  getSchemaDict: (lang) ->
     s = _.pickDeep @, 'type', 'label', 'optional', 'min', 'max', 'decimal', 'options', 'options.label', 'options.value'
     switch @type
       when "text"

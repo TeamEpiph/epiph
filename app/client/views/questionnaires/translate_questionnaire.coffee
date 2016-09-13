@@ -25,7 +25,7 @@ doSubmitAllForms = (numFormsToSubmit) ->
 formSubmitted = ->
   if (_numFormsToSubmit -= 1) <= 0
     _submittingForms = false
-    console.log "allFormsSubmitted"
+
 
 autoformHooks = 
   onSubmit: (insertDoc, updateDoc, currentDoc) ->
@@ -39,6 +39,7 @@ autoformHooks =
 
 Template.translateQuestionnaireSourceLang.rendered = ->
   @autorun ->
+    Template.currentData() #must trigger reselection
     Meteor.setTimeout ->
       $("#source-lang option[value=#{sourceLang.get()}]").attr('selected', true)
     , 100
@@ -62,6 +63,7 @@ Template.translateQuestionnaireSourceLang.events
 
 Template.translateQuestionnaireDestinationLang.rendered = ->
   @autorun ->
+    Template.currentData() #must trigger reselection
     Meteor.setTimeout ->
       $("#destination-lang option[value=#{destinationLang.get()}]").attr('selected', true)
     , 100
@@ -133,18 +135,18 @@ Template.translateQuestionnaire.helpers
   allQuestions: ->
     Questions.find(
       questionnaireId: @_id
-      #_id: "JvAN9d6bzzjct3mbK"
     ,
       sort: index: 1
     )
 
   editQuestionnaireQuestionOptions: ->
-    q = _.clone @
+    q = @copy()
+    if sourceLang.get() isnt @primaryLanguage
+      q.translateTo(sourceLang.get())
     schema = {}
     schema[q._id.toString()] = q.getSchemaDict()
     q.schema = new SimpleSchema(schema)
     question: q
-    options: null
 
 
 Template.translateQuestionnaire.events
@@ -152,7 +154,7 @@ Template.translateQuestionnaire.events
     submitAllForms()
 
   "click #editQuestionnaire": (evt) ->
-    console.log "editQuestionnaire"
+    Router.go "editQuestionnaire", _id: @_id
 
   "click #previewQuestionnaire": (evt) ->
     data =
