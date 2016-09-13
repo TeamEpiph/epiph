@@ -289,6 +289,7 @@ class @Question
       translations:
         type: Object
         blackbox: true
+        optional: true
 
     if finalValidation
       _.extend schema,
