@@ -28,6 +28,12 @@
             <th>Visits</th>
             <td>{{numVisits}}</td>
           </tr>
+          {{#if languages}}
+          <tr>
+            <th>Languages</th>
+            <td>{{languages}}</td>
+          </tr>
+          {{/if}}
           {{#if isExcluded}}
           <tr>
             <th class="text-danger">excluded</th>

@@ -17,6 +17,13 @@ class @Patient
     return null unless @studyDesignId?
     StudyDesigns.findOne _id: @studyDesignId
 
+  languages: ->
+    langs = ""
+    langs += @primaryLanguage if @primaryLanguage?
+    if @secondaryLanguage
+      langs += ", #{@secondaryLanguage}"
+    langs
+
 
 @Patients = new Meteor.Collection("patients",
   transform: (doc) ->
