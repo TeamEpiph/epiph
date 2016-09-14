@@ -50,6 +50,7 @@ Template.translateQuestionnaireSourceLang.helpers
     pl = @primaryLanguage
     langs = isoLangs.filter (l) ->
       l.code is pl or tl.indexOf(l.code) > -1
+    langs = JSON.parse(JSON.stringify(langs))
     _.some langs, (l) ->
       if l.code is pl
         l.suffix = "- PRIMARY LANGUAGE -"
