@@ -52,7 +52,9 @@ repositionQuestionEditor = ->
   #FIXME breakpoint
   if !_isFullscreen.get() and sq? and sq.offset()? and $(document).width() > 992
     if $(document).width() > 992
-      $("#questionEditor").css("margin-top", sq.offset().top-200)
+      offset = sq.offset().top-200
+      offset = 0if offset < 0
+      $("#questionEditor").css("margin-top", offset)
   else
     $("#questionEditor").css("margin-top", "")
   return
