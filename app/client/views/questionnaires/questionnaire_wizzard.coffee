@@ -273,6 +273,9 @@ Template.questionnaireWizzard.created = ->
     data = Template.currentData()
     patient = data.patient
     questionnaire = _questionnaire.get()
+    if !patient #preview
+      _lang.set null
+      return
     if patient.primaryLanguage? 
       if patient.primaryLanguage is questionnaire.primaryLanguage
         _lang.set null
