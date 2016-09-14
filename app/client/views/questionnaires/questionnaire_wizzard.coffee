@@ -69,6 +69,7 @@ _readonly = new ReactiveVar(false)
 _questionnaire = new ReactiveVar(null)
 _nextQuestionnaire = null
 _preview = new ReactiveVar(false)
+_lang = new ReactiveVar(null)
 
 isAFormDirty = ->
   if _readonly.get() or _preview.get()
@@ -267,6 +268,34 @@ Template.questionnaireWizzard.created = ->
     _pageIndex.set 0
     AutoForm.addHooks(autoformIds, autoformHooks, true)
 
+  #determine language
+  @autorun ->
+    data = Template.currentData()
+    patient = data.patient
+    questionnaire = _questionnaire.get()
+    if patient.primaryLanguage? 
+      if patient.primaryLanguage is questionnaire.primaryLanguage
+        _lang.set null
+        return
+      if questionnaire.translationLanguages? and questionnaire.translationLanguages.length > 0
+        lang = questionnaire.translationLanguages.find (t) ->
+          t is patient.primaryLanguage
+        if lang?
+          _lang.set lang
+          return
+    if patient.secondaryLanguage? 
+      if patient.secondaryLanguage is questionnaire.primaryLanguage
+        _lang.set null
+        return
+      if questionnaire.translationLanguages? and questionnaire.translationLanguages.length > 0
+        lang = questionnaire.translationLanguages.find (t) ->
+          t is patient.secondaryLanguage
+        if lang?
+          _lang.set lang
+          return
+    _lang.set null
+    return
+
 Template.questionnaireWizzard.destroyed = ->
   $(document).unbind('keyup.wizzard')
   Session.set('selectedQuestionnaireWizzard', null)
@@ -281,6 +310,12 @@ Template.questionnaireWizzard.helpers
   userDescription: ->
     getUserDescription(Meteor.user())
 
+  language: ->
+    lang = _lang.get()
+    questionnaire = _questionnaire.get()
+    if !lang and questionnaire.primaryLanguage?
+      lang = questionnaire.primaryLanguage
+    lang
 
   templateGestures:
     'swipeleft div': (evt, templateInstance) ->
@@ -294,11 +329,19 @@ Template.questionnaireWizzard.helpers
 
   questionsForPage: ->
     questionIdsForPage = _questionIdsForPage.get()[_pageIndex.get()]
-    Questions.find
+    cursor = Questions.find(
       questionnaireId: _questionnaire.get()._id
       _id: {$in: questionIdsForPage}
     ,
       sort: {index: 1}
+    )
+    lang = _lang.get()
+    if lang? #we need to translate all questions
+      questions = cursor.map (q) ->
+        q.translateTo lang
+      return questions
+    else #no need to translate
+      return cursor
 
   questionnaire: ->
     _questionnaire.get()

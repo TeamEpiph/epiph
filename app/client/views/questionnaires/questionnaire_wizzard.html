@@ -13,7 +13,11 @@
                   <td>Case Manager:&nbsp;</td> <td>{{userDescription}}&nbsp;&nbsp;</td>
                   <td>Patient:&nbsp;</td> <td>{{patientDescription}}&nbsp;</td>
                 </tr><tr>
+                  {{#if language}}
+                  <td>Language:</td><td>{{language}}</td>
+                  {{else}}
                   <td></td><td></td>
+                  {{/if}}
                   <td>Visit:&nbsp;</td> <td>{{visit.title}}&nbsp;</td>
                 </tr>
               </table>
