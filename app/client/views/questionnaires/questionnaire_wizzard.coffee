@@ -299,6 +299,15 @@ Template.questionnaireWizzard.created = ->
     _lang.set null
     return
 
+  @autorun ->
+    Template.currentData() #must trigger reselection
+    value = _lang.get()
+    if !value?
+      value = _questionnaire.get().primaryLanguage
+    Meteor.setTimeout ->
+      $("#source-lang option[value=#{value}]").attr('selected', true)
+    , 100
+
 Template.questionnaireWizzard.destroyed = ->
   $(document).unbind('keyup.wizzard')
   Session.set('selectedQuestionnaireWizzard', null)
@@ -319,6 +328,21 @@ Template.questionnaireWizzard.helpers
     if !lang and questionnaire.primaryLanguage?
       lang = questionnaire.primaryLanguage
     lang
+
+  hasLangs: ->
+    _questionnaire.get().primaryLanguage?
+
+  langs: ->
+    questionnaire = _questionnaire.get()
+    tl = questionnaire.translationLanguages or []
+    pl = questionnaire.primaryLanguage
+    langs = isoLangs.filter (l) ->
+      l.code is pl or tl.indexOf(l.code) > -1
+    _.some langs, (l) ->
+      if l.code is pl
+        l.suffix = "- PRIMARY LANGUAGE -"
+      l.code is pl
+    langs
 
   templateGestures:
     'swipeleft div': (evt, templateInstance) ->
@@ -517,3 +541,6 @@ Template.questionnaireWizzard.events
     else
       formSubmitted()
     false
+
+  "change #source-lang": (evt) ->
+    _lang.set $(evt.target).find(":selected").attr('value')

@@ -21,6 +21,14 @@
                   <td>Visit:&nbsp;</td> <td>{{visit.title}}&nbsp;</td>
                 </tr>
               </table>
+              {{else}}
+                {{#if hasLangs}}
+                  <select id="source-lang" class="form-control">
+                    {{#each langs}}
+                    <option value={{code}}>{{name}} ({{nativeName}}) {{suffix}}</option>
+                    {{/each}}
+                  </select>
+                {{/if}}
               {{/unless}}
             </div>
           </div>
