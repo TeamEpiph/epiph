@@ -29,6 +29,14 @@ class @Questionnaire
         numPages += 1
     numPages
 
+  languages: ->
+    langs = ""
+    langs += @primaryLanguage if @primaryLanguage?
+    if @translationLanguages? and @translationLanguages.length > 0
+      langs += ', '
+      langs += @translationLanguages.join ', '
+    langs
+
 
 @Questionnaires = new Meteor.Collection("questionnaires",
   transform: (doc) ->

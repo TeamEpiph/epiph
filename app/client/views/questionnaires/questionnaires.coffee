@@ -10,7 +10,8 @@ Template.questionnaires.helpers
       { key: 'title', label: "Title", sortByValue: true, fn: (v,o)->if o.id then "#{o.title} (#{o.id})" else o.title },
       { key: 'numQuestions', label: "num. questions" },
       { key: 'numPages', label: "num. pages" },
-      { key: 'creator', label: "Creator", fn: (v,o) -> getUserDescription(o.creator()) },
+      { key: 'languages', label: "languages", fn: (v,o) -> o.languages() },
+      { key: 'creator', label: "creator", fn: (v,o) -> getUserDescription(o.creator()) },
       { key: "createdAt", label: 'created', sortByValue: true, fn: (v,o)->fullDate(v)},
       { key: 'buttons', label: '', tmpl: Template.questionnairesTableButtons }
     ]
