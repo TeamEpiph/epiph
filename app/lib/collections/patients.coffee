@@ -48,6 +48,12 @@ schema =
   'caseManagerId':
     type: String
     optional: true
+  'primaryLanguage':
+    type: String
+    optional: true
+  'secondaryLanguage':
+    type: String
+    optional: true
   'hasData':
     type: Boolean
     defaultValue: false
@@ -106,9 +112,13 @@ Meteor.methods
     update = _.pickDeep update,
     "$set.caseManagerId",
     "$set.studyDesignId",
+    "$set.primaryLanguage",
+    "$set.secondaryLanguage",
     "$set.hrid",
     "$unset.caseManagerId",
     "$unset.studyDesignId",
+    "$unset.primaryLanguage",
+    "$unset.secondaryLanguage",
     "$unset.hrid"
 
     Patients.find(_id: $in: ids).forEach (p) ->

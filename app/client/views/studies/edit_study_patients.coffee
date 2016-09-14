@@ -66,6 +66,9 @@ Template.editStudyPatients.helpers
     ).map (d) ->
       label: d.title
       value: d._id
+    langs = isoLangs.map (l) ->
+      label: "#{l.name} (#{l.nativeName})"
+      value: l.code
     schema =
       caseManagerId:
         label: "Case Manager"
@@ -81,6 +84,18 @@ Template.editStudyPatients.helpers
         autoform:
           type: "select"
           options: designs
+      primaryLanguage:
+        label: 'Primary Language'
+        type: String
+        optional: true
+        autoform:
+          options: langs
+      secondaryLanguage:
+        label: 'Secondary Language'
+        type: String
+        optional: true
+        autoform:
+          options: langs
     ids = Session.get('editingPatientIds')
     if ids? and ids.length is 1
       schema = _.extend schema, 
