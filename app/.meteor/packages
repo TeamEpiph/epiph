@@ -74,5 +74,4 @@ rzymek:moment-locale-de
 standard-minifier-css@1.2.0
 standard-minifier-js@1.2.0
 underscore@1.0.9
-hitchcott:app-dump
 shell-server

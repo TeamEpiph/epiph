@@ -64,7 +64,6 @@ fortawesome:fontawesome@4.5.0
 frozeman:template-var@1.3.0
 geojson-utils@1.0.9
 handlebars@1.0.7
-hitchcott:app-dump@0.4.2
 hot-code-push@1.0.4
 html-tools@1.0.10
 htmljs@1.0.10

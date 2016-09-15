@@ -110,9 +110,6 @@ Router.map ->
         Meteor.subscribe("activities")
       ]
 
-  @route "backup",
-    path: "backup"
-
 
 if Meteor.isClient	
   Accounts.ui.config
