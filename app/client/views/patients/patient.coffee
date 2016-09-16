@@ -30,3 +30,7 @@ Template.patient.helpers
 
   templateData: ->
     patient: @
+
+Template.patient.events
+  "click .id, click .hrid": (evt) ->
+    selectPatientId(@_id, true)

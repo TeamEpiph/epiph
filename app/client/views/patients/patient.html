@@ -4,45 +4,29 @@
   <div class="row">
     <div class="col-xs-12 col-md-3 col-lg-2 profile"><!-- col-md-push-9 text-right"> -->
       <div class="well">
-        <table class="table">
-          <tr>
-            <th>
-              <img src="{{identicon _id size=10 scale=10}}">
-            </th>
-            <td>
-              <p>
-                <b>{{id}}</b><br>
-                {{hrid}}
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <th>Created at</th>
-            <td>{{fullDateTime createdAt}}</td>
-          </tr>
-          <tr>
-            <th>Study</th>
-            <td>{{study.title}}</td>
-          </tr>
-          <tr>
-            <th>Visits</th>
-            <td>{{numVisits}}</td>
-          </tr>
-          {{#if languages}}
-          <tr>
-            <th>Languages</th>
-            <td>{{languages}}</td>
-          </tr>
-          {{/if}}
-          {{#if isExcluded}}
-          <tr>
-            <th class="text-danger">excluded</th>
-            <td class="text-danger">
-              yes <i class="fa fa-lg fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="{{fullDateTime excludedAt}}: {{excludeReason}}"></i>
-            </td>
-          </tr>
-          {{/if}}
-        </table>
+        <h4 class="id">{{id}}</h4>
+        <h4 class="hrid">{{hrid}}</h4>
+        <img src="{{identicon _id size=10 scale=15}}">
+        <h5>Created at</h5>
+        <p>{{fullDateTime createdAt}}</p>
+        {{#if study.title}}
+        <h5>Study</h5>
+        <p>{{study.title}}</p>
+        {{/if}}
+        {{#if numVisits}}
+        <h5>Visits</h5>
+        <p>{{numVisits}}</p>
+        {{/if}}
+        {{#if languages}}
+          <h5>Languages</h5>
+          <p>{{languages}}</p>
+        {{/if}}
+        {{#if isExcluded}}
+          <h5 class="text-danger">Excluded</h5>
+          <p class="text-danger">
+            yes <i class="fa fa-lg fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="{{fullDateTime excludedAt}}: {{excludeReason}}"></i>
+          </p>
+        {{/if}}
       </div>
     </div>
     <div class="col-xs-12 col-md-9 col-lg-10"><!-- col-md-pull-3"> -->

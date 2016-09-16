@@ -201,7 +201,7 @@ Template.patients.events
     Session.set 'selectedQuestionnaireId', id
     return
 
-@selectPatientId = (id) ->
+@selectPatientId = (id, clearVisitsSelection) ->
   if id?
     patient = Patients.findOne id
     if patient.studyDesignId?
@@ -219,6 +219,8 @@ Template.patients.events
     else
       Session.set 'selectedStudyIds', null
       Session.set 'selectedStudyDesignIds', null
+  if clearVisitsSelection
+    Session.set 'selectedDesignVisitId', null
   Session.set 'selectedPatientId', id
   return
 
