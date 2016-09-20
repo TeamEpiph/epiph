@@ -427,6 +427,22 @@ Migrations.add
     console.log "fixed question indices"
     return
 
+Migrations.add
+  version: 22
+  up: ->
+    console.log "migrate from patient.studyDesignId to .studyDesignIds" 
+    Patients.find(
+      studyDesignId: $exists: 1
+    ).forEach (p) ->
+      console.log p
+      Patients.update p._id,
+        $set: studyDesignIds: [p.studyDesignId]
+        $unset: studyDesignId: 1
+      console.log Patients.findOne p._id
+    console.log "fixed migrating studyDesignId(s)" 
+    return
+
+
 Meteor.startup ->
   Migrations.migrateTo('latest')
   #Migrations.migrateTo('17,rerun')
