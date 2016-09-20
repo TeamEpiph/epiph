@@ -132,7 +132,9 @@ Meteor.methods
     throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
 
     # use query from Patient
-    studyDesign = patient.studyDesign()
+    studyDesign = StudyDesigns.findOne
+      _id: $in: patient.studyDesignIds
+      'visits._id': designVisitId
     throw new Meteor.Error(403, "studyDesign can't be found.") unless studyDesign?
 
     visitTemplate = _.find studyDesign.visits, (visit) ->
@@ -187,13 +189,14 @@ Meteor.methods
     return
 
 
-@__getScheduledVisitsForPatientId = (patientId) ->
+@__getScheduledVisitsForPatientId = (patientId, studyDesignId) ->
   check patientId, String
+  check studyDesignId, String
 
   patient = Patients.findOne patientId
   throw new Meteor.Error(403, "patient can't be found.") unless patient?
 
-  studyDesign = patient.studyDesign()
+  studyDesign = StudyDesigns.findOne studyDesignId
   if !studyDesign?
     return []
 

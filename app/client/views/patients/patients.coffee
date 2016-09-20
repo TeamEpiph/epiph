@@ -23,7 +23,7 @@ Template.patients.rendered = ->
 
   @autorun ->
     Session.get('selectedStudyIds')
-    Session.get('selectedStudyDesignIds')
+    #Session.get('selectedStudyDesignIds')
     Session.get('selectedPatientId')
     Session.get('selectedDesignVisitId')
     Session.get('selectedQuestionnaireWizzard')
@@ -46,29 +46,29 @@ Template.patients.helpers
 
   patients: ->
     selectedStudyIds = Session.get 'selectedStudyIds'
-    selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
+    #selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
     selectedPatientId = Session.get 'selectedPatientId'
     find = {}
     if selectedStudyIds? and selectedStudyIds.length > 0
       find.studyId = {$in: selectedStudyIds}
-    if selectedStudyDesignIds? and selectedStudyDesignIds.length > 0
-      find.studyDesignId = {$in: selectedStudyDesignIds}
+    #if selectedStudyDesignIds? and selectedStudyDesignIds.length > 0
+    #  find.studyDesignIds = {$in: selectedStudyDesignIds}
     if !find.studyId? and !find.studyDesignId? and selectedPatientId?
       find._id = selectedPatientId
     Patients.find(find, {sort: {studyId: 1}})
 
   visits: ->
     selectedStudyIds = Session.get 'selectedStudyIds'
-    selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
+    #selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
     selectedPatientId = Session.get 'selectedPatientId'
     find = {}
     if selectedStudyIds?
       find.studyId = {$in: selectedStudyIds}
-    if selectedStudyDesignIds?
-      find._id = {$in: selectedStudyDesignIds}
+    #if selectedStudyDesignIds?
+    #  find._id = {$in: selectedStudyDesignIds}
     else if selectedPatientId?
-      studyDesignId = Patients.findOne(selectedPatientId).studyDesignId
-      find._id = studyDesignId
+      studyDesignIds = Patients.findOne(selectedPatientId).studyDesignIds
+      find._id = {$in: studyDesignIds}
     visits = []
     StudyDesigns.find(find).forEach (design) ->
       design.visits.forEach (v) ->
@@ -82,10 +82,16 @@ Template.patients.helpers
     selectedDesignVisitId = Session.get 'selectedDesignVisitId'
     p = Patients.findOne selectedPatientId
     if p?
-      d = StudyDesigns.findOne p.studyDesignId
-      if d?
+      questionnaireIds = []
+      visit = null
+      StudyDesigns.find(
+        _id: $in: p.studyDesignIds
+      ).forEach (d) ->
         v = _.find d.visits, (visit) ->
           visit._id is selectedDesignVisitId
+        if v? and v.length > 0
+          visit = v[0]
+      if visit?
         return Questionnaires.find
           _id: {$in: v.questionnaireIds}
     return
@@ -101,9 +107,9 @@ Template.patients.helpers
     selectedStudyIds = Session.get 'selectedStudyIds'
     if selectedStudyIds?
       find.studyId = {$in: selectedStudyIds}
-    selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
-    if selectedStudyDesignIds?
-      find.studyDesignId = {$in: selectedStudyDesignIds}
+    #selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
+    #if selectedStudyDesignIds?
+    #  find.studyDesignIds = {$in: selectedStudyDesignIds}
     #selectedPatientId = Session.get 'selectedPatientId'
     #if selectedPatientId?
     #  find._id = selectedPatientId
@@ -123,10 +129,12 @@ Template.patients.helpers
         study = o.study()
         return study.title if study?
     ,
-      key: 'designId', label: "Design"
+      key: 'studyDesignIds', label: "Designs"
       fn: (v,o) -> 
-        design = o.studyDesign()
-        return design.title if design?
+        ds = ""
+        designs = o.studyDesigns().forEach (d) ->
+          ds += d.title+', '
+        return ds.slice(0, -2)
     ,
       key: 'caseManagerId', label: "Case Manager"
       fn: (v,o) -> 
@@ -138,8 +146,10 @@ Template.patients.helpers
     ,
       key: '', label: "no. sheduled visits"
       fn: (v,o) -> 
-        design = o.studyDesign()
-        return design.visits.length if design?
+        visits = 0
+        design = o.studyDesigns().forEach (d) ->
+          visits += d.visits.length if d?
+        return visits
     ,
       key: "createdAt", label: 'created', sortByValue: true
       fn: (v,o)-> fullDate(v)
@@ -166,15 +176,15 @@ Template.patients.events
     Session.set 'selectedStudyIds', ids
     return
 
-  "change #designsSelect": (evt) ->
-    ids = $('#designsSelect').val()
-    if ids.indexOf('deselect') > -1
-      $('#designsSelect').selectpicker('deselectAll')
-      ids = null
-    Session.set 'selectedDesignVisitId', null
-    Session.set 'selectedPatientId', null
-    Session.set 'selectedStudyDesignIds', ids
-    return
+  #"change #designsSelect": (evt) ->
+  #  ids = $('#designsSelect').val()
+  #  if ids.indexOf('deselect') > -1
+  #    $('#designsSelect').selectpicker('deselectAll')
+  #    ids = null
+  #  Session.set 'selectedDesignVisitId', null
+  #  Session.set 'selectedPatientId', null
+  #  Session.set 'selectedStudyDesignIds', ids
+  #  return
 
   "change #patientSelect": (evt) ->
     id = $('#patientSelect').val()
@@ -204,21 +214,25 @@ Template.patients.events
 @selectPatientId = (id, clearVisitsSelection) ->
   if id?
     patient = Patients.findOne id
-    if patient.studyDesignId?
-      studyDesign = StudyDesigns.findOne patient.studyDesignId
+    if patient.studyDesignIds?
+      # we can use the first designId here because all designs
+      # must be in the same studyDesign
+      studyDesign = StudyDesigns.findOne patient.studyDesignIds[0]
 
-      selectedStudyIds = Session.get('selectedStudyIds') or []
-      selectedStudyIds.push studyDesign.studyId
-      selectedStudyIds = _.unique selectedStudyIds
-      Session.set 'selectedStudyIds', selectedStudyIds
+      if studyDesign?
+        selectedStudyIds = Session.get('selectedStudyIds') or []
+        selectedStudyIds.push studyDesign.studyId
+        selectedStudyIds = _.unique selectedStudyIds
+        Session.set 'selectedStudyIds', selectedStudyIds
 
-      selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
-      selectedStudyDesignIds.push studyDesign._id
-      selectedStudyDesignIds = _.unique selectedStudyDesignIds
-      Session.set 'selectedStudyDesignIds', selectedStudyDesignIds
+      #selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
+      #StudyDesigns.find(_id: $in: patient.studyDesignIds).forEach (d) ->
+      #  selectedStudyDesignIds.push d._id
+      #selectedStudyDesignIds = _.unique selectedStudyDesignIds
+      #Session.set 'selectedStudyDesignIds', selectedStudyDesignIds
     else
       Session.set 'selectedStudyIds', null
-      Session.set 'selectedStudyDesignIds', null
+      #Session.set 'selectedStudyDesignIds', null
   if clearVisitsSelection
     Session.set 'selectedDesignVisitId', null
   Session.set 'selectedPatientId', id
@@ -227,7 +241,7 @@ Template.patients.events
 refreshSelectValues = ->
   Meteor.setTimeout ->
     $('#studiesSelect').selectpicker('val', Session.get('selectedStudyIds') or null)
-    $('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds') or null)
+    #$('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds') or null)
     $('#patientSelect').selectpicker('val', Session.get('selectedPatientId') or null)
     $('#visitSelect').selectpicker('val', Session.get('selectedDesignVisitId') or null)
     $('#questionnaireSelect').selectpicker('val', Session.get('selectedQuestionnaireId') or null)
@@ -237,7 +251,7 @@ _hashChangedInternally = false
 refreshUrlParams = ->
   newHash =
     studyIds: Session.get('selectedStudyIds')
-    designIds: Session.get('selectedStudyDesignIds')
+    #designIds: Session.get('selectedStudyDesignIds')
     patientId: Session.get('selectedPatientId')
     visitId: Session.get('selectedDesignVisitId')
     questionnaireWizzard: Session.get('selectedQuestionnaireWizzard')
@@ -267,7 +281,7 @@ hashchange = ->
     return if error?
     hash = JSON.parse hash.slice(1)
     Session.set 'selectedStudyIds', hash.studyIds
-    Session.set 'selectedStudyDesignIds', hash.designIds
+    #Session.set 'selectedStudyDesignIds', hash.designIds
     Session.set 'selectedPatientId', hash.patientId
     Session.set 'selectedDesignVisitId', hash.visitId
     qw = Session.get 'selectedQuestionnaireWizzard'
@@ -279,7 +293,7 @@ hashchange = ->
         __closeQuestionnaireWizzard()
   else
     Session.set 'selectedStudyIds', null
-    Session.set 'selectedStudyDesignIds', null
+    #Session.set 'selectedStudyDesignIds', null
     Session.set 'selectedPatientId', null
     Session.set 'selectedDesignVisitId', null
     if Session.get('selectedQuestionnaireWizzard')?
@@ -303,20 +317,20 @@ Template.studyOption.rendered = ->
 Template.studyOption.destroyed = ->
   refreshStudiesSelect()
 
-designOptionTimeout = null
-refreshDesignsSelect = ->
-  if designOptionTimeout?
-    Meteor.clearTimeout designOptionTimeout
-  designOptionTimeout = Meteor.setTimeout((->
-    $('#designsSelect').selectpicker 'refresh'
-    designOptionTimeout = false
-    return
-  ), 50)
-  return
-Template.designOption.rendered = ->
-  refreshDesignsSelect()
-Template.designOption.destroyed = ->
-  refreshDesignsSelect()
+#designOptionTimeout = null
+#refreshDesignsSelect = ->
+#  if designOptionTimeout?
+#    Meteor.clearTimeout designOptionTimeout
+#  designOptionTimeout = Meteor.setTimeout((->
+#    $('#designsSelect').selectpicker 'refresh'
+#    designOptionTimeout = false
+#    return
+#  ), 50)
+#  return
+#Template.designOption.rendered = ->
+#  refreshDesignsSelect()
+#Template.designOption.destroyed = ->
+#  refreshDesignsSelect()
 
 patientOptionTimeout = null
 refreshPatientsSelect = ->
@@ -332,6 +346,12 @@ Template.patientOption.rendered = ->
   refreshPatientsSelect()
 Template.patientOption.destroyed = ->
   refreshPatientsSelect()
+Template.patientOption.helpers
+  studyDesignTitles: ->
+    titles = ""
+    @studyDesigns().forEach (d) ->
+      titles +=d.title+', '
+    titles.slice(0, -2)
 
 visitOptionTimeout = null
 refreshVisitsSelect = ->

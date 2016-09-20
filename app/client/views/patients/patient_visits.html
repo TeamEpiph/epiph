@@ -1,4 +1,15 @@
 <template name="patientVisits">
+<div id="designs">
+  <ul class="nav nav-tabs hidden-print">
+    {{#each designs}}
+    <li role="presentation" class={{designTabClasses}}>
+      <a href="" class="switchDesign"> 
+        {{title}}
+      </a>
+    </li>
+    {{/each}}
+  </ul>
+</div>
 <div id="visits">
   <table class="table table-striped collapsed">
     <tbody>
@@ -33,6 +44,7 @@
           </tr>
         {{/with}}
       {{else}}
+        <br>
         This patient either isn't mapped to an study design or this design has no visits scheduled.
       {{/each}}
     </tbody>

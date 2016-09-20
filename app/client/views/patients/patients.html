@@ -1,12 +1,14 @@
 <template name="studyOption">
   <option value={{_id}}>{{title}}</option>
 </template>
+<!--
 <template name="designOption">
   <option value={{_id}}>{{title}} ({{study.title}})</option>
 </template>
+-->
 <template name="patientOption">
   {{#if hrid}}
-    <option value={{_id}}>{{hrid}} - {{id}} ({{study.title}} - {{studyDesign.title}})</option>
+    <option value={{_id}}>{{hrid}} - {{id}} ({{study.title}} - {{studyDesignTitles}})</option>
   {{else}}
     <option value={{_id}}>{{id}} ({{study.title}} - {{studyDesign.title}})</option>
   {{/if}}
@@ -47,6 +49,7 @@
 				{{/each}}
 			</select>
 
+      <!--
       <i class="fa fa-lg fa-chevron-right"></i>
 			<select id="designsSelect" class="selectpicker" title="select designs" multiple data-live-search="true">
         <option class="italic" value="deselect"><b>clear selection</b></option>
@@ -54,6 +57,7 @@
 					{{> designOption}}
 				{{/each}}
 			</select>
+      -->
 
       <i class="fa fa-lg fa-chevron-right"></i>
       <select id="patientSelect" class="selectpicker show-tick" title="select patient" data-live-search="true">

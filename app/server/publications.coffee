@@ -127,7 +127,7 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
       Studies.find _id: patient.studyId
   ,
     find: (patient) ->
-      StudyDesigns.find _id: patient.studyDesignId
+      StudyDesigns.find _id: $in: patient.studyDesignIds
     children: [
       find: (studyDesign) ->
         Questionnaires.find

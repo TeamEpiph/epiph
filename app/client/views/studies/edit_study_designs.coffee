@@ -1,6 +1,8 @@
 listQuestionnaireIds = new ReactiveVar([])
 listRecordPhysicalData = new ReactiveVar(false)
 
+_selectedStudyDesignId = new ReactiveVar(null)
+
 remainingQuestionnaires = (design) ->
   qIds = design.questionnaireIds or []
   qIds = _.union(qIds, (listQuestionnaireIds.get() or []) )
@@ -82,11 +84,21 @@ Template.editStudyDesigns.destroyed = ->
 Template.editStudyDesigns.rendered = ->
   _ignoreAddEvents = false
   Meteor.setTimeout ->
-    $("button.accordion-toggle").first().click()
-  , 400
-  Meteor.setTimeout ->
     _ignoreAddEvents = false
   , 1000
+
+  @autorun ->
+    sSDId = _selectedStudyDesignId.get()
+    study = Template.currentData()
+    studyDesignIds = StudyDesigns.find(
+      studyId: study._id
+    ,
+      sort: createdAt: 1
+    ).map (sd) -> sd._id
+    if !sSDId? or studyDesignIds.indexOf(sSDId) < 0
+      _selectedStudyDesignId.set  studyDesignIds[0]
+
+  return
 
 Template.editStudyDesigns.helpers
   allQuestionnaires: ->
@@ -96,9 +108,18 @@ Template.editStudyDesigns.helpers
     StudyDesigns.find studyId: @_id,
       sort: {createdAt: 1}
 
-  #this design=design
+  selectedDesign: ->
+    StudyDesigns.findOne _selectedStudyDesignId.get()
+
+  designTabClass: ->
+    if @_id is _selectedStudyDesignId.get()
+      "active"
+    else
+      ""
+
+  #this design
   titleEO: ->
-    design = @design
+    design = @
     value: design.title
     emptytext: "no title"
     success: (response, newVal) ->
@@ -126,6 +147,8 @@ Template.editStudyDesigns.helpers
 
   #this design=design
   visits: ->
+    if !@design? or !@design.visits?
+      return
     @design.visits.sort (a, b)->
       a.index - b.index
     prevDay = 0
@@ -222,15 +245,16 @@ Template.editStudyDesigns.helpers
 
 
 Template.editStudyDesigns.events
-  "click .editable-click": (evt) ->
-    evt.preventDefault()
-    evt.stopPropagation()
+  "click .switchDesign": (evt) ->
+    _selectedStudyDesignId.set @_id
+    return true
 
   "click #createStudyDesign": (evt) ->
+    evt.preventDefault()
     Meteor.call "createStudyDesign", @_id, (error, studyDesignId) ->
       throwError error if error?
-      $("#collapse_#{studyDesignId}").collapse('show')
-      __scrollToBottom()
+      _selectedStudyDesignId.set studyDesignId
+    return
 
   "click .copyDesign": (evt) ->
     evt.preventDefault()
@@ -239,8 +263,6 @@ Template.editStudyDesigns.events
       if error?
         _ignoreAddEvents = false
         throwError error
-      $("#collapse_#{studyDesignId}").collapse('show')
-      __scrollToBottom()
       Meteor.setTimeout ->
         _ignoreAddEvents = false
       , 500

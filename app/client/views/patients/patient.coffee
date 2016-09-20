@@ -11,15 +11,17 @@ Template.patient.rendered = ->
   @$('[data-toggle=tooltip]').tooltip()
 
 Template.patient.helpers
+  designs: ->
+    ds = ""
+    designs = @studyDesigns().forEach (d) ->
+      ds += d.title+', '
+    ds.slice(0, -2)
+
   numVisits: ->
-    #Visits.find(
-    #  patientId: @_id
-    #).count()
-    studyDesign = @studyDesign()
-    if studyDesign?
-      studyDesign.visits.length
-    else
-      0
+    visits = 0
+    @studyDesigns().forEach (d) ->
+      visits += d.visits.length if d?
+    visits
 
   template: ->
     selectedDesignVisitId = Session.get 'selectedDesignVisitId'

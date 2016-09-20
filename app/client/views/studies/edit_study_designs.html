@@ -2,142 +2,148 @@
 <div class="editStudyDesigns">
   <div class="row">
     <div class="col-xs-12">
-    <br>
-    <button id="createStudyDesign" class="btn btn-primary hidden-print">
-      Add Design <i class="fa fa-plus"></i>
-    </button>
-    <br><br>
-    <div class="all-questionnaires">
-      Available Questionnaires:
-      {{#each allQuestionnaires}}
-        <span class="label label-info">{{title}}</span>
-      {{/each}}
+    <div class="hidden-print">
+      <br>
+      <div class="all-questionnaires">
+        Available Questionnaires:
+        {{#each allQuestionnaires}}
+          <span class="label label-info">{{title}}</span>
+        {{/each}}
+      </div>
+      <br>
+      <div class="designs">
+        <ul class="nav nav-tabs">
+          {{#each designs}}
+          <li role="presentation" class={{designTabClass}}>
+            <span class="tab switchDesign"> 
+              {{#if eq designTabClass "active"}}
+                {{> xEditable titleEO}}
+              {{else}}
+                {{title}}
+              {{/if}}
+            </span>
+          </li>
+          {{/each}}
+          <li role="presentation">
+            <a href="" id="createStudyDesign"> 
+              Add Design <i class="fa fa-plus"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-      {{#each designs}}
-      {{#with design=.}}
-        <div class="panel panel-default">
-          <div class="panel-heading" role="tab" id="heading_{{design._id}}">
-            <h4 class="panel-title panel-title-inline">
-              {{> xEditable titleEO}}
-            </h4>
-            <div class="btn-group pull-right">
-              <button class="btn btn-primary copyDesign" data-id={{_id}} title="copy">
-                <i class="fa fa-lg fa-copy"></i>
-              </button>
-              <button class="btn btn-danger removeDesign" data-id={{_id}} title="remove">
-                <i class="fa fa-lg fa-trash"></i>
-              </button>
-              <button class="btn btn-primary accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" data-target="#collapse_{{design._id}}" aria-expanded="false" aria-controls="collapse_{{design._id}}"></button>
-            </div>
-          </div>
-          <div id="collapse_{{design._id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_{{design._id}}" data-parent="#accordion">
-            <div class="panel-body">
-              <table class="table studyDesignTable">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Days offset from previous</th>
-                    <th>Days offset from baseline</th>
-                    <th>Scheduled Questionnaires</th>
-                    <th></th>
-                    <!--
-                    {{#each questionnaires}}
-                      <th>{{title}}</th>
-                    {{/each}}
-                    {{#if listRecordPhysicalData}}
-                      <th>record physical data</th>
-                    {{/if}}
-                    <th scope="row" class="hidden-print">
-                      {{#if hasRemainingQuestionnaires}}
-                      <div class="dropdown">
-                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="listQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                          add Questionnaire
-                          <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="listQuestionnaireDropdown">
-                          {{#each remainingQuestionnaires}}
-                            <li><a href="" class="listQuestionnaire" data-id={{_id}}>{{title}}</a></li>
-                          {{/each}}
-                          {{#unless listRecordPhysicalData}}
-                            <li><a href="" class="listRecordPhysicalData">Record physical data</a></li>
-                          {{/unless}}
-                        </ul>
-                      </div> 
-                      {{/if}}
-                    </th>
-                    -->
-                  </tr>
-                </thead>
-                <tbody>
-                  {{#each visits}}
-                  {{#with visit=. design=../design}}
-                    <tr>
-                      <td class="visitTd title">
-                        {{> xEditable visitTitleEO}}
-                      </td>
-
-                      <td class="visitTd">
-                        {{#unless hasDaysOffsetFromBaseline}}
-                          {{> xEditable visitDaysOffsetFromPreviousEO}}
-                        {{/unless}}
-                      </td>
-
-                      <td class="visitTd">
-                        {{#unless hasDaysOffsetFromPrevious}}
-                          {{> xEditable visitDaysOffsetFromBaselineEO}}
-                        {{/unless}}
-                      </td>
-                      
-                      <td class="visitTd">
-                        {{> editStudyDesignsTags}}	
-                      </td>
-                      
-                      <!--
-                      {{#each questionnaires}}
-                        {{#with questionnaire=. visit=../visit design=../design}}
-                          <td class="visitTd">
-                            <div class="toggleQuestionnaireAtVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
-                              <i class="fa fa-lg {{questionnaireIconClass}}"></i>
-                            </div>
-                          </td>
-                        {{/with}}
-                      {{/each}}
-
-                      {{#if listRecordPhysicalData}}
-                        <td class="visitTd" >
-                          <div class="toggleRecordPhysicalDataAtVisit" data-visit-id={{_id}}>
-                            <i class="fa fa-lg {{physicalIconClass}}"></i>
-                          </div>
-                        </td>
-                      {{/if}}
-                      -->
-
-                      <td class="visitTd text-right">
-                        <div class="btn-group hidden-print">
-                          <button class="btn btn-primary moveUp" title="move up">
-                            <i class="fa fa-arrow-up"></i>
-                          </button>
-                          <button class="btn btn-primary moveDown" title="move down">
-                            <i class="fa fa-arrow-down"></i>
-                          </button>
-                          <button class="btn btn-danger removeVisit" title="remove">
-                            <i class="fa fa-lg fa-trash"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  {{/with}}
-                  {{/each}}
-                </tbody>
-              </table>
-              <br class="hidden-print">
-              <button id="addVisit" class="btn btn-primary hidden-print">Add Visit <i class="fa fa-plus"></i></button>
-            </div>
-          </div>
+    <div class="design">
+      {{#with design=selectedDesign}}
+        <h2 class="visible-print-block">{{design.title}}</h2>
+        <div class="controls">
+          <button class="btn btn-primary copyDesign" data-id={{_id}} title="copy">
+            <i class="fa fa-lg fa-copy"></i>
+          </button>
+          <button class="btn btn-danger removeDesign" data-id={{_id}} title="remove">
+            <i class="fa fa-lg fa-trash"></i>
+          </button>
         </div>
+        <table class="table studyDesignTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Days offset from previous</th>
+              <th>Days offset from baseline</th>
+              <th>Scheduled Questionnaires</th>
+              <th></th>
+              <!--
+              {{#each questionnaires}}
+                <th>{{title}}</th>
+              {{/each}}
+              {{#if listRecordPhysicalData}}
+                <th>record physical data</th>
+              {{/if}}
+              <th scope="row" class="hidden-print">
+                {{#if hasRemainingQuestionnaires}}
+                <div class="dropdown">
+                  <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="listQuestionnaireDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    add Questionnaire
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="listQuestionnaireDropdown">
+                    {{#each remainingQuestionnaires}}
+                      <li><a href="" class="listQuestionnaire" data-id={{_id}}>{{title}}</a></li>
+                    {{/each}}
+                    {{#unless listRecordPhysicalData}}
+                      <li><a href="" class="listRecordPhysicalData">Record physical data</a></li>
+                    {{/unless}}
+                  </ul>
+                </div> 
+                {{/if}}
+              </th>
+              -->
+            </tr>
+          </thead>
+          <tbody>
+            {{#each visits}}
+            {{#with visit=. design=../design}}
+              <tr>
+                <td class="visitTd title">
+                  {{> xEditable visitTitleEO}}
+                </td>
+
+                <td class="visitTd">
+                  {{#unless hasDaysOffsetFromBaseline}}
+                    {{> xEditable visitDaysOffsetFromPreviousEO}}
+                  {{/unless}}
+                </td>
+
+                <td class="visitTd">
+                  {{#unless hasDaysOffsetFromPrevious}}
+                    {{> xEditable visitDaysOffsetFromBaselineEO}}
+                  {{/unless}}
+                </td>
+                
+                <td class="visitTd">
+                  {{> editStudyDesignsTags}}	
+                </td>
+                
+                <!--
+                {{#each questionnaires}}
+                  {{#with questionnaire=. visit=../visit design=../design}}
+                    <td class="visitTd">
+                      <div class="toggleQuestionnaireAtVisit" data-visit-id={{visit._id}} data-questionnaire-id={{questionnaire._id}}>
+                        <i class="fa fa-lg {{questionnaireIconClass}}"></i>
+                      </div>
+                    </td>
+                  {{/with}}
+                {{/each}}
+
+                {{#if listRecordPhysicalData}}
+                  <td class="visitTd" >
+                    <div class="toggleRecordPhysicalDataAtVisit" data-visit-id={{_id}}>
+                      <i class="fa fa-lg {{physicalIconClass}}"></i>
+                    </div>
+                  </td>
+                {{/if}}
+                -->
+
+                <td class="visitTd text-right">
+                  <div class="btn-group hidden-print">
+                    <button class="btn btn-primary moveUp" title="move up">
+                      <i class="fa fa-arrow-up"></i>
+                    </button>
+                    <button class="btn btn-primary moveDown" title="move down">
+                      <i class="fa fa-arrow-down"></i>
+                    </button>
+                    <button class="btn btn-danger removeVisit" title="remove">
+                      <i class="fa fa-lg fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            {{/with}}
+            {{/each}}
+          </tbody>
+        </table>
+        <br class="hidden-print">
+        <button id="addVisit" class="btn btn-primary hidden-print">Add Visit <i class="fa fa-plus"></i></button>
       {{/with}}
-      {{/each}}
       </div>
     </div>
   </div>

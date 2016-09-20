@@ -19,6 +19,10 @@ Template.patientVisit.rendered = ->
 
 
 Template.patientVisit.helpers
+  designTitle: ->
+    sdId = Session.get 'selectedPatientStudyDesignId'
+    StudyDesigns.findOne(sdId).title
+
   #this templateData
   visit: ->
     designVisitId = Session.get 'selectedDesignVisitId'
@@ -33,6 +37,10 @@ Template.patientVisit.helpers
 
 
 Template.patientVisit.events
+  #this visit
+  "click .designTitle": (evt) ->
+    selectPatientId(@patientId, true) 
+
   #with questionnaire=this visit=.. patient=../../patient
   "click .answerQuestionnaire": (evt, tmpl) ->
     data =

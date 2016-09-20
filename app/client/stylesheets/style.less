@@ -162,6 +162,9 @@ table.collapsed {
     }
   }
   #visit {
+    .designTitle {
+      cursor: pointer;
+    }
     .questionnaires {
       table {
         width: initial;
@@ -317,63 +320,24 @@ table.collapsed {
       font-weight: normal;
     }
   }
+  .designs {
+    a {
+      margin: 0px 5px;
+    }
+  }
+  .design {
+    .controls {
+      float: right;
+      margin-right: 15px
+    }
+  }
   @media print {
     font-size: 0.8em;
-    .collapse {
-      display: block !important;
-      height: auto !important;
-      visibility: visible !important;
-    }
-    .panel {
-      page-break-after: always;
-      page-break-inside: avoid;
-    }
     .btn-group {
       display: none;
     }
-  }
-
-  .panel-group {
-    margin-top: 1em;
-    .panel {
-      &:first-child {
-        border-top: none;
-      }
-      &:nth-child(odd) {
-        .panel-heading {
-          background-color: @table-bg-accent !important;
-        }
-      }
-      margin-top: 0px;
-      border-radius: 0 !important;
-      border: none;
-      box-shadow: none;
-      -webkit-box-shadow: none;
-      .panel-heading {
-        height: 61px;
-        padding: 14px 15px;
-        background-color: transparent;
-        .panel-title-inline {
-          display: inline;
-          font-size: 28px;
-        }
-        .btn-group {
-          margin-top: -5px;
-          .accordion-toggle {
-            &:after {
-              font-family: 'FontAwesome';
-              content: "\f078";
-              //font-size: 1.2em;
-            }
-            &.collapsed:after {
-              content: "\f054";
-            }
-          }
-        }
-      }
-      .panel-body {
-        border: none;
-      }
+    .controls {
+      display: none;
     }
   }
   .studyDesignTable {

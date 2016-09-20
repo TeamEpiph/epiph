@@ -1,18 +1,45 @@
 Template.patientVisits.destroyed = ->
   $('.x-editable-meteorized').off 'shown', __editableDateSanitizer
 
+Template.patientVisits.rendered = ->
+  #manage selectedPatientStudyDesignId
+  @autorun ->
+    sSDId = Session.get('selectedPatientStudyDesignId')
+    patient = Template.currentData().patient
+    if !patient? or !patient.studyDesignIds? or patient.studyDesignIds.length is 0
+      return
+    if !sSDId? or patient.studyDesignIds.indexOf(sSDId) < 0
+      studyDesigns = patient.studyDesigns().fetch()
+      if studyDesigns? and studyDesigns.length > 0
+        sdId = studyDesigns[0]._id
+      if sdId?
+        Session.set 'selectedPatientStudyDesignId', sdId
+      else
+        Session.set 'selectedPatientStudyDesignId', null
+    return
+
 refreshEditableDateSanitizer = ->
   Meteor.setTimeout ->
     $('.x-editable-meteorized').on 'shown', __editableDateSanitizer
   , 100
 
 Template.patientVisits.helpers
+  designs: ->
+    @patient.studyDesigns()
+
+  designTabClasses: ->
+    if @_id is Session.get('selectedPatientStudyDesignId')
+      "active"
+    else
+      ""
+
   visits: ->
     patient = @patient
-    studyDesign = patient.studyDesign()
-    if !studyDesign?
+    studyDesigns = patient.studyDesigns().fetch()
+    selectedPatientStudyDesignId = Session.get 'selectedPatientStudyDesignId'
+    if !studyDesigns? or studyDesigns.length is 0 or !selectedPatientStudyDesignId?
       return null
-    visits = __getScheduledVisitsForPatientId(patient._id)
+    visits = __getScheduledVisitsForPatientId(patient._id, selectedPatientStudyDesignId)
     now = moment()
     visits.forEach (v) ->
       date = null
@@ -70,6 +97,9 @@ Template.patientVisits.helpers
 
 
 Template.patientVisits.events
+  "click .switchDesign": (evt) ->
+    Session.set 'selectedPatientStudyDesignId', @_id
+
   #with questionnaire visit= patient
   "click .showQuestionnaire": (evt, tmpl) ->
     data =

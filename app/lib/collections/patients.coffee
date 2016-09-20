@@ -13,9 +13,12 @@ class @Patient
     return null unless @studyId?
     Studies.findOne _id: @studyId
 
-  studyDesign: ->
-    return null unless @studyDesignId?
-    StudyDesigns.findOne _id: @studyDesignId
+  studyDesigns: ->
+    return [] unless @studyDesignIds?
+    StudyDesigns.find
+      _id: $in: @studyDesignIds
+    ,
+      sort: createdAt: 1
 
   languages: ->
     langs = ""
@@ -121,12 +124,12 @@ Meteor.methods
     #pick whitelisted keys
     update = _.pickDeep update,
     "$set.caseManagerId",
-    "$set.studyDesignId",
+    "$set.studyDesignIds",
     "$set.primaryLanguage",
     "$set.secondaryLanguage",
     "$set.hrid",
     "$unset.caseManagerId",
-    "$unset.studyDesignId",
+    "$unset.studyDesignIds",
     "$unset.primaryLanguage",
     "$unset.secondaryLanguage",
     "$unset.hrid"

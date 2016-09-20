@@ -26,7 +26,13 @@ Template.editStudyPatients.helpers
       { key: 'id', label: "", sortable: false, fn: (v, o) -> new Spacebars.SafeString("<input type='checkbox' data-id=#{o._id} />") },
       { key: 'id', label: "ID" },
       { key: 'hrid', label: "HRID" },
-      { key: 'caseManagerId', label: "Design", fn: (v,o) -> design = o.studyDesign(); return design.title if design? },
+      { key: 'studyDesignIds', label: "Designs",
+      fn: (v,o) -> 
+        ds = ""
+        designs = o.studyDesigns().forEach (d) ->
+          ds += d.title+', '
+        return ds.slice(0, -2)
+      },
       { key: 'caseManagerId', label: "Case Manager", fn: (v,o) -> getUserDescription(o.caseManager()) },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->fullDate(v) },
@@ -77,12 +83,12 @@ Template.editStudyPatients.helpers
         autoform:
           type: "select"
           options: caseManagers
-      studyDesignId:
-        label: "Design"
-        type: String
+      studyDesignIds:
+        label: "Designs"
+        type: [String]
         optional: true
         autoform:
-          type: "select"
+          type: "select-checkbox"
           options: designs
       primaryLanguage:
         label: 'Primary Language'
