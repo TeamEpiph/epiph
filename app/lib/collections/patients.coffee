@@ -121,18 +121,28 @@ Meteor.methods
     check ids, [String]
     check update, Object
 
+    allowedKeys = [
+      "$set.caseManagerId",
+      "$set.studyDesignIds",
+      "$set.primaryLanguage",
+      "$set.secondaryLanguage",
+      "$unset.caseManagerId",
+      "$unset.studyDesignIds",
+      "$unset.primaryLanguage",
+      "$unset.secondaryLanguage",
+    ]
+
+    if ids.length > 1
+      if update['$set']? #don't overwrite with empty values
+        delete update['$unset']
+    else if ids.length is 1
+      allowedKeys = _.union allowedKeys, [
+        "$set.hrid",
+        "$unset.hrid"
+      ]
+
     #pick whitelisted keys
-    update = _.pickDeep update,
-    "$set.caseManagerId",
-    "$set.studyDesignIds",
-    "$set.primaryLanguage",
-    "$set.secondaryLanguage",
-    "$set.hrid",
-    "$unset.caseManagerId",
-    "$unset.studyDesignIds",
-    "$unset.primaryLanguage",
-    "$unset.secondaryLanguage",
-    "$unset.hrid"
+    update = _.pickDeep update, allowedKeys
 
     Patients.find(_id: $in: ids).forEach (p) ->
       study = Studies.findOne p.studyId

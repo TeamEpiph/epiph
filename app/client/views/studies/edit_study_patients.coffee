@@ -3,8 +3,6 @@ AutoForm.hooks
     onSubmit: (insertDoc, updateDoc, currentDoc) ->
       self = @
       ids = Session.get 'editingPatientIds'
-      if ids.length > 1
-        updateDoc = _.pickDeep updateDoc, "$set.caseManagerId", "$set.studyDesignId"
       Meteor.call "updatePatients", Session.get('editingPatientIds'), updateDoc, (error) ->
         self.done()
         throwError error if error?
