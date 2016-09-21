@@ -38,7 +38,6 @@ Meteor.methods
     Studies.insert
       title: "new Study"
       creatorId: Meteor.userId()
-    return
 
   "updateStudyTitle": (studyId, title) ->
     checkIfAdmin()
