@@ -61,9 +61,8 @@ class @Export
       patients = Patients.find(
         _id: {$in: design.patientIds}
       ).forEach (patient) ->
-        studyDesign = StudyDesigns.findOne patient.studyDesignId
         study = Studies.findOne studyDesign.studyId
-        mixedVisits = __getScheduledVisitsForPatientId(patient._id)
+        mixedVisits = __getScheduledVisitsForPatientId(patient._id, studyDesign._id)
         #filter based on selection
         mixedVisits = mixedVisits.filter (mv) ->
           id = mv.designVisitId or mv._id
