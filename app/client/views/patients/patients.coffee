@@ -144,6 +144,10 @@ Template.patients.helpers
         else
           ""
     ,
+      key: 'languages', label: "Languages"
+      fn: (v,o) ->
+        o.languages()
+    ,
       key: '', label: "no. sheduled visits"
       fn: (v,o) -> 
         visits = 0

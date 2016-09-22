@@ -32,6 +32,7 @@ Template.editStudyPatients.helpers
         return ds.slice(0, -2)
       },
       { key: 'caseManagerId', label: "Case Manager", fn: (v,o) -> getUserDescription(o.caseManager()) },
+      { key: 'languages', label: "Languages", fn: (v,o) -> o.languages() },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->fullDate(v) },
       { key: 'buttons', label: '', tmpl: Template.studyPatientsTableButtons }
