@@ -225,6 +225,15 @@ Template.patients.events
         selectedStudyIds = _.unique selectedStudyIds
         Session.set 'selectedStudyIds', selectedStudyIds
 
+      #check if selectedDesignVisitId is posible for patient
+      selectedDesignVisitId = Session.get 'selectedDesignVisitId'
+      if selectedDesignVisitId?
+        sd = StudyDesigns.findOne
+          _id: $in: patient.studyDesignIds
+          'visits._id': selectedDesignVisitId
+        if !sd #selectedDesignVisitId is from another design, which this patient isn't part of
+          Session.set 'selectedDesignVisitId', null
+
       #selectedStudyDesignIds = Session.get('selectedStudyDesignIds') or []
       #StudyDesigns.find(_id: $in: patient.studyDesignIds).forEach (d) ->
       #  selectedStudyDesignIds.push d._id
