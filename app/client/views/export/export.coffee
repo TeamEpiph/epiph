@@ -37,6 +37,7 @@ Template.export.rendered = ->
     parent: '_patient'
     text: 'patient HRID'
     icon: _patientIcon
+    state: { selected: true }
   nodes.push
     id: '__patient._id'
     parent: '_patient'
