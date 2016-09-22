@@ -51,6 +51,12 @@ Meteor.methods
       Patients.update patient._id,
         $set: hasData: true
 
+    #update patient.hasDataForDesignIds
+    studyDesign = StudyDesigns.findOne
+      'visits._id': visit.designVisitId
+    Patients.update patient._id,
+      $addToSet: hasDataForDesignIds: studyDesign._id
+
     if !visit.date?
       Meteor.call "changeVisitDate", visit._id, Date.now()
 

@@ -70,6 +70,9 @@ schema =
   'hasData':
     type: Boolean
     defaultValue: false
+  'hasDataForDesignIds':
+    type: [String]
+    optional: true
   'isExcluded':
     type: Boolean
     defaultValue: false
@@ -150,14 +153,23 @@ Meteor.methods
       throw new Meteor.Error(400, "Study is locked. Please unlock it first.") if study.isLocked
 
     #check if changing studyDesign for a patient which has data
-    if update['$set']?['studyDesignId']? or update['$unset']?['studyDesignId']?
+    if update['$set']?['studyDesignIds']? or update['$unset']?['studyDesignIds']?
       patientIds = []
       Patients.find(_id: $in: ids).forEach (p) ->
-        if p.hasData and p.studyDesignId isnt update['$set']['studyDesignId']
+        # unset is always a string
+        if update['$unset']?['studyDesignIds']? and p.hasData
           patientIds.push p.id
+        if p.hasDataForDesignIds?
+          if update['$set']?['studyDesignIds']?
+            allFound = true
+            p.hasDataForDesignIds.forEach (sDId) ->
+              if update['$set']['studyDesignIds'].indexOf(sDId) is -1
+                allFound = false
+            if !allFound
+              patientIds.push p.id
 
       if patientIds.length > 0
-        throw new Meteor.Error(400, "The following patients are already mapped to another design and have entered data: #{patientIds.join(', ')}. Please remove these IDs from your selection.") 
+        throw new Meteor.Error(400, "You have removed one or more study designs from patient(s) (#{patientIds.join(', ')}) which have already entered data for one of these designs. This is not allowed and your changes are therefore discarded.") 
 
       #remove already created visits with no data
       Patients.find(_id: $in: ids).forEach (p) ->
