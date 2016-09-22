@@ -105,6 +105,7 @@ Template.export.rendered = ->
     parent: '_studyDesign'
     text: 'title'
     icon: _designIcon
+    state: { selected: true }
 
   nodes.push
     id: '_visit'
@@ -147,6 +148,32 @@ Template.export.rendered = ->
       state: { opened: true }
     nodes.push studyNode
 
+    nodes.push
+      id: '_patients_'+study._id
+      parent: 'study_'+study._id
+      text: 'Patients'
+      icon: _patientIcon
+      state:
+        opened: true
+    Patients.find(
+      studyId: study._id
+    ).forEach (patient) ->
+      title = patient.id
+      if patient.hrid
+        title += " - "+patient.hrid
+      studyDesignTitles = StudyDesigns.find(
+        _id: $in: patient.studyDesignIds
+      ).map (d) -> d.title
+      if studyDesignTitles? and studyDesignTitles.length > 0
+        title += " (#{studyDesignTitles.join(', ')})"
+      nodes.push
+        id: 'studyPatient_'+patient._id
+        parent: '_patients_'+study._id
+        text: title
+        icon: _patientIcon
+        state:
+          opened: true
+
     StudyDesigns.find(
       studyId: study._id
     ).forEach (design) ->
@@ -171,23 +198,23 @@ Template.export.rendered = ->
         text: 'Visits'
         icon: _visitIcon
         state:
-          opened: true
+          opened: false
       nodes.push
         id: '_questionnaires_'+design._id
         parent: 'design_'+design._id
         text: 'Questionnaires'
         icon: _questionnaireIcon
         state:
-          opened: true
+          opened: false
 
       Patients.find(
-        studyDesignId: design._id
+        studyDesignIds: design._id
       ).forEach (patient) ->
         title = patient.id
         if patient.hrid
           title += " - "+patient.hrid
         nodes.push
-          id: 'patient_'+patient._id
+          id: 'patient_'+patient._id+'_'+design._id
           parent: '_patients_'+design._id
           text: title
           icon: _patientIcon
@@ -232,8 +259,7 @@ Template.export.rendered = ->
             icon: _questionIcon
 
 
-  #console.log nodes
-  $('#tree').jstree(
+  tree = $('#tree').jstree(
     plugins: [ "checkbox" ]
     checkbox:
       "keep_selected_style": false
@@ -242,7 +268,8 @@ Template.export.rendered = ->
       themes:
         name: 'proton'
         responsive: true
-  ).on 'changed.jstree', (evt, data) ->
+  )
+  tree.on 'changed.jstree', (evt, data) ->
     selectedIds = data.instance.get_selected()
 
     #dicts for easier searching
@@ -261,6 +288,17 @@ Template.export.rendered = ->
         #e[variable] = true
         e.push variable
         systemVariables[entity] = e
+
+      # shortcuts
+      else if sId.lastIndexOf("studyPatient_", 0) is 0
+        patientId = sId.replace "studyPatient_", ""
+        debugger if !patientId?
+        patient = Patients.findOne patientId
+        StudyDesigns.find(
+          _id: $in: patient.studyDesignIds
+        ).forEach (d) -> 
+          id = 'patient_'+patient._id+'_'+d._id
+          tree.jstree("select_node", id, true, false)
 
       #content
       else if sId.lastIndexOf("patient_", 0) is 0 or
@@ -281,6 +319,7 @@ Template.export.rendered = ->
               designId = step.replace "design_", ""
             if step.lastIndexOf("patient_", 0) is 0
               patientId = step.replace "patient_", ""
+              patientId = patientId.replace(/_.*/, '')
           debugger if !designId? or !patientId?
           design = patientsAndVisitsByDesignsDict[designId]
           if !design?
