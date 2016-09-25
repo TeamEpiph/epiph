@@ -168,7 +168,7 @@ Template.patients.events
 
   "change #studiesSelect": (evt) ->
     ids = $('#studiesSelect').val()
-    if ids.indexOf('deselect') > -1
+    if !ids? or ids.indexOf('deselect') > -1
       $('#studiesSelect').selectpicker('deselectAll')
       ids = null
     Session.set 'selectedDesignVisitId', null
