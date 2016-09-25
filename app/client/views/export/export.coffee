@@ -387,9 +387,36 @@ Template.export.rendered = ->
     designs = []
     for key in Object.keys(patientsAndVisitsByDesignsDict)
       designs.push patientsAndVisitsByDesignsDict[key]
+    designsTitlesDict = {}
+    StudyDesigns.find().forEach (d) ->
+      designsTitlesDict[d._id] = d.title
+    designs = designs.sort (a, b) ->
+      at = designsTitlesDict[a._id] or ""
+      at = at.toUpperCase()
+      bt = designsTitlesDict[b._id] or ""
+      bt = bt.toUpperCase()
+      if at < bt
+        return -1
+      if at > bt
+        return 1
+      return 0
+
     questionnaires = []
     for key in Object.keys(questionnairesAndQuestionsDict)
       questionnaires.push questionnairesAndQuestionsDict[key]
+    questionnairesTitlesDict = {}
+    Questionnaires.find().forEach (q) ->
+      questionnairesTitlesDict[q._id] = q.title
+    questionnaires = questionnaires.sort (a, b) ->
+      at = questionnairesTitlesDict[a._id] or ""
+      at = at.toUpperCase()
+      bt = questionnairesTitlesDict[b._id] or ""
+      bt = bt.toUpperCase()
+      if at < bt
+        return -1
+      if at > bt
+        return 1
+      return 0
 
     selection =
       system: systemVariables
