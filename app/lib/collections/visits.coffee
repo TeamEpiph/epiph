@@ -223,7 +223,7 @@ Meteor.methods
         baselineDate = moment(v.date)
       #special case for visit before baseline with negative daysOffsetFromBaseline
       #if there are multiple such vists, the one closest to the baseline wins
-      if previousVisit.daysOffsetFromBaseline < 0 and previousDate?
+      if previousDate? and previousVisit? and previousVisit.daysOffsetFromBaseline < 0
         v.dateScheduled = moment(previousDate).add(-previousVisit.daysOffsetFromBaseline, 'days')
         baselineDate = moment(v.dateScheduled)
 
