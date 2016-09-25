@@ -5,14 +5,7 @@ Template.patients.rendered = ->
   @subscribe("studies", onReady: -> refreshSelectValues())
   @subscribe("patients", onReady: -> refreshSelectValues())
   @subscribe("caseManagers", onReady: -> refreshSelectValues())
-
-  tmpl = @ 
-  @autorun ->
-    selectedStudyIds = Session.get 'selectedStudyIds'
-    if selectedStudyIds? and selectedStudyIds.length > 0
-      tmpl.subscribe "studyDesignsForStudy", selectedStudyIds, onReady: -> refreshSelectValues()
-    else
-      tmpl.subscribe "studyDesigns", onReady: -> refreshSelectValues()
+  @subscribe("studyDesigns", onReady: -> refreshSelectValues())
 
   @$('.selectpicker').each ->
     $(@).selectpicker()
