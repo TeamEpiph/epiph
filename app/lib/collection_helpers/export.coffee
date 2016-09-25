@@ -121,10 +121,9 @@ class @Export
     if selection.questionnaires?
       selection.questionnaires.forEach (questionnaireSelection) ->
         questionnaire = Questionnaires.findOne questionnaireSelection._id
-        if row.visitTemplate.questionnaireIds.indexOf(questionnaire._id) > -1
+        noAnswer = notScheduled
+        if row.visitTemplate? and row.visitTemplate.questionnaireIds? and row.visitTemplate.questionnaireIds.indexOf(questionnaire._id) > -1
           noAnswer = empty
-        else
-          noAnswer = notScheduled
         Questions.find(
           _id: $in: questionnaireSelection.questionIds
           questionnaireId: questionnaire._id
