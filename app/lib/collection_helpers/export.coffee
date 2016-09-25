@@ -98,6 +98,7 @@ class @Export
   @columns: (selection, row) ->
     cols = []
     empty = 'NA'
+    notScheduled = '?'
     if Meteor.isClient
       empty = 'only in CSV'
     error = 'ERROR'
@@ -120,6 +121,10 @@ class @Export
     if selection.questionnaires?
       selection.questionnaires.forEach (questionnaireSelection) ->
         questionnaire = Questionnaires.findOne questionnaireSelection._id
+        if row.visitTemplate.questionnaireIds.indexOf(questionnaire._id) > -1
+          noAnswer = empty
+        else
+          noAnswer = notScheduled
         Questions.find(
           _id: $in: questionnaireSelection.questionIds
           questionnaireId: questionnaire._id
@@ -146,18 +151,18 @@ class @Export
                         else
                           cols.push 0
                       else #no subanswer for this question
-                        cols.push empty
+                        cols.push noAnswer
                   else #if question.selectionMode is "single"
                     if subanswer? and subanswer.value?
                       cols.push subanswer.value
                     else #no subanswer for this subquestion
-                      cols.push empty
+                      cols.push noAnswer
                 else #no answer for this question
                   if question.selectionMode is "multi"
                     question.choices.forEach (choice) ->
-                      cols.push empty
+                      cols.push noAnswer
                   else #if question.selectionMode is "single"
-                    cols.push empty
+                    cols.push noAnswer
             else #missing subquestions
               if Meteor.isServer
                 cols.push error
@@ -173,12 +178,12 @@ class @Export
                     else
                       cols.push 0
                   else
-                    cols.push empty
+                    cols.push noAnswer
               else #if question.selectionMode is "single"
                 if answer?
                   cols.push answer.value
                 else
-                  cols.push empty
+                  cols.push noAnswer
             else
               if Meteor.isServer
                 cols.push error
@@ -193,5 +198,5 @@ class @Export
               else
                 cols.push answer.value
             else
-              cols.push empty
+              cols.push noAnswer
     cols
