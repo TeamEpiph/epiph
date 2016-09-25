@@ -62,7 +62,7 @@ Template.patients.helpers
       find.studyId = {$in: selectedStudyIds}
     #if selectedStudyDesignIds?
     #  find._id = {$in: selectedStudyDesignIds}
-    else if selectedPatientId?
+    if selectedPatientId?
       studyDesignIds = Patients.findOne(selectedPatientId).studyDesignIds
       find._id = {$in: studyDesignIds}
     visits = []
