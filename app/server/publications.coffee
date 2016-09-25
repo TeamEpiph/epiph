@@ -130,8 +130,11 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
       StudyDesigns.find _id: $in: patient.studyDesignIds
     children: [
       find: (studyDesign) ->
-        Questionnaires.find
-          _id: {$in: studyDesign.questionnaireIds }
+        if studyDesign.questionnaireIds? and studyDesign.questionnaireIds.length > 0
+          Questionnaires.find
+            _id: {$in: studyDesign.questionnaireIds }
+        else
+          null
       children: [
         find: (questionnaire) ->
           Questions.find
