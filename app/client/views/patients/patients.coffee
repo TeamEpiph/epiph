@@ -1,3 +1,5 @@
+_refreshSelectsContentsTrigger = new ReactiveVar(false)
+
 Template.patients.destroyed = ->
   $(window).off('hashchange')
 
@@ -38,6 +40,7 @@ Template.patients.helpers
       design
 
   patients: ->
+    _refreshSelectsContentsTrigger.get()
     selectedStudyIds = Session.get 'selectedStudyIds'
     #selectedStudyDesignIds = Session.get 'selectedStudyDesignIds'
     selectedPatientId = Session.get 'selectedPatientId'
@@ -248,6 +251,7 @@ Template.patients.events
   return
 
 refreshSelectValues = ->
+  _refreshSelectsContentsTrigger.set(_refreshSelectsContentsTrigger.get())
   Meteor.setTimeout ->
     $('#studiesSelect').selectpicker('val', Session.get('selectedStudyIds') or null)
     #$('#designsSelect').selectpicker('val', Session.get('selectedStudyDesignIds') or null)
