@@ -127,9 +127,11 @@ class @Export
         ,
           sort: index: 1
         ).forEach (question) ->
-          answer = Answers.findOne
-            questionId: question._id
-            visitId: row.visit._id if row.visit?
+          answer = null
+          if row.visit? and row.visit._id?
+            answer = Answers.findOne
+              questionId: question._id
+              visitId: row.visit._id
           if question.type is 'table' or question.type is 'table_polar'
             if question.subquestions? and question.subquestions.length > 0
               question.subquestions.forEach (subquestion) ->
