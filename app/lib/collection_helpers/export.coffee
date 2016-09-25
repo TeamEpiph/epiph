@@ -16,7 +16,7 @@ class @Export
           questionnaireId: questionnaire._id
           type: $ne: 'description'
         ,
-          sort: {index: 1}
+          sort: index: 1
         ).forEach (question) ->
           #console.log question
           if question.type is 'table' or question.type is 'table_polar'
@@ -125,7 +125,7 @@ class @Export
           questionnaireId: questionnaire._id
           type: $ne: 'description'
         ,
-          sort: {index: 1}
+          sort: index: 1
         ).forEach (question) ->
           answer = Answers.findOne
             questionId: question._id

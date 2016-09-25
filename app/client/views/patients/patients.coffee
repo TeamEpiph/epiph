@@ -33,14 +33,14 @@ Template.patients.rendered = ->
 
 Template.patients.helpers
   studies: ->
-    Studies.find()
+    Studies.find({}, {sort: title: 1})
 
   designs: ->
     selectedStudyIds = Session.get 'selectedStudyIds'
     find = {}
     if selectedStudyIds?
       find.studyId = {$in: selectedStudyIds}
-    StudyDesigns.find(find).map (design) ->
+    StudyDesigns.find(find, {sort: index: 1}).map (design) ->
       design.study = Studies.findOne(design.studyId)
       design
 
@@ -70,10 +70,11 @@ Template.patients.helpers
       studyDesignIds = Patients.findOne(selectedPatientId).studyDesignIds
       find._id = {$in: studyDesignIds}
     visits = []
-    StudyDesigns.find(find).forEach (design) ->
+    StudyDesigns.find(find, sort: {title: 1}).forEach (design) ->
+      study = Studies.findOne(design.studyId)
       design.visits.forEach (v) ->
         v.design = design
-        v.study = Studies.findOne(design.studyId)
+        v.study = study
         visits.push v
     visits
 
@@ -94,6 +95,8 @@ Template.patients.helpers
       if visit?
         return Questionnaires.find
           _id: {$in: v.questionnaireIds}
+        ,
+          sort: title: 1
     return
 
   singlePatient: ->

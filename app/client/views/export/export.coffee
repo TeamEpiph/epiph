@@ -140,7 +140,7 @@ Template.export.rendered = ->
     icon: _studyIcon
     state: { opened: true }
 
-  Studies.find().forEach (study) ->
+  Studies.find({}, {sort: title: 1}).forEach (study) ->
     studyNode =
       id: 'study_'+study._id
       parent: '_studies'
@@ -177,6 +177,8 @@ Template.export.rendered = ->
 
     StudyDesigns.find(
       studyId: study._id
+    ,
+      sort: title: 1
     ).forEach (design) ->
       nodes.push
         id: 'design_'+design._id
@@ -236,6 +238,8 @@ Template.export.rendered = ->
       questionnaireIds = design.questionnaireIds || []
       Questionnaires.find(
         _id: {$in: questionnaireIds}
+      ,
+        sort: title: 1
       ).forEach (questionnaire) ->
         nodes.push
           id: 'questionnaire_'+questionnaire._id+'_'+design._id
@@ -248,7 +252,7 @@ Template.export.rendered = ->
         Questions.find(
           questionnaireId: questionnaire._id
         ,
-          sort: {index: 1}
+          sort: index: 1
         ).forEach (question) ->
           title = "#{question.index} - #{question.label}"
           if title.length > 30
