@@ -36,6 +36,7 @@ AutoForm.hooks
               return
           else 
             form.done(error)
+            AutoForm.resetForm(form.formId)
         else
           form.done()
       false
