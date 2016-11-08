@@ -39,6 +39,8 @@ Template.registerHelper "eq_or", () ->
     return true if a is b
     i++
   return false
+Template.registerHelper "gt", (a,b) ->
+  a > b
 
 Template.registerHelper "percentage", (a, b) ->
   "#{Math.round(100/a*b)}%"

@@ -22,6 +22,13 @@
                 <button class="btn btn-primary btn-sm showQuestionnaire">
                   Show <i class="fa fa-lg fa-file-text-o"></i>
                 </button>
+                {{#if isInRole 'admin'}}
+                  {{#if gt questionnaire.numAnswered 0}}
+                    <button class="btn btn-danger btn-sm removeAnswersForQuestionnaire">
+                      <i class="fa fa-lg fa-trash"></i>
+                    </button>
+                  {{/if}}
+                {{/if}}
 
               </td>
               {{/unless}}

@@ -60,3 +60,29 @@ Template.patientVisit.events
       readonly: true
     __showQuestionnaireWizzard data
     false
+
+  "click .removeAnswersForQuestionnaire": (evt, tmpl) ->
+    visitId = @visit._id
+    questionnaireId = @questionnaire._id
+    swal {
+      title: 'Remove answers'
+      text: "Are you really sure you want to delete this patient's answers for the questionnaire \"#{@questionnaire.title}\"? If yes type a reason and choose Yes. A log entry will be created."
+      type: 'input'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+      inputPlaceholder: "Reason to delete answers."
+      closeOnConfirm: false
+    }, (reason) ->
+      if reason is false #cancel
+        swal.close()
+        return
+      if !reason? or reason.length is 0
+        swal.showInputError("You need to state a reason!")
+        return false
+      Meteor.call "removeAnswersOfQuestionnaireFromVisit", visitId, questionnaireId, reason, (error) ->
+        if error?
+          throwError error
+        else
+          swal("The answers have been deleted.")
+      return true
+    return false

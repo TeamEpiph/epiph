@@ -188,6 +188,33 @@ Meteor.methods
         $unset: date: ''
     return
 
+  "removeAnswersOfQuestionnaireFromVisit": (visitId, questionnaireId, reason) ->
+    checkIfAdmin()
+    check(visitId, String)
+    check(questionnaireId, String)
+    check(reason, String)
+
+    questionnaire = Questionnaires.findOne questionnaireId
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
+    visit = Visits.findOne visitId
+    throw new Meteor.Error(403, "visit not found.") unless visit?
+    patient = Patients.findOne visit.patientId
+    throw new Meteor.Error(403, "patient not found.") unless patient?
+
+    questionIds = Questions.find({questionnaireId: questionnaireId}).map (q) ->
+      q._id
+    answers = Answers.find(
+      questionId: $in: questionIds
+      visitId: visitId
+    ).fetch()
+
+    Meteor.call "logActivity", "remove all answers of questionnaire (#{questionnaire.id} - #{questionnaire.title}) from visit (#{visit.title} - #{visit._id}) from patient (#{patient.hrid} - #{patient.id})", "critical", reason, answers
+
+    answerIds = answers.map (a) -> a._id
+    Answers.remove
+      _id: $in: answerIds
+    return
+
 
 @__getScheduledVisitsForPatientId = (patientId, studyDesignId) ->
   check patientId, String
