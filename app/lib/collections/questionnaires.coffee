@@ -113,7 +113,7 @@ Meteor.methods
         throw new Meteor.Error(400, "questionnaireIsUsedProvideReason")
       else
         s = modifier['$set']
-        Meteor.call "logActivity", "change title/id of questionnaire (#{questionnaire.title} / #{questionnaire.id}) which in use to (#{s.title} / #{s.id})", "notice", forceReason, modifier['$set']
+        Meteor.call "logActivity", "change title/id/language of questionnaire (#{questionnaire.title} / #{questionnaire.id} / #{questionnaire.primaryLanguage}) which is in use to (#{s.title} / #{s.id} / #{s.primaryLanguage})", "notice", forceReason, modifier['$set']
     Questionnaires.update docId, modifier
 
   copyQuestionnaire: (questionnaireId) ->
