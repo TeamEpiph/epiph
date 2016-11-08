@@ -116,6 +116,25 @@ Meteor.methods
         Meteor.call "logActivity", "change title/id/language of questionnaire (#{questionnaire.title} / #{questionnaire.id} / #{questionnaire.primaryLanguage}) which is in use to (#{s.title} / #{s.id} / #{s.primaryLanguage})", "notice", forceReason, modifier['$set']
     Questionnaires.update docId, modifier
 
+  removeQuestionnaireTranslation: (id, lang) ->
+    checkIfAdmin()
+    check(id, String)
+    check(lang, String)
+
+    questionnaire = Questionnaires.findOne id
+    throw new Meteor.Error(403, "questionnaire not found.") unless questionnaire?
+
+    Questions.update
+      questionnaireId: questionnaire._id
+    ,
+      $unset: "translations.#{lang}": 1
+    ,
+      multi: true
+
+    Questionnaires.update questionnaire._id,
+      $pull: translationLanguages: lang
+    return
+
   copyQuestionnaire: (questionnaireId) ->
     checkIfAdmin()
     check(questionnaireId, String)

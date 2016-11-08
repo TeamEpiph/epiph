@@ -75,6 +75,9 @@ Template.translateQuestionnaireDestinationLang.helpers
     isoLangs.filter (l) ->
       l.code isnt pl
 
+  destinationLangExists: ->
+    @translationLanguages.indexOf(destinationLang.get()) > -1
+
 Template.translateQuestionnaireDestinationLang.events
   "change #destination-lang": (evt) ->
     destinationLang.set $(evt.target).find(":selected").attr('value')
@@ -152,6 +155,24 @@ Template.translateQuestionnaire.helpers
 Template.translateQuestionnaire.events
   "click #submitTranslation": (evt) ->
     submitAllForms()
+
+  "click #removeTranslation": (evt) ->
+    id = @_id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this translation?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+      closeOnConfirm: false
+    }, ->
+      Meteor.call "removeQuestionnaireTranslation", id, destinationLang.get(), (error) ->
+        if error?
+          throwError error
+        else
+          swal.close()
+      return true
+    return false
 
   "click #editQuestionnaire": (evt) ->
     Router.go "editQuestionnaire", _id: @_id
