@@ -4,14 +4,14 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-coffeescript@1.11.1_2
-accounts-password@1.3.1
+coffeescript@1.11.1_4
+accounts-password@1.3.3
 alanning:roles
 aldeed:autoform
 aldeed:collection2
 drskullster:bootstrap
 jabbslad:basic-auth
-less@2.7.6
+less@2.7.8
 meteorhacks:aggregate
 iron:router
 ian:accounts-ui-bootstrap-3
