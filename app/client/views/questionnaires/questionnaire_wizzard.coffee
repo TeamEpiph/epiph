@@ -309,9 +309,34 @@ Template.questionnaireWizzard.created = ->
       $("#source-lang option[value=#{value}]").attr('selected', true)
     , 100
 
+
+adjustHeaderHeight = ->
+  $('.questionnaireWizzard h2.modal-title').css('font-size', '1pt')
+  width = $('.questionnaireWizzard .modal-header').width()
+  height = $('.questionnaireWizzard .modal-header').height()
+  rWidth = $('.questionnaireWizzard .modal-header .regulations').width()
+  $('.questionnaireWizzard .title-wrapper').width(width-rWidth-5)
+  $('.questionnaireWizzard .title-wrapper').height(height)
+  fs = 16
+  counter = 0
+  while(true)
+    if fs > 32
+      return
+    counter += 1
+    $('.questionnaireWizzard h2.modal-title').css('font-size', fs+'pt')
+    if $('.questionnaireWizzard h2.modal-title').height() > 60
+      $('.questionnaireWizzard h2.modal-title').css('font-size', fs-1+'pt')
+      return
+    fs += 1
+
+Template.questionnaireWizzard.rendered = ->
+  $(window).resize(adjustHeaderHeight)
+  Meteor.setTimeout(adjustHeaderHeight, 2000)
+
 Template.questionnaireWizzard.destroyed = ->
   $(document).unbind('keyup.wizzard')
   Session.set('selectedQuestionnaireWizzard', null)
+  $(window).off("resize", adjustHeaderHeight)
 
 
 Template.questionnaireWizzard.helpers

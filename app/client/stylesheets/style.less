@@ -404,9 +404,14 @@ table.collapsed {
       background-color: white;
       position: fixed;
       width: 100%;
+      height: 75px;
       z-index: 9999;
-      h2 {
-        display: inline-block;
+      .title-wrapper {
+        position: fixed;
+        overflow: hidden;
+        h2 {
+          line-height: 1.1;
+        }
       }
       .regulations {
         float: right;
