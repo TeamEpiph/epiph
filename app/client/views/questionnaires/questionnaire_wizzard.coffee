@@ -161,6 +161,7 @@ nextPage = ->
     #else
     Modal.hide('questionnaireWizzard')
   else
+    $('modal-content').scrollTop(0)
     _pageIndex.set _pageIndex.get()+1
 
 previousPage = ->
