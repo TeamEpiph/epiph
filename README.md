@@ -1,7 +1,8 @@
 epiph 
 ======
 
-Epiph is a webapp to facilitate psychological trials based on questionnaires.
+epiph is a webapp to facilitate psychological trials based on questionnaires.
+You can enter your own questionnaires with multiple question/answer types (multiple-choice (single/multi selection), text, date, etc.). Design your study and schedule visits by defining which questionnaires have to be filled out in which visit. After creating patients, you are ready to fill out questionnaires. Epiph supports exporting the gathered answers as a csv or save it to a (MongoDB) collection for direct access from multiple statistic tools (ex. R).
 
 ## Usage
 
