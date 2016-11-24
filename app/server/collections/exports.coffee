@@ -18,7 +18,7 @@ Meteor.methods
         tableName: tableName
       i = 0
       while i < headers.length
-        header = headers[i].title.replace(".", "_")
+        header = headers[i].title.replace(/\./g, "_")
         tableRow[header] = cols[i] 
         i++
       ExportTable.insert tableRow
