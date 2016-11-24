@@ -1,5 +1,0 @@
-job1:
-  script: "echo job1 >> /tmp/ci-test.log"
-
-job2:
-  script: "id >> /tmp/ci-test.log"
