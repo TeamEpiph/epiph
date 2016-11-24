@@ -173,7 +173,9 @@ Meteor.methods
 
       #remove already created visits with no data
       Patients.find(_id: $in: ids).forEach (p) ->
-        Visits.remove patientId: p._id
+        Visits.find( patientId: p._id ).forEach (v) ->
+          if Answers.find( visitId: v._id).count() is 0
+            Visits.remove _id: v._id
 
     ids.forEach (id) ->
       try
