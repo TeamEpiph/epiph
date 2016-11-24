@@ -1,3 +1,4 @@
-FROM patte/meteord:onbuild
+FROM ulexus/meteor
+COPY app /home/meteor/www
 ENV PORT 3000
 ENV ROOT_URL https://epiph.stage.kjpk.patpat.org
