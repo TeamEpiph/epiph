@@ -36,4 +36,4 @@ Project planning is done via trello: https://trello.com/epiph
 
 
 # Copyright and license
-Code and documentation copyright 2016 Patrick Recher and University of Basel. Code is licensed under GPLv3.
+Code and documentation copyright 2016 Patrick Recher, Ronan Zimmermann and University of Basel. Code is licensed under GPLv3.
