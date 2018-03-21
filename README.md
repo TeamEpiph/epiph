@@ -29,7 +29,10 @@ sudo docker build -t epiph-meteor -f Dockerfile_stage_kjpk .
 sudo docker tag epiph-meteor your.registry.org/epiph-meteor:0.0.11
 sudo docker push your.registry.org/epiph-meteor:0.0.11
 ```
-
+### Default User for login to epiph
+email: admin@admin.com
+username: admin
+password: password
 
 ## TODOs
 Project planning is done via trello: https://trello.com/epiph
