@@ -30,8 +30,11 @@ sudo docker tag epiph-meteor your.registry.org/epiph-meteor:0.0.11
 sudo docker push your.registry.org/epiph-meteor:0.0.11
 ```
 ### Default User for login to epiph
-email: admin@admin.com
+
+email: admin@admin.com 
+
 username: admin
+
 password: password
 
 ## TODOs
