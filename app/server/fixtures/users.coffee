@@ -2,26 +2,12 @@ if Meteor.users.find().count() is 0
   now = new Date().getTime()
   users = [
     {
-    name: "Patrick Recher"
-    email: "patrick.recher@gmail.com"
-    username: "patte"
-    password: "mammut"
+    name: "Admin"
+    email: "admin@admin.com"
+    username: "admin"
+    password: "password"
     roles: ["admin", "caseManager"]
-    }
-    {
-    name: "Lukas Fürer"
-    email: "lukas.fuerer@unibas.ch"
-    username: "lukas.fuerer"
-    password: "asdfasdf"
-    roles: ["admin", "caseManager"]
-    }
-    {
-    name: "Ronan Zimmermann"
-    email: "ronan.zimmermann@unibas.ch"
-    username: "ronan.zimmermann"
-    password: "asdfasdf"
-    roles: ["admin", "caseManager"]
-    }
+    }    
   ]
   _.each users, (user) ->
     _id = undefined
