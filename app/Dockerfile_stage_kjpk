@@ -1,5 +1,0 @@
-FROM ulexus/meteor
-COPY . /home/meteor/src
-RUN chown -R meteor:meteor /home/meteor/
-ENV PORT 3000
-ENV ROOT_URL https://epiph.stage.kjpk.patpat.org
