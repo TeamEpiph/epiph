@@ -2,14 +2,14 @@ _studyIcon = 'fa fa-book'
 _designIcon = 'fa fa-list-alt'
 _visitIcon = 'fa fa-calendar-check-o'
 _patientIcon = 'fa fa-user'
-_questionnaireIcon = 'fa fa-file-text-o' 
+_questionnaireIcon = 'fa fa-file-text-o'
 _questionIcon = 'fa fa-cube'
 _caseManagerIcon = 'fa fa-user-md'
 _answerIcon = 'fa fa-edit'
 Template.export.rendered = ->
   # nodes are leafes in the export tree
   # node id nomenclatura:
-  #   - ids beginning with 1 underscore are structure only (folders) and ignored 
+  #   - ids beginning with 1 underscore are structure only (folders) and ignored
   #   - ids beginning with 2 underscore are system variables selectors (regexed)
   #   - ids not beginning with an underscore are content (visit, patient, etc.)
   nodes = []
@@ -301,7 +301,7 @@ Template.export.rendered = ->
         patient = Patients.findOne patientId
         StudyDesigns.find(
           _id: $in: patient.studyDesignIds
-        ).forEach (d) -> 
+        ).forEach (d) ->
           id = 'patient_'+patient._id+'_'+d._id
           tree.jstree("select_node", id, true, false)
 
@@ -423,7 +423,7 @@ Template.export.rendered = ->
       designs: designs
       questionnaires: questionnaires
 
-    console.log selection
+    #console.log selection
     _selection.set selection
 
     return
