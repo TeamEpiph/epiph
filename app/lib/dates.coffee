@@ -8,7 +8,7 @@ if Meteor.isClient
     else
       moment.locale 'en'
 
-@__dateFormat = "L"
+@__dateFormat = "YYYY/MM/DD"
 @__dateTimeFormat = "LLL"
 
 @fullDate = (date, noOrnamentation) ->
