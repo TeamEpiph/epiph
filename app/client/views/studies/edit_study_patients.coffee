@@ -25,7 +25,7 @@ Template.editStudyPatients.helpers
       { key: 'id', label: "ID" },
       { key: 'hrid', label: "HRID" },
       { key: 'studyDesignIds', label: "Designs",
-      fn: (v,o) -> 
+      fn: (v,o) ->
         ds = ""
         designs = o.studyDesigns().forEach (d) ->
           ds += d.title+', '
@@ -59,7 +59,7 @@ Template.editStudyPatients.helpers
       null
     else
       Patients.findOne _id: ids[0]
-    
+
   editSessionPatientsSchema: ->
     caseManagers = Meteor.users.find(
       roles: "caseManager"
@@ -103,7 +103,7 @@ Template.editStudyPatients.helpers
           options: langs
     ids = Session.get('editingPatientIds')
     if ids? and ids.length is 1
-      schema = _.extend schema, 
+      schema = _.extend schema,
         hrid:
           label: "HRID"
           type: String
@@ -128,7 +128,7 @@ Template.editStudyPatients.events
     return if !@_id #header
     editingPatientIds = Session.get("editingPatientIds") or []
     checkbox = $(evt.target).parent().find('input')
-    if event.target.type is "checkbox"
+    if evt.target.type is "checkbox"
       if (index = editingPatientIds.indexOf(@_id)) > -1
         editingPatientIds.splice(index, 1)
         checkbox.prop('checked', false)
@@ -142,7 +142,7 @@ Template.editStudyPatients.events
       Session.set "editingPatientIds", [@_id]
     return
 
-    
+
   "click button.show": (evt) ->
     selectPatientId(@_id)
     Router.go "patients"
@@ -232,7 +232,7 @@ Template.editStudyPatients.events
         return false
       Meteor.call "includePatient", patientId, reason, (error) ->
         if error?
-          throwError error 
+          throwError error
         else
           swal("the patient has been included.")
       return true
