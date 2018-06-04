@@ -97,7 +97,7 @@ Meteor.methods
 
     #check if primaryLanguage is changed to an existing translation
     if ( (newLang=modifier['$set'].primaryLanguage) isnt questionnaire.primaryLanguage)
-      if questionnaire.translationLanguages.indexOf(newLang) > -1
+      if questionnaire.translationLanguages and questionnaire.translationLanguages.indexOf(newLang) > -1
         throw new Meteor.Error(400, "Can't set #{newLang} as the primary language for this questionnaire because a translation to this language exists already. If you really wan't to do this, please delete the translation first.")
 
     #check if questionnaire is used
@@ -168,7 +168,7 @@ Meteor.methods
     studyIds = []
     studyDesignIds = StudyDesigns.find(
       questionnaireIds: questionnaireId
-    ).map (sd) -> 
+    ).map (sd) ->
       studyIds.push sd.studyId
       sd._id
     studyIds = _.uniq studyIds

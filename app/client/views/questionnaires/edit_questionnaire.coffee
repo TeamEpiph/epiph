@@ -34,7 +34,7 @@ AutoForm.hooks
                       swal.close()
                       form.done()
               return
-          else 
+          else
             form.done(error)
             AutoForm.resetForm(form.formId)
         else
@@ -44,7 +44,7 @@ AutoForm.hooks
 
 resizeQuestionEditor = ->
   qe = $('#questionEditor')
-  parent = qe.parent() 
+  parent = qe.parent()
   qe.width( parent.width() )
 
 repositionQuestionEditor = ->
@@ -54,7 +54,7 @@ repositionQuestionEditor = ->
   if !_isFullscreen.get() and sq? and sq.offset()? and $(document).width() > 992
     if $(document).width() > 992
       offset = sq.offset().top-200
-      offset = 0if offset < 0
+      offset = 0 if offset < 0
       $("#questionEditor").css("margin-top", offset)
   else
     $("#questionEditor").css("margin-top", "")
@@ -115,7 +115,7 @@ Template.editQuestionnaire.helpers
     langs = isoLangs.map (l) ->
       label: "#{l.name} (#{l.nativeName})"
       value: l.code
-    schema = 
+    schema =
       title:
         type: String
       id:
@@ -152,7 +152,7 @@ Template.editQuestionnaire.helpers
   #this: selectedQuestion
   questionFormSchema: ->
     new SimpleSchema(@getMetaSchemaDict())
-      
+
 
 Template.editQuestionnaire.events
   "click #toggleFullscreen": (evt) ->
@@ -178,7 +178,7 @@ Template.editQuestionnaire.events
     t = question.type
     newType = evt.target.value
     changeQuestionType = (questionId, newType) ->
-      Meteor.call "updateQuestion", 
+      Meteor.call "updateQuestion",
         $set: type: newType
       ,
         questionId
