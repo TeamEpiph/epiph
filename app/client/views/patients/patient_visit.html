@@ -10,7 +10,14 @@
           {{#with questionnaire=this visit=.. patient=../../patient}}
             <tr>
               <td class="{{questionnaireCSS}}">{{questionnaire.title}}</td>
-              <td class="{{questionnaireCSS}}">{{percentage questionnaire.numQuestions questionnaire.numAnswered}}</td>
+              <td class="{{questionnaireCSS}}">
+                {{#if questionnaire.numQuestionsRequired}}
+                  {{percentage questionnaire.numQuestionsRequired
+                    questionnaire.numAnsweredRequired}}
+                {{else}}
+                  100%
+                {{/if}}
+              </td>
               <!--
               <td class="cursorPointer showQuestionnaire"><i class="fa fa-lg fa-list"></i></td>
               -->

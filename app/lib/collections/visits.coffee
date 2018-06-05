@@ -45,16 +45,22 @@ class @Visit
     visit = @
     quests = @questionnaires().map (quest) ->
       numQuestions = 0
+      numQuestionsRequired = 0
       quest.answered = true
       quest.numAnswered = 0
+      quest.numAnsweredRequired = 0
       questions = Questions.find
         questionnaireId: quest._id
         type: {$ne: "description"} #filter out descriptions
       .map (question) ->
         if question.subquestions?
           numQuestions += question.subquestions.length
+          if !question.optional
+            numQuestionsRequired += question.subquestions.length
         else
           numQuestions += 1
+          if !question.optional
+            numQuestionsRequired++
 
         answer = Answers.findOne
           visitId: visit._id
@@ -65,19 +71,24 @@ class @Visit
           answered = answer? and answer.value.length is question.subquestions.length
         #question.answered = answered
 
-        if !answered 
+        if !answered
           quest.answered = false
 
         if question.subquestions?
           if answer?
             quest.numAnswered += answer.value.length
+            if !question.optional
+              quest.numAnsweredRequired += answer.value.length
         else if answered
           quest.numAnswered += 1
+          if !question.optional
+            quest.numAnsweredRequired++
 
         question
       #quest.questions = questions
       quest.numQuestions = numQuestions
-      quest.answered = false if questions.length is 0
+      quest.numQuestionsRequired = numQuestionsRequired
+      quest.answered = true if quest.numAnsweredRequired >= quest.numQuestionsRequired
       quest
     quests
 
@@ -153,7 +164,7 @@ Meteor.methods
 
     #we copy the data here from the visit template to
     #an actuall existing visit here
-    visit = 
+    visit =
       patientId: patient._id
       designVisitId: visitTemplate._id
       title: visitTemplate.title

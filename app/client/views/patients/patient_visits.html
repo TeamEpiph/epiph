@@ -3,7 +3,7 @@
   <ul class="nav nav-tabs hidden-print">
     {{#each designs}}
     <li role="presentation" class={{designTabClasses}}>
-      <a href="" class="switchDesign"> 
+      <a href="" class="switchDesign">
         {{title}}
       </a>
     </li>
@@ -27,7 +27,12 @@
                 <i class="fa fa-lg fa-file-text-o"></i>
                 <div>
                   {{questionnaire.id}}<br>
-                  {{percentage questionnaire.numQuestions questionnaire.numAnswered}}
+                  {{#if questionnaire.numQuestionsRequired}}
+                    {{percentage questionnaire.numQuestionsRequired
+                      questionnaire.numAnsweredRequired}}
+                  {{else}}
+                    100%
+                  {{/if}}
                 </div>
               </div>
               {{/with}}

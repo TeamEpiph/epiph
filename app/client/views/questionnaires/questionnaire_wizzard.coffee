@@ -90,31 +90,38 @@ submitAllForms = (goto) ->
   _goto = goto
   numFormsToSubmit = 0
   missingAnswer = false
+  optionalQuestions = []
+  questions = Questions.find
+    questionnaireId: _questionnaire.get()._id
+  .map (question) ->
+    if question.optional
+      optionalQuestions.push(question._id)
   #count forms and check for empty inputs
   $("form").each ->
     e = $(@)
     classes = e.attr('class')
     if classes? and classes.indexOf('question') > -1
       numFormsToSubmit += 1
-      if classes? and classes.indexOf('questionForm') > -1
-        #check multiple subquestions forms
-        lines = e.find('tbody tr')
-        lines.each ->
-          l = $(@)
-          lineAnswered = l.find('input:checked').length > 0
-          if !lineAnswered
-            missingAnswer = true
-            l.addClass("missing-answer")
-          else
-            l.removeClass("missing-answer")
-      else
-        #check one question forms
-        updateDoc = AutoForm.getFormValues(e.attr('id')).updateDoc
-        if Object.keys(updateDoc).length is 0 or updateDoc?['$unset']?.value is ""
-          missingAnswer = true
-          e.addClass("missing-answer")
+      if optionalQuestions.indexOf(e.attr('id')) < 0
+        if classes? and classes.indexOf('questionForm') > -1
+          #check multiple subquestions forms
+          lines = e.find('tbody tr')
+          lines.each ->
+            l = $(@)
+            lineAnswered = l.find('input:checked').length > 0
+            if !lineAnswered
+              missingAnswer = true
+              l.addClass("missing-answer")
+            else
+              l.removeClass("missing-answer")
         else
-          e.removeClass("missing-answer")
+          #check one question forms
+          updateDoc = AutoForm.getFormValues(e.attr('id')).updateDoc
+          if Object.keys(updateDoc).length is 0 or updateDoc?['$unset']?.value is ""
+            missingAnswer = true
+            e.addClass("missing-answer")
+          else
+            e.removeClass("missing-answer")
   if missingAnswer
       swal {
         title: 'missing answers'
@@ -170,16 +177,16 @@ previousPage = ->
   _pageIndex.set index
 
 
-autoformHooks = 
+autoformHooks =
   onSubmit: (insertDoc, updateDoc, currentDoc) ->
     if !_submittingForms #ignore enter press
       @done()
       return false
     if _preview.get() or _readonly.get()
       return
-    insertDoc.visitId = currentDoc.visitId 
+    insertDoc.visitId = currentDoc.visitId
     insertDoc.questionId = currentDoc.questionId
-    insertDoc._id = currentDoc._id if currentDoc._id? 
+    insertDoc._id = currentDoc._id if currentDoc._id?
     #console.log "submit questionAutoform"
     #console.log insertDoc
     if insertDoc.value? and (!currentDoc.value? or (currentDoc.value? and currentDoc.value isnt insertDoc.value))
@@ -203,7 +210,7 @@ Template.questionnaireWizzard.created = ->
     _preview.set true
   else
     _preview.set false
- 
+
   #close on escape key press
   $(document).on('keyup.wizzard', (e)->
     e.stopPropagation()
@@ -237,7 +244,7 @@ Template.questionnaireWizzard.created = ->
       _nextQuestionnaire = validatedQuestionnaires[index+1]
     else
       _nextQuestionnaire = null
-  
+
   #collect autoformIds, count pages
   @autorun ->
     count = 0
@@ -277,7 +284,7 @@ Template.questionnaireWizzard.created = ->
     if !patient #preview
       _lang.set null
       return
-    if patient.primaryLanguage? 
+    if patient.primaryLanguage?
       if patient.primaryLanguage is questionnaire.primaryLanguage
         _lang.set null
         return
@@ -287,7 +294,7 @@ Template.questionnaireWizzard.created = ->
         if lang?
           _lang.set lang
           return
-    if patient.secondaryLanguage? 
+    if patient.secondaryLanguage?
       if patient.secondaryLanguage is questionnaire.primaryLanguage
         _lang.set null
         return
@@ -419,7 +426,7 @@ Template.questionnaireWizzard.helpers
       "normal"
 
   answerFormSchema: ->
-    schema = 
+    schema =
       _id:
         type: String
         optional: true
@@ -431,10 +438,10 @@ Template.questionnaireWizzard.helpers
         optional: true
       value: @question.getSchemaDict()
     new SimpleSchema(schema)
-    
+
   doc: ->
     return if _preview.get()
-    @answer or 
+    @answer or
       visitId: @visit._id
       questionId: @question._id
 
@@ -476,11 +483,11 @@ Template.questionnaireWizzard.helpers
         css = "answeredPartly"
       if i is activeIndex
         css += " active"
-      pages[i] = 
+      pages[i] =
         index: i+1
         css: css
     pages
-        
+
   isOnFirstPage: ->
     _pageIndex.get() is 0
 
@@ -537,7 +544,7 @@ Template.questionnaireWizzard.events
     if @question.type is "description"
       formSubmitted()
       return
-    answer = 
+    answer =
       visitId: @visit._id
       questionId: @question._id
       value: []
@@ -550,7 +557,7 @@ Template.questionnaireWizzard.events
           input = $(@)
           values.push input.data('choice_value').toString()
         if values.length > 0
-          answer.value.push 
+          answer.value.push
             code: subquestion.code
             value: values
       else #if @question.selectionMode is "single"
@@ -558,7 +565,7 @@ Template.questionnaireWizzard.events
           throw new Meteor.Error('error when processing the values: single selection got multiple values.')
         else if inputs.length is 1
           value = inputs.first().data('choice_value').toString()
-          answer.value.push 
+          answer.value.push
             code: subquestion.code
             value: value
     if answer.value.length > 0
