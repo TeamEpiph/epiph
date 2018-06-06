@@ -3,21 +3,49 @@ Router.configure
   loadingTemplate: "loading"
   notFoundTemplate: "not_found"
 
-# automatically render notFoundTemplate if data is null
-#Router.onBeforeAction('dataNotFound')
-Router.onBeforeAction( ->
-  AccountsEntry.signInRequired(this)	
-, {except: ["entrySignIn", "entrySignUp", "entryForgotPassword", "entrySignOut", "entryResetPassword", "appDumpHTTP"] })
+AccountsTemplates.configure
+  defaultLayout: 'layout'
+  enablePasswordChange: true
+  showForgotPasswordLink: true
 
-#Router.plugin('ensureSignedIn',
-#  except: ["entrySignIn", "entrySignUp", "entryForgotPassword", "entrySignOut", "entryResetPassword"]
-#)
+AccountsTemplates.configureRoute('changePwd');
+AccountsTemplates.configureRoute('enrollAccount');
+AccountsTemplates.configureRoute('forgotPwd');
+AccountsTemplates.configureRoute('resetPwd');
+AccountsTemplates.configureRoute('signIn', { redirect: '/patients', });
+AccountsTemplates.configureRoute('signUp');
+AccountsTemplates.configureRoute('verifyEmail');
+
+pwd = AccountsTemplates.removeField('password');
+AccountsTemplates.removeField('email');
+AccountsTemplates.addFields([
+  {
+      _id: "username",
+      type: "text",
+      displayName: "username",
+      required: true,
+      minLength: 5,
+  },
+  {
+      _id: 'email',
+      type: 'email',
+      required: true,
+      displayName: "email",
+      re: /.+@(.+){2,}\.(.+){2,}/,
+      errStr: 'Invalid email',
+  },
+  pwd
+]);
+
+Router.plugin('ensureSignedIn', {
+    except: ['atSignIn', 'atSignUp', 'atForgotPwd', 'atResetPwd']
+});
 
 previousPage = null
 Router.map ->
   @route "root",
     path: "/"
-    onBeforeAction: (pause)->
+    onBeforeAction: ->
       @redirect "/patients"
 
   @route "dashboard",
@@ -111,12 +139,6 @@ Router.map ->
       ]
 
 
-if Meteor.isClient	
+if Meteor.isClient
   Accounts.ui.config
-    passwordSignupFields: 'USERNAME_AND_EMAIL'
-
-Meteor.startup ->
-  AccountsEntry.config
-    homeRoute: '/' #redirect to this path after sign-out
-    dashboardRoute: '/patients'  #redirect to this path after sign-in
     passwordSignupFields: 'USERNAME_AND_EMAIL'

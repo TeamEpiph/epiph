@@ -14,7 +14,6 @@ jabbslad:basic-auth
 less@2.7.11
 meteorhacks:aggregate
 iron:router
-ian:accounts-ui-bootstrap-3
 sacha:spin
 matb33:collection-hooks
 fortawesome:fontawesome
@@ -55,7 +54,6 @@ spacebars@1.0.12
 check@1.3.0
 
 
-joshowens:accounts-entry-1.2
 chriswessels:hammer
 ajduke:bootstrap-tagsinput
 sergeyt:typeahead
@@ -76,3 +74,6 @@ standard-minifier-js@2.3.1
 underscore@1.0.10
 shell-server@0.3.1
 dynamic-import@0.3.0
+useraccounts:iron-routing
+useraccounts:bootstrap
+accounts-ui
