@@ -6,7 +6,7 @@ Meteor.methods
 
     user = Meteor.users.findOne userId
     throw new Meteor.Error(403, "user not found.") unless user?
- 
+
     #check role
     found = false
     _.some __systemRoles, (r) ->
@@ -33,7 +33,7 @@ Meteor.methods
       , (error, result) ->
         if error?
           future.throw new Meteor.Error(500, error.errmsg)
-        else 
+        else
           future.return result
       future.wait()
     Roles.addUsersToRoles(userId, role)
@@ -56,3 +56,10 @@ Meteor.methods
           future.return result
       future.wait()
     Roles.removeUsersFromRoles(userId, role)
+
+  removeUser: (userId) ->
+    checkIfAdmin()
+    # Logout user
+    Meteor.users.update(userId, {$set : { "services.resume.loginTokens" : [] }}, {multi:true})
+    # Delete user
+    Meteor.users.remove(userId)

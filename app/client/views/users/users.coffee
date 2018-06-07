@@ -66,6 +66,25 @@ Template.usersTableButtons.events
       Meteor.call "removeUserFromRole", id, role, (error) ->
         throwError error if error
 
+  "click button.removeUser": (evt) ->
+    id = @_id
+    swal {
+      title: 'Are you sure?'
+      text: 'Do you really want to delete this user?'
+      type: 'warning'
+      showCancelButton: true
+      confirmButtonText: 'Yes'
+      closeOnConfirm: false
+    }, ->
+      swal.close()
+      Meteor.call "removeUser", id, (error) ->
+        if error?
+          throwError error
+        else
+          swal.close()
+      return true
+    return false
+
 Template.usersTableButtons.helpers
   isInRole: (_id, role) ->
     Roles.userIsInRole(_id, role)
