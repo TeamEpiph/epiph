@@ -55,7 +55,21 @@
           </a>
         </li>
         {{/if}}
-        {{> atNavButton}}
+        {{#if currentUser}}
+          <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown">{{ username(currentUser) }} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{{pathFor 'atChangePwd'}}">Change password</a></li>
+                <li><a id="logoutUser">Sign out</a></li>
+              </ul>
+          </li>
+        {{else}}
+          <li>
+            <a href="{{pathFor 'atSignIn'}}">
+              Sign in/Join
+            </a>
+          </li>
+        {{/if}}
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
