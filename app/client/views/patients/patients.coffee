@@ -124,19 +124,19 @@ Template.patients.helpers
       key: 'hrid', label: "hrid"
     ,
       key: 'studyId', label: "Study", sortOrder: 0
-      fn: (v,o) -> 
+      fn: (v,o) ->
         study = o.study()
         return study.title if study?
     ,
       key: 'studyDesignIds', label: "Designs"
-      fn: (v,o) -> 
+      fn: (v,o) ->
         ds = ""
         designs = o.studyDesigns().forEach (d) ->
           ds += d.title+', '
         return ds.slice(0, -2)
     ,
       key: 'caseManagerId', label: "Case Manager"
-      fn: (v,o) -> 
+      fn: (v,o) ->
         caseManager = o.caseManager()
         if caseManager?
           getUserDescription caseManager
@@ -148,7 +148,7 @@ Template.patients.helpers
         o.languages()
     ,
       key: '', label: "no. sheduled visits"
-      fn: (v,o) -> 
+      fn: (v,o) ->
         visits = 0
         design = o.studyDesigns().forEach (d) ->
           visits += d.visits.length if d?
