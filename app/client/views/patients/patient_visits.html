@@ -12,13 +12,28 @@
 </div>
 <div id="visits">
   <table class="table table-striped collapsed">
+    <thead>
+      <tr>
+        <td> Visit name </td>
+        <td> Visit date </td>
+        <td> Date scheduled </td>
+        <td> Questionnaires </td>
+        <td></td>
+        <td></td>
+      </tr>
+    </thead>
     <tbody>
       {{#each visits}}
         {{#with visit=this patient=../patient}}
           <tr>
             <td class="openVisit cursorPointer"><b>{{visit.title}}</b></td>
             <td>
-              <p class={{visit.dateCSS}}>{{> xEditable visitDateEO}}</p>
+              <p class={{styleDate(visit.date)}}>{{> xEditable visitDateEO}}</p>
+            </td>
+            <td>
+              <p class={{styleDate(visit.dateScheduled)}}>
+                <span>{{displayDate(visit.dateScheduled)}}</span>
+              </p>
             </td>
             <td>
             {{#each visit.validatedQuestionnaires}}

@@ -33,36 +33,38 @@ Template.patientVisits.helpers
     else
       ""
 
+  displayDate: (date) ->
+    if date?
+      fullDate(date)
+    else
+      'no date set'
+
+  styleDate: (date) ->
+    if !date?
+      return "no-date"
+    date = moment(date)
+    now = moment()
+    if date.year() is now.year() and date.dayOfYear() is now.dayOfYear()
+      return "due"
+    else if date.isBefore(now)
+      return "over-due"
+    else
+      return "future"
+
   visits: ->
     patient = @patient
     studyDesigns = patient.studyDesigns().fetch()
     selectedPatientStudyDesignId = Session.get 'selectedPatientStudyDesignId'
     if !studyDesigns? or studyDesigns.length is 0 or !selectedPatientStudyDesignId?
       return null
-    visits = __getScheduledVisitsForPatientId(patient._id, selectedPatientStudyDesignId)
-    now = moment()
-    visits.forEach (v) ->
-      date = null
-      if v.date?
-        date = moment(v.date)
-      else if v.dateScheduled?
-        date = moment(v.dateScheduled)
-      if !date?
-        v.dateCSS = "no-date"
-      else 
-        if date.year() is now.year() and date.dayOfYear() is now.dayOfYear()
-          v.dateCSS = "due"
-        else if date.isBefore(now)
-          v.dateCSS = "over-due"
-        else
-          v.dateCSS = "future"
-    visits
+    return __getScheduledVisitsForPatientId(patient._id, selectedPatientStudyDesignId)
 
   visitDateEO: ->
     refreshEditableDateSanitizer()
     visit = @visit
     patient = @patient
-    date = visit.date or visit.dateScheduled or null 
+    # date = visit.date or visit.dateScheduled or null
+    date = visit.date or null
     dateString = null
     if date?
       dateString = fullDate(date)
@@ -89,7 +91,7 @@ Template.patientVisits.helpers
   questionnaireCSS: ->
     return "valid" if @questionnaire.answered
     "invalid"
-  
+
   #this questionnaire visit patient
   physioRecordsCSS: ->
     return "valid" if @visit.physioValid
