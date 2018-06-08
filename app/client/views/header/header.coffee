@@ -8,9 +8,6 @@ Template.header.helpers
     return "active" if active
     ""
 
-  username: (user) ->
-    getUserDescription(user)
-
 Template.header.events
   #this is needed to trigger hashchange
   "click #patientsA": (evt) ->

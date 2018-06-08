@@ -58,6 +58,7 @@ Meteor.methods
     Roles.removeUsersFromRoles(userId, role)
 
   removeUser: (userId) ->
+    check(userId, String)
     checkIfAdmin()
     # Logout user
     Meteor.users.update(userId, {$set : { "services.resume.loginTokens" : [] }}, {multi:true})
