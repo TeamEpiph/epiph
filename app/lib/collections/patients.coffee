@@ -94,7 +94,7 @@ Patients.attachSchema new SimpleSchema(schema)
 if Meteor.isServer
   Meteor.methods
     "createPatient": (studyId) ->
-      checkIfAdmin()
+      canAddPatient(studyId)
       check studyId, String
       study = Studies.findOne studyId
       throw new Meteor.Error(403, "study not found.") unless study?
@@ -109,6 +109,7 @@ if Meteor.isServer
             creatorId: Meteor.userId()
             studyId: studyId
             hasData: false
+            caseManagerId: Meteor.userId()
         catch e
           console.log "Error: createPatient"
           console.log e
@@ -120,20 +121,25 @@ if Meteor.isServer
 
 Meteor.methods
   'updatePatients': (ids, update) ->
-    checkIfAdmin()
     check ids, [String]
     check update, Object
+    ids.forEach((patientId) -> canUpdatePatient(patientId))
 
     allowedKeys = [
       "$set.caseManagerId",
       "$set.studyDesignIds",
       "$set.primaryLanguage",
       "$set.secondaryLanguage",
-      "$unset.caseManagerId",
-      "$unset.studyDesignIds",
       "$unset.primaryLanguage",
       "$unset.secondaryLanguage",
     ]
+
+    if Roles.userIsInRole(Meteor.user(), 'admin')
+      allowedKeys = [
+        allowedKeys...,
+        "$unset.caseManagerId",
+        "$unset.studyDesignIds"
+      ]
 
     if ids.length > 1
       if update['$set']? #don't overwrite with empty values
@@ -169,7 +175,7 @@ Meteor.methods
               patientIds.push p.id
 
       if patientIds.length > 0
-        throw new Meteor.Error(400, "You have removed one or more study designs from patient(s) (#{patientIds.join(', ')}) which have already entered data for one of these designs. This is not allowed and your changes are therefore discarded.") 
+        throw new Meteor.Error(400, "You have removed one or more study designs from patient(s) (#{patientIds.join(', ')}) which have already entered data for one of these designs. This is not allowed and your changes are therefore discarded.")
 
       #remove already created visits with no data
       Patients.find(_id: $in: ids).forEach (p) ->
@@ -250,7 +256,7 @@ Meteor.methods
     Visits.find(patientId: patientId).forEach (v) ->
       Answers.remove visitId: v._id
       Visits.remove v._id
-      
+
     Patients.remove
       _id: patientId
     return

@@ -1,5 +1,22 @@
 _refreshSelectsContentsTrigger = new ReactiveVar(false)
 
+AutoForm.hooks
+  addPatientsForm:
+    onSubmit: (insertDoc, updateDoc, currentDoc) ->
+      self = @
+      update =
+        '$set':
+          studyDesignIds: [updateDoc['$set']['design']]
+      Meteor.call 'createPatient', insertDoc.study, (error, patientId) ->
+        if error?
+          throwError error
+        else
+          Meteor.call "updatePatients", [patientId], update, (error) ->
+            if error?
+              throwError error
+            self.done()
+      false
+
 Template.patients.destroyed = ->
   $(window).off('hashchange')
 
@@ -161,6 +178,35 @@ Template.patients.helpers
   selectedPatient: ->
     Patients.findOne
       _id: Session.get('selectedPatientId')
+
+  addPatientsSchema: ->
+    if Roles.userIsInRole(Meteor.userId(), 'admin')
+      patientsFilter = {}
+    else
+      patientsFilter = {'caseManagerId': Meteor.userId()}
+    patients = Patients.find(patientsFilter, {sort: {studyId: 1}})
+    studies = Studies.find(
+      {'_id': {$in: Array.from(new Set(patients.map((x) -> x.studyId)))}}
+    )
+    schema =
+      study:
+        label: "Study"
+        type: String
+        optional: false
+        autoform:
+          type: "select"
+          options: studies.map((x) -> {'label': x.title, 'value': x._id})
+      design:
+        label: "Design"
+        type: String
+        optional: false
+        autoform:
+          type: "select"
+          options: () ->
+            StudyDesigns.find(
+              {'studyId': AutoForm.getFieldValue('study')}
+            ).map((x) -> {'label': x.title, 'value': x._id})
+    new SimpleSchema(schema)
 
 
 Template.patients.events
