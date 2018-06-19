@@ -236,8 +236,8 @@ Meteor.methods
     return
 
   "removePatient": (patientId, forceReason) ->
-    checkIfAdmin()
     check patientId, String
+    canUpdatePatient(patientId)
 
     patient = Patients.findOne patientId
     throw new Meteor.Error(500, "Patient can't be found.") unless patient?

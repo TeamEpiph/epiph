@@ -29,6 +29,23 @@
             yes <i class="fa fa-lg fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="{{fullDateTime excludedAt}}: {{excludeReason}}"></i>
           </p>
         {{/if}}
+        <h4>Edit</h4>
+        {{#autoForm schema=editPatientSchema doc=formDoc id="editPatientForm" type="normal" autosave=false}}
+          {{#each afFieldNames}}
+            {{> afQuickField name=this.name options=afOptionsFromSchema}}
+          {{/each}}
+          <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+              <i class="fa fa-check"></i>
+            </button>
+            <button type="reset" class="btn btn-warning">
+              <i class="fa fa-repeat"></i>
+            </button>
+            <button class="btn btn-danger delete">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        {{/autoForm}}
       </div>
     </div>
     <div class="col-xs-12 col-md-9 col-lg-10"><!-- col-md-pull-3"> -->
