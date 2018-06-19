@@ -150,6 +150,11 @@ Meteor.methods
         "$unset.hrid"
       ]
 
+    # If no study designs are selected store an empty array
+    if update['$unset']? and update['$set']? and update['$unset']['studyDesignIds']?
+      delete update['$unset']['studyDesignIds']
+      update['$set']['studyDesignIds'] = []
+
     #pick whitelisted keys
     update = _.pickDeep update, allowedKeys
 
