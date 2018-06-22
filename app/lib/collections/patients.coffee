@@ -58,6 +58,7 @@ schema =
   'studyDesignIds':
     type: [String]
     optional: true
+    defaultValue: []
   'caseManagerId':
     type: String
     optional: true
