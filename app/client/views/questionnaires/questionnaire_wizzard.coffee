@@ -413,6 +413,18 @@ Template.questionnaireWizzard.helpers
       visitId: visitId
       questionId: questionId
 
+  displayQuestion: (visitId, question) ->
+    if !question.conditional?
+      return ''
+    else
+      answer_conditional = Answers.findOne
+        visitId: visitId
+        questionId: question.conditional
+      if answer_conditional?
+        return ''
+      else
+        return 'display:none;'
+
   readonly: ->
     _readonly.get()
 
@@ -578,3 +590,11 @@ Template.questionnaireWizzard.events
 
   "change #source-lang": (evt) ->
     _lang.set $(evt.target).find(":selected").attr('value')
+
+  "change form": (evt) ->
+    value = evt.currentTarget.value
+    # Check if value is defined and has a true value
+    if value? and !(value.value in ['false', '0'])
+      $("form[data-conditional='#{evt.currentTarget.id}']").show()
+    else
+      $("form[data-conditional='#{evt.currentTarget.id}']").hide()

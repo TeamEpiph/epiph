@@ -38,9 +38,13 @@
           <div class="modal-body question">
             {{#each questionsForPage}}
               <!-- augment with question and answer -->
-              {{#with patient=../patient questionnaire=questionnaire visit=../visit question=. answer=(answerForQuestion ../visit._id _id) readonly=readonly preview=preview}}
+              {{#with patient=../patient questionnaire=questionnaire visit=../visit
+                question=. answer=(answerForQuestion ../visit._id _id) readonly=readonly
+                preview=preview display=(displayQuestion ../visit._id .)}}
               {{#if eq_or question.type "description" "table" "table_polar"}}
-              <form id={{question._id}} class="questionForm" fields="answer" novalidate="novalidate">
+              <form id={{question._id}} class="questionForm"
+                fields="answer" novalidate="novalidate" style={{display}}
+                data-conditional={{question.conditional}}>
                 <div class="form-group" data-required="true">
                   {{#if eq question.type "description"}}
                   {{#markdown}}{{question.label}}{{/markdown}}
@@ -59,11 +63,15 @@
                 {{#if preview}}
                   <p class="code">{{questionnaire.id}}_{{question.code}}</p>
                 {{/if}}
-                {{#autoForm doc=doc schema=answerFormSchema id=question._id type=formType class="questionAutoform" fields="value"}}
-                  {{#each afFieldNames}}
-                    {{> afQuickField name=this.name options=afOptionsFromSchema}}
-                  {{/each}}
-                {{/autoForm}}
+                {{#if display}}
+                {{/if}}
+                  {{#autoForm doc=doc schema=answerFormSchema id=question._id
+                    type=formType class="questionAutoform" fields="value"
+                    style=display data-conditional=question.conditional}}
+                    {{#each afFieldNames}}
+                      {{> afQuickField name=this.name options=afOptionsFromSchema}}
+                    {{/each}}
+                  {{/autoForm}}
               {{/if}}
               {{/with}}
               <br>

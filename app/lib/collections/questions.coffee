@@ -132,6 +132,16 @@ class @Question
               {label: "Table Polar", value: "table_polar"},
               {label: "Description (no question)", value: "description"},
             ]
+      conditional:
+        label: "Conditional"
+        type: String
+        optional: true
+        autoform:
+          type: "select"
+          options: ->
+            Questions.find({'questionnaireId': Session.get('editingQuestionnaireId'),
+            '_id': {'$ne': Session.get('selectedQuestionId')}}).map (x) ->
+              {label: "#{x.index}: #{x.label[0..40]}", value: "#{x._id}"}
       break:
         label: "insert pagebreak after this item"
         type: Boolean
@@ -463,7 +473,7 @@ Meteor.methods
     throw new Meteor.Error(403, "question (#{docId}) not found.") unless question?
 
     typeChange = false
-    
+
     #check if question.code is unique
     if (code = modifier['$set'].code) and code isnt question.code
       count = Questions.find(
@@ -717,7 +727,7 @@ Meteor.methods
       $set:
         "translations.#{lang}": translation
 
-    Questionnaires.update 
+    Questionnaires.update
       _id: question.questionnaireId
     ,
       $addToSet:
