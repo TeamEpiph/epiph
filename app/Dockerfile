@@ -1,5 +1,15 @@
 FROM node:8-slim
 
+LABEL base.image="node:8-slim"
+LABEL software="epiph"
+LABEL software.description="A webapp to facilitate psychological trials based on questionnaires."
+LABEL software.website="https://github.com/TeamEpiph/epiph"
+LABEL software.license="SPDX:GPL-3.0"
+LABEL maintainer="jaroslaw.surkont@unibas.ch"
+LABEL maintainer.organisation="Biozentrum, University of Basel"
+LABEL maintainer.location="Klingelbergstrasse 50/70, CH-4056 Basel, Switzerland"
+LABEL maintainer.license="SPDX:GPL-3.0"
+
 RUN apt-get update && \
   apt-get install --yes \
     git && \
@@ -11,7 +21,7 @@ USER meteor
 COPY --chown=meteor:staff . /home/meteor/src
 
 RUN cd /home/meteor/src && \
-  curl https://install.meteor.com?release=$(cat .meteor/release | cut -f2 -d'@') | sh && \
+  curl https://install.meteor.com | sh && \
   /home/meteor/.meteor/meteor npm install --production && \
   mkdir -p /home/meteor && \
   /home/meteor/.meteor/meteor build --directory /home/meteor && \
