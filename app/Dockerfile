@@ -1,4 +1,4 @@
-FROM node:8-slim
+FROM node:8.11.3-slim
 
 LABEL base.image="node:8-slim"
 LABEL software="epiph"
