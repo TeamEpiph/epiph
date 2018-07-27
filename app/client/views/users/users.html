@@ -31,8 +31,11 @@
       </button>
     {{/if}}
     {{/each}}
-    <button class="btn btn-danger removeUser" title="remove user">
+    {{#with systemRoles}}
+    <button class="btn btn-danger removeUser" title="remove user" data-id={{../_id}}
+      disabled={{isCurrentUser ../_id}}>
       <i class="fa fa-lg fa-trash"></i>
     </button>
+    {{/with}}
   </div>
 </template>

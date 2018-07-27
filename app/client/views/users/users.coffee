@@ -21,6 +21,13 @@ Template.usersTableButtons.helpers
   systemRoles: ->
     __systemRoles
 
+  isInRole: (_id, role) ->
+    Roles.userIsInRole(_id, role)
+
+  isCurrentUser: (_id) ->
+    _id is Meteor.userId()
+
+
 Template.usersTableButtons.events
   "click .addToRole": (evt)->
     id = $(evt.target).closest("button").data().id
@@ -68,6 +75,8 @@ Template.usersTableButtons.events
 
   "click button.removeUser": (evt) ->
     id = @_id
+    if id is Meteor.userId()
+      return false
     swal {
       title: 'Are you sure?'
       text: 'Do you really want to delete this user?'
@@ -84,7 +93,3 @@ Template.usersTableButtons.events
           swal.close()
       return true
     return false
-
-Template.usersTableButtons.helpers
-  isInRole: (_id, role) ->
-    Roles.userIsInRole(_id, role)

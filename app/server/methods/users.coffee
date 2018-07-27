@@ -60,7 +60,10 @@ Meteor.methods
   removeUser: (userId) ->
     check(userId, String)
     checkIfAdmin()
-    # Logout user
-    Meteor.users.update(userId, {$set : { "services.resume.loginTokens" : [] }}, {multi:true})
-    # Delete user
-    Meteor.users.remove(userId)
+    if Meteor.userId() is userId
+      throw new Meteor.Error(400, "unable to delete the logged in user.")
+    else
+      # Logout user
+      Meteor.users.update(userId, {$set : { "services.resume.loginTokens" : [] }}, {multi:true})
+      # Delete user
+      Meteor.users.remove(userId)
