@@ -2,12 +2,9 @@ class @Patient
   constructor: (doc) ->
     _.extend this, doc
 
-  caseManager: ->
-    return null unless @caseManagerId?
-    Meteor.users.findOne _id: @caseManagerId
-
-  caseManagerName: ->
-    getUserDescription @caseManager()
+  caseManagers: ->
+    return null unless @caseManagerIds?
+    Meteor.users.find(_id: $in: @caseManagerIds).map((x) -> x)
 
   study: ->
     return null unless @studyId?
@@ -62,6 +59,9 @@ schema =
   'caseManagerId':
     type: String
     optional: true
+  'caseManagerIds':
+    type: [String]
+    optional: true
   'primaryLanguage':
     type: String
     optional: true
@@ -110,7 +110,7 @@ if Meteor.isServer
             creatorId: Meteor.userId()
             studyId: studyId
             hasData: false
-            caseManagerId: Meteor.userId()
+            caseManagerIds: [Meteor.userId()]
         catch e
           console.log "Error: createPatient"
           console.log e
@@ -127,7 +127,7 @@ Meteor.methods
     ids.forEach((patientId) -> canUpdatePatient(patientId))
 
     allowedKeys = [
-      "$set.caseManagerId",
+      "$set.caseManagerIds",
       "$set.studyDesignIds",
       "$set.primaryLanguage",
       "$set.secondaryLanguage",
@@ -138,7 +138,7 @@ Meteor.methods
     if Roles.userIsInRole(Meteor.user(), 'admin')
       allowedKeys = [
         allowedKeys...,
-        "$unset.caseManagerId",
+        "$unset.caseManagerIds",
         "$unset.studyDesignIds"
       ]
 

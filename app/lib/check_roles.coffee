@@ -11,7 +11,7 @@
     authorized = true
   else
     patients = Patients.find(
-      {'studyId': studyId, 'caseManagerId': user._id}
+      {'studyId': studyId, 'caseManagerIds': user._id}
     ).map((x) -> x)
     authorized = patients? and patients.length > 0
   if !authorized
@@ -25,7 +25,7 @@
     authorized = true
   else
     patients = Patients.find(
-      {'_id': patientId, 'caseManagerId': user._id}
+      {'_id': patientId, 'caseManagerIds': user._id}
     ).map((x) -> x)
     authorized = patients? and patients.length > 0
   if !authorized

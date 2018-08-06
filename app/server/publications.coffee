@@ -3,14 +3,14 @@ onlyIfAdmin = ->
     return true
   else
     @ready()
-    return 
+    return
 
 onlyIfAdminOrCaseManager = ->
   if Roles.userIsInRole(@userId, ['admin', 'caseManager'])
     return true
   else
     @ready()
-    return 
+    return
 
 onlyIfUser = ->
   if @userId
@@ -22,7 +22,7 @@ onlyIfUser = ->
 #################################################
 
 Meteor.publish "caseManagers", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdmin.call(@)
   Meteor.users.find(
     roles: "caseManager"
   ,
@@ -60,17 +60,17 @@ Meteor.publish "userProfiles", ->
   )
 
 Meteor.publish "studies", ->
-  return unless onlyIfAdminOrCaseManager.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@)
   Studies.find()
 Meteor.publish "study", (_id) ->
-  return unless onlyIfAdminOrCaseManager.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@)
   Studies.find(_id: _id)
 
 Meteor.publish "studyDesigns", ->
-  return unless onlyIfAdminOrCaseManager.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@)
   StudyDesigns.find()
 Meteor.publish "studyDesignsForStudy", (studyIds) ->
-  return unless onlyIfAdminOrCaseManager.call(@) 
+  return unless onlyIfAdminOrCaseManager.call(@)
   if typeof studyIds is 'string'
     studyIds = [studyIds]
   StudyDesigns.find
@@ -80,7 +80,7 @@ Meteor.publish "patients", ->
   if Roles.userIsInRole(@userId, ['admin'])
     return Patients.find()
   else if Roles.userIsInRole(@userId, ['caseManager'])
-    return Patients.find caseManagerId: @userId
+    return Patients.find caseManagerIds: @userId
   else
     @ready()
     return
@@ -99,7 +99,7 @@ Meteor.publish "studyForPatient", (_id) ->
   else if Roles.userIsInRole(@userId, ['caseManager'])
     patient = Patients.findOne
       _id: _id
-      caseManagerId: @userId
+      caseManagerIds: @userId
     if patient?
       return Studies.find _id: patient.studyId
   @ready()
@@ -108,8 +108,8 @@ Meteor.publish "studyDesignForPatient", (_id) ->
 	patient = Patients.findOne _id: _id
 	if patient?
     studyDesign = StudyDesigns.find studyId: patient.studyId
-    if Roles.userIsInRole(@userId, ['admin']) or 
-    (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+    if Roles.userIsInRole(@userId, ['admin']) or
+    (Roles.userIsInRole(@userId, 'caseManager') and @userId in patient.caseManagerIds)
       return studyDesign
   @ready()
 
@@ -118,8 +118,8 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
   find: ->
     patient = Patients.findOne _id: patientId
     if patient?
-      if Roles.userIsInRole(@userId, ['admin']) or 
-      (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+      if Roles.userIsInRole(@userId, ['admin']) or
+      (Roles.userIsInRole(@userId, 'caseManager') and @userId in patient.caseManagerIds)
         return Patients.find _id: patientId
     return null
   children: [
@@ -142,18 +142,18 @@ Meteor.publishComposite 'studyCompositesForPatient', (patientId) ->
       ]
     ]
   ]
-        
-    
+
+
 Meteor.publish "visits", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdmin.call(@)
   Visits.find()
 
 Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
   find: ->
     patient = Patients.findOne patientId
     if patient?
-      if Roles.userIsInRole(@userId, ['admin']) or 
-      (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+      if Roles.userIsInRole(@userId, ['admin']) or
+      (Roles.userIsInRole(@userId, 'caseManager') and @userId in patient.caseManagerIds)
         return Patients.find _id: patientId
     return null
   children: [
@@ -171,24 +171,24 @@ Meteor.publishComposite 'visitsCompositeForPatient', (patientId) ->
 #####################################
 
 Meteor.publish "questionnaires", ->
-  return unless onlyIfUser.call(@) 
+  return unless onlyIfUser.call(@)
   Questionnaires.find()
 Meteor.publish "questions", ->
-  return unless onlyIfUser.call(@) 
+  return unless onlyIfUser.call(@)
   Questions.find()
 Meteor.publish "questionsForQuestionnaire", (questionnaireId)->
-  return unless onlyIfUser.call(@) 
+  return unless onlyIfUser.call(@)
   Questions.find
     questionnaireId: questionnaireId
 
 #####################################
 
 Meteor.publish "activities", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdmin.call(@)
   Activities.find()
 
 #####################################
 
 Meteor.publish "exportTables", ->
-  return unless onlyIfAdmin.call(@) 
+  return unless onlyIfAdmin.call(@)
   ExportTables.find()

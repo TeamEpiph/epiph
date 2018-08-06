@@ -31,7 +31,7 @@ Template.editStudyPatients.helpers
           ds += d.title+', '
         return ds.slice(0, -2)
       },
-      { key: 'caseManagerId', label: "Case Manager", fn: (v,o) -> getUserDescription(o.caseManager()) },
+      { key: 'caseManagerIds', label: "Case Managers", fn: (v,o) -> o.caseManagers().map((x) -> getUserDescription(x)).join(', ') },
       { key: 'languages', label: "Languages", fn: (v,o) -> o.languages() },
       { key: 'isExcluded', label: "excluded", tmpl: Template.studyPatientsTableExcluded }
       { key: "createdAt", label: 'created', sortByValue: true, sortOrder: 0, sortDirection: 'descending', fn: (v,o)->fullDate(v) },
@@ -75,12 +75,12 @@ Template.editStudyPatients.helpers
       label: "#{l.name} (#{l.nativeName})"
       value: l.code
     schema =
-      caseManagerId:
+      caseManagerIds:
         label: "Case Manager"
-        type: String
+        type: [String]
         optional: true
         autoform:
-          type: "select"
+          type: "select-checkbox"
           options: caseManagers
       studyDesignIds:
         label: "Designs"

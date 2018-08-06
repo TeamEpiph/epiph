@@ -214,7 +214,7 @@ Migrations.add
 Migrations.add
   version: 11
   up: ->
-    console.log "rename question.mode to question.selectionMode and it's values from radio to single and checkbox to multi" 
+    console.log "rename question.mode to question.selectionMode and it's values from radio to single and checkbox to multi"
     c = 0
     Questions.find().forEach (q) ->
       if q.type is "multipleChoice" or q.type is "table" or q.type is "table_polar"
@@ -352,7 +352,7 @@ Migrations.add
       #use direct to prevent $set.updatedAt being added
       Questions.direct.update q._id, q
     return
- 
+
 Migrations.add
   version: 18
   up: ->
@@ -430,7 +430,7 @@ Migrations.add
 Migrations.add
   version: 22
   up: ->
-    console.log "migrate from patient.studyDesignId to .studyDesignIds" 
+    console.log "migrate from patient.studyDesignId to .studyDesignIds"
     Patients.find(
       studyDesignId: $exists: 1
     ).forEach (p) ->
@@ -439,9 +439,23 @@ Migrations.add
         $set: studyDesignIds: [p.studyDesignId]
         $unset: studyDesignId: 1
       console.log Patients.findOne p._id
-    console.log "fixed migrating studyDesignId(s)" 
+    console.log "fixed migrating studyDesignId(s)"
     return
 
+Migrations.add
+  version: 23
+  up: ->
+    console.log "migrate from patient.caseManagerId to .caseManagerIds"
+    Patients.find(
+      caseManagerId: $exists: 1
+    ).forEach (p) ->
+      console.log p
+      Patients.update p._id,
+        $set: caseManagerIds: [p.caseManagerId]
+        $unset: caseManagerId: 1
+      console.log Patients.findOne p._id
+    console.log "fixed migrating caseManagerId(s)"
+    return
 
 Meteor.startup ->
   Migrations.migrateTo('latest')

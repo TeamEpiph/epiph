@@ -11,7 +11,7 @@ Meteor.methods
 
     patient = Patients.findOne visit.patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
-    throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+    throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and @userId in patient.caseManagerIds)
 
     check(answer.questionId, String)
     question = Questions.findOne  answer.questionId
@@ -32,7 +32,7 @@ Meteor.methods
     if answer._id?
       a = Answers.findOne _.pick answer, 'visitId', 'questionId', '_id'
       throw new Meteor.Error(403, "answer to update can't be found.") unless answer?
-      
+
       Answers.update answer._id,
         $set: value: answer.value
       answerId = answer._id

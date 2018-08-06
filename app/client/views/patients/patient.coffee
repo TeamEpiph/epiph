@@ -80,12 +80,12 @@ Template.patient.helpers
         max: 8
     if Roles.userIsInRole(Meteor.userId(), 'admin')
       schema = _.extend schema,
-        caseManagerId:
-          label: "Case Manager"
-          type: String
+        caseManagerIds:
+          label: "Case Managers"
+          type: [String]
           optional: true
           autoform:
-            type: "select"
+            type: "select-checkbox"
             options: caseManagers
     new SimpleSchema(schema)
 

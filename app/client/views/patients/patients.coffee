@@ -152,11 +152,11 @@ Template.patients.helpers
           ds += d.title+', '
         return ds.slice(0, -2)
     ,
-      key: 'caseManagerId', label: "Case Manager"
+      key: 'caseManagerIds', label: "Case Managers"
       fn: (v,o) ->
-        caseManager = o.caseManager()
-        if caseManager?
-          getUserDescription caseManager
+        caseManagers = o.caseManagers()
+        if caseManagers?
+          caseManagers.map((x) -> getUserDescription(x)).join(', ')
         else
           ""
     ,
@@ -183,7 +183,7 @@ Template.patients.helpers
     if Roles.userIsInRole(Meteor.userId(), 'admin')
       patientsFilter = {}
     else
-      patientsFilter = {'caseManagerId': Meteor.userId()}
+      patientsFilter = {'caseManagerIds': [Meteor.userId()]}
     patients = Patients.find(patientsFilter, {sort: {studyId: 1}})
     studies = Studies.find(
       {'_id': {$in: Array.from(new Set(patients.map((x) -> x.studyId)))}}

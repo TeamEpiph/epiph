@@ -140,7 +140,7 @@ Meteor.methods
 
     patient = Patients.findOne patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
-    throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+    throw new Meteor.Error(433, "you are not allowed to upsert answers") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and  @userId in patient.caseManagerIds)
 
     # use query from Patient
     studyDesign = StudyDesigns.findOne
@@ -189,7 +189,7 @@ Meteor.methods
 
     patient = Patients.findOne visit.patientId
     throw new Meteor.Error(403, "patient can't be found.") unless patient?
-    throw new Meteor.Error(433, "you are not allowed change this visit") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and patient.caseManagerId is @userId)
+    throw new Meteor.Error(433, "you are not allowed change this visit") unless Roles.userIsInRole(@userId, ['admin']) or (Roles.userIsInRole(@userId, 'caseManager') and @userId in patient.caseManagerIds)
 
     if date?
       Visits.update visitId,
