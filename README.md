@@ -33,7 +33,11 @@ The app now runs with an empty database on http://localhost:3000
 
 ### Deployment
 
-This app can be easily deployed using docker-compose
+This app can be easily deployed using docker-compose.
+If you haven't installed Docker and Docker Compose already, check the official
+documentation for the installation details:
+[Docker](https://docs.docker.com/install/) and
+[Docker Compose](https://docs.docker.com/compose/install/).
 
 ```
 git clone https://github.com/TeamEpiph/epiph.git
