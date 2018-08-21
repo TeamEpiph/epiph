@@ -56,7 +56,7 @@ schema =
     type: [String]
     optional: true
     defaultValue: []
-  'caseManagerId':
+  'caseManagerId':  # TODO remove it at some point
     type: String
     optional: true
   'caseManagerIds':

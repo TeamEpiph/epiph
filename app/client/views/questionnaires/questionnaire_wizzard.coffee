@@ -144,6 +144,23 @@ doSubmitAllForms = (numFormsToSubmit) ->
     e = $(@)
     classes = e.attr('class')
     if classes? and classes.indexOf('question') > -1
+      q = Questions.findOne(e.attr('id'))
+      # Remove the answer to conditional question if it is hidden
+      if q.conditional?
+        value = $('#' + q.conditional).val().value
+        parentQuestion = Questions.findOne(q.conditional)
+        removeAnswer = true
+        if parentQuestion.type is 'multipleChoice'
+          selection = parentQuestion.choices.find((x) -> x.value is value)
+          if selection?
+            removeAnswer = !selection.conditional
+        else if parentQuestion.type is 'boolean'
+          if (parentQuestion.showCondtionalQuestionsOn? and
+              value in parentQuestion.showCondtionalQuestionsOn)
+            removeAnswer = false
+        if removeAnswer
+          e.trigger('reset')
+          e.val().value = 'NA'
       e.submit()
 
 formSubmitted = ->
@@ -414,16 +431,24 @@ Template.questionnaireWizzard.helpers
       questionId: questionId
 
   displayQuestion: (visitId, question) ->
-    if !question.conditional?
-      return ''
-    else
+    showQuestion = true
+    if question.conditional?
+      showQuestion = false
       answer_conditional = Answers.findOne
         visitId: visitId
         questionId: question.conditional
       if answer_conditional?
-        return ''
-      else
-        return 'display:none;'
+        parentQuestion = Questions.findOne(question.conditional)
+        if parentQuestion.type is 'multipleChoice'
+          selection = parentQuestion.choices.find(
+            (x) -> x.value is answer_conditional.value)
+          if selection?
+            showQuestion = selection.conditional
+        else if parentQuestion.type is 'boolean'
+          if (parentQuestion.showCondtionalQuestionsOn? and
+                answer_conditional.value in parentQuestion.showCondtionalQuestionsOn)
+              showQuestion = true
+    return if showQuestion then '' else 'display:none;'
 
   readonly: ->
     _readonly.get()
@@ -592,9 +617,17 @@ Template.questionnaireWizzard.events
     _lang.set $(evt.target).find(":selected").attr('value')
 
   "change form": (evt) ->
-    value = evt.currentTarget.value
-    # Check if value is defined and has a true value
-    if value? and !(value.value in ['false', '0'])
+    question = Questions.findOne(evt.currentTarget.id)
+    value = evt.currentTarget.value.value
+    showQuestion = false
+    if question.type is 'multipleChoice'
+      selection = question.choices.find((x) -> x.value is value)
+      if selection?
+        showQuestion = selection.conditional
+    else if question.type is 'boolean'
+      if question.showCondtionalQuestionsOn? and value in question.showCondtionalQuestionsOn
+        showQuestion = true
+    if showQuestion
       $("form[data-conditional='#{evt.currentTarget.id}']").show()
     else
       $("form[data-conditional='#{evt.currentTarget.id}']").hide()

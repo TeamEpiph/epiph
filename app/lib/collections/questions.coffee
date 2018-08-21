@@ -210,6 +210,23 @@ class @Question
           type: Boolean
           defaultValue: false
 
+    if @type is "boolean"
+      _.extend schema,
+        showCondtionalQuestionsOn:
+          label: "Show conditional questions on:"
+          type: [String]
+          optional: true
+          defaultValue: false
+          autoform:
+            type: "select-checkbox-inline"
+            options: [
+              label: "true"
+              value: "true"
+            ,
+              label: "false"
+              value: "false"
+            ]
+
     if @type is "multipleChoice" or @type is "table" or @type is "table_polar"
       _.extend schema,
         choices:
@@ -223,6 +240,11 @@ class @Question
         'choices.$.value':
           type: String
           regEx: noWhitespaceRegex
+        'choices.$.conditional':
+          label: '?'
+          type: Boolean
+          optional: true
+          defaultValue: false
       if @selectionMode is "multi"
         schema['choices.$.value'].custom = ->
           #console.log "> #{@value} #{@key} <"

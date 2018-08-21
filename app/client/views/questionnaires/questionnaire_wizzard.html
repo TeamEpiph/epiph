@@ -68,9 +68,7 @@
                   {{#autoForm doc=doc schema=answerFormSchema id=question._id
                     type=formType class="questionAutoform" fields="value"
                     style=display data-conditional=question.conditional}}
-                    {{#each afFieldNames}}
-                      {{> afQuickField name=this.name options=afOptionsFromSchema}}
-                    {{/each}}
+                    {{> afQuickFields name=this.name}}
                   {{/autoForm}}
               {{/if}}
               {{/with}}
