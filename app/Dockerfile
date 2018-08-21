@@ -6,7 +6,7 @@ LABEL software.description="A webapp to facilitate psychological trials based on
 LABEL software.website="https://github.com/TeamEpiph/epiph"
 LABEL software.license="SPDX:GPL-3.0"
 LABEL maintainer="jaroslaw.surkont@unibas.ch"
-LABEL maintainer.organisation="Biozentrum, University of Basel"
+LABEL maintainer.organisation="sciCORE, University of Basel"
 LABEL maintainer.location="Klingelbergstrasse 50/70, CH-4056 Basel, Switzerland"
 LABEL maintainer.license="SPDX:GPL-3.0"
 
