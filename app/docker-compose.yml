@@ -13,7 +13,7 @@ services:
     links:
       - mongo
     environment:
-      MONGO_URL: mongodb://mongo:27017/meteor
+      MONGO_URL: mongodb://mongo:27017/epiph
 
   mongo:
     image: mongo:latest
