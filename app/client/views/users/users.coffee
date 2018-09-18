@@ -74,7 +74,8 @@ Template.usersTableButtons.events
         throwError error if error
 
   "click button.removeUser": (evt) ->
-    id = @_id
+    evt.stopImmediatePropagation()
+    id = $(evt.target).closest("button").data().id
     if id is Meteor.userId()
       return false
     swal {
