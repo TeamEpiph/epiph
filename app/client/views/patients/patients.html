@@ -81,20 +81,6 @@
       -->
     </div>
   </div>
-  {{#unless singlePatient}}
-  <div class="row" style="margin-top: 1rem;">
-    <div class="col-xs-12">
-      {{#autoForm schema=addPatientsSchema id="addPatientsForm" type="normal" autosave=false class="form-inline"}}
-        {{#each afFieldNames}}
-          {{> afQuickField name=this.name options=afOptionsFromSchema template="bootstrap-horizontal" class="form-control"}}
-        {{/each}}
-        <button class="btn btn-primary" style="margin-bottom: 10px;">
-          Add Patient <i class="fa fa-user-plus"></i>
-        </button>
-      {{/autoForm}}
-    </div>
-  </div>
-  {{/unless}}
   <div class="row">
     <div class="col-xs-12">
       {{#unless singlePatient}}
