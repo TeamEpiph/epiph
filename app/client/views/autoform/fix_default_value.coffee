@@ -63,14 +63,3 @@ Template.afRadioGroup.rendered = checkedInputRendered
 Template.afRadioGroup_bootstrap3.rendered = checkedInputRendered
 Template.afCheckboxGroup.rendered = checkedInputRendered
 Template.afCheckboxGroup_bootstrap3.rendered = checkedInputRendered
-
-
-afBootstrapDatepickerRendered = Template.afBootstrapDatepicker.rendered
-Template.afBootstrapDatepicker.rendered = ->
-  afBootstrapDatepickerRendered.call @
-  inputRendered.call @
-
-afBootstrapDateTimePickerRendered = Template.afBootstrapDateTimePicker.rendered
-Template.afBootstrapDateTimePicker.rendered = ->
-  afBootstrapDateTimePickerRendered.call @
-  inputRendered.call @
