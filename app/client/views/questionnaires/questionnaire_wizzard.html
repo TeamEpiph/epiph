@@ -12,15 +12,20 @@
               {{#unless preview}}
               <table>
                 <tr>
-                  <td>Case Manager:&nbsp;</td> <td>{{userDescription}}&nbsp;&nbsp;</td>
+                  <td>Current case manager:&nbsp;</td> <td>{{userDescription}}&nbsp;&nbsp;</td>
                   <td>Patient:&nbsp;</td> <td>{{patientDescription}}&nbsp;</td>
-                </tr><tr>
+                </tr>
+                <tr>
                   {{#if language}}
                   <td>Language:</td><td>{{language}}</td>
                   {{else}}
                   <td></td><td></td>
                   {{/if}}
                   <td>Visit:&nbsp;</td> <td>{{visit.title}}&nbsp;</td>
+                </tr>
+                <tr>
+                  <td></td><td></td>
+                  <td>Study:&nbsp;</td> <td>{{studyTitle}}</td>
                 </tr>
               </table>
               {{else}}

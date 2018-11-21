@@ -372,6 +372,9 @@ Template.questionnaireWizzard.helpers
   userDescription: ->
     getUserDescription(Meteor.user())
 
+  studyTitle: ->
+    Studies.findOne(@patient.studyId).title
+
   language: ->
     lang = _lang.get()
     questionnaire = _questionnaire.get()
