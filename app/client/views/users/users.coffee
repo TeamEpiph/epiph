@@ -27,6 +27,9 @@ Template.usersTableButtons.helpers
   isCurrentUser: (_id) ->
     _id is Meteor.userId()
 
+  canRemoveFromAdminRole: (_id, role) ->
+    _id is Meteor.userId() and role is 'admin'
+
 
 Template.usersTableButtons.events
   "click .addToRole": (evt)->

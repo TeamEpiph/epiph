@@ -19,7 +19,8 @@
   <div class="btn-group">
     {{#each systemRoles}}
     {{#if isInRole ../_id role}}
-      <button class="btn btn-success btn-stack removeFromRole" data-id={{../_id}} data-role={{role}} title="remove from role {{role}}">
+      <button class="btn btn-success btn-stack removeFromRole" data-id={{../_id}} data-role={{role}} title="remove from role {{role}}"
+          disabled={{canRemoveFromAdminRole ../_id role}}>
         <span class="fa-stack fa">
           <i class="fa {{icon}} fa-stack-1x"></i>
           <i class="fa fa-ban fa-stack-2x text-danger hoverOpaque"></i>
