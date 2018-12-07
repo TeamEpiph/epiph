@@ -216,7 +216,7 @@ class @Question
           label: "Show conditional questions on:"
           type: [String]
           optional: true
-          defaultValue: false
+          defaultValue: ["true"]
           autoform:
             type: "select-checkbox-inline"
             options: [
