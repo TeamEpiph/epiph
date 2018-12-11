@@ -161,10 +161,14 @@ doSubmitAllForms = (numFormsToSubmit) ->
         if removeAnswer
           e.trigger('reset')
           e.val().value = 'NA'
+      if classes.indexOf('missing-answer') > -1
+        # Missing answers for required questions are not submitted with e.submit(),
+        # run formSubmitted to decrease the counter and change Wizzard state
+        formSubmitted()
       e.submit()
 
 formSubmitted = ->
-  if (_numFormsToSubmit -= 1) <= 0
+  if --_numFormsToSubmit <= 0
     _submittingForms = false
     if _goto is 'nextPage'
       nextPage()
