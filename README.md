@@ -32,18 +32,50 @@ meteor
 The app now runs with an empty database on http://localhost:3000
 
 ### Deployment
+This app can be easily hosted using docker-compose.
 
-This app can be easily deployed using docker-compose.
+#### Preparation: install docker-compose
+
 If you haven't installed Docker and Docker Compose already, check the official
 documentation for the installation details:
 [Docker](https://docs.docker.com/install/) and
 [Docker Compose](https://docs.docker.com/compose/install/).
 
+#### Preparation: docker network
+Create the web network with the following command:
+```
+docker network create web
+```
+
+#### Run epiph
 ```
 git clone https://github.com/TeamEpiph/epiph.git
+
 cd epiph/app
-docker-compose up
+
+vi docker-compose.yml # adapt traefik.basic.frontend.rule to your domain
+docker-compose up -d
 ```
+Now epiph is running on http://localhost:3000
+If you want to expose the service to the public via a domain, follow the next steps.
+
+#### External Access and HTTPS
+Make sure port 80 and 443 are accessible from external and that you set up DNS
+correctly. The domain name you are going to specify needs to resolve to your IP.
+Traefik is going to request an TLS certificate from Let's Encrypt and
+needs these ports to be available in order to verify the request.
+
+```
+cd epiph/traefik
+touch acme.json && chmod 600 acme.json
+cp traefik.toml.example traefik.toml
+vi traefik.toml # set domain and email
+
+docker-compose up -d
+```
+
+The app should be up on the domain you specified eg. https://epiph.ch
+
 
 ### Default User for login to epiph
 

@@ -16,6 +16,15 @@ services:
       - mongo
     environment:
       MONGO_URL: mongodb://mongo:27017/epiph
+    networks:
+      - web
+      - default
+    labels:
+      - "traefik.docker.network=web"
+      - "traefik.enable=true"
+      - "traefik.basic.frontend.rule=Host:epiph.ch"
+      - "traefik.basic.port=3000"
+      - "traefik.basic.protocol=http"
 
   mongo:
     image: mongo:latest
@@ -26,3 +35,7 @@ services:
       - "27017"
     volumes:
       - ./docker-data/mongo:/data/db
+
+networks:
+  web:
+    external: true
