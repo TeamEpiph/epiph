@@ -22,3 +22,5 @@ services:
       - "27017:27017"
     expose:
       - "27017"
+    volumes:
+      - ./docker-data/mongo:/data/db
