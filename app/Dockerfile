@@ -20,16 +20,21 @@ USER meteor
 
 COPY --chown=meteor:staff . /home/meteor/src
 
-RUN cd /home/meteor/src && \
-  curl https://install.meteor.com | sh && \
-  /home/meteor/.meteor/meteor npm install --production && \
-  mkdir -p /home/meteor && \
-  /home/meteor/.meteor/meteor build --directory /home/meteor && \
-  rm -rf /home/meteor/.meteor && \
-  cd /home/meteor/bundle/programs/server && \
-  npm install
+# install meteor
+RUN curl https://install.meteor.com | sh
 
-WORKDIR /home/meteor/bundle
+# build the app
+RUN cd /home/meteor/src && \
+  npm install --production && \
+  mkdir -p /home/meteor/build && \
+  /home/meteor/.meteor/meteor build --directory /home/meteor/build && \
+  cd /home/meteor/build/bundle/programs/server && \
+  npm install --production
+
+# cleanup
+RUN rm -rf /home/meteor/.meteor
+
+WORKDIR /home/meteor/build/bundle
 
 EXPOSE 3000
 ENV PORT 3000
